@@ -1,18 +1,19 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
     namespace = "com.ipb.remangokbabel"
-    compileSdk = 34
+    compileSdk = AndroidSdk.compile
 
     defaultConfig {
         applicationId = "com.ipb.remangokbabel"
-        minSdk = 24
-        targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = AndroidSdk.minSdk
+        targetSdk = AndroidSdk.target
+        versionCode = AndroidSdk.versionCode
+        versionName = AndroidSdk.versionName
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -20,9 +21,34 @@ android {
         }
     }
 
+//    signingConfigs {
+//        create("release") {
+//            storeFile = file(KeyStore.storeFile)
+//            storePassword = KeyStore.storePassword
+//            keyAlias = KeyStore.keyAlias
+//            keyPassword = KeyStore.keyPassword
+//        }
+//        create("debug") {
+//            storeFile = file(KeyStore.storeFile)
+//            storePassword = KeyStore.storePassword
+//            keyAlias = KeyStore.keyAlias
+//            keyPassword = KeyStore.keyPassword
+//        }
+//    }
+
     buildTypes {
-        release {
+        debug {
             isMinifyEnabled = false
+            isDebuggable = true
+            applicationIdSuffix = ".debug"
+            versionNameSuffix = "-debug"
+        }
+        release {
+            isMinifyEnabled = true
+            isDebuggable = false
+            isJniDebuggable = false
+            isPseudoLocalesEnabled = false
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -39,9 +65,6 @@ android {
     buildFeatures {
         compose = true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion = "1.5.1"
-    }
     packaging {
         resources {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
@@ -49,16 +72,28 @@ android {
     }
 }
 
-dependencies {
+composeCompiler {
+    enableStrongSkippingMode = true
 
+    reportsDestination = layout.buildDirectory.dir("compose_compiler")
+}
+
+dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.activity.compose)
+    implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.material.iconsExtended)
+    implementation(libs.coil.kt.compose)
+    implementation(libs.github.sdp.compose)
+    implementation(libs.okhttp3)
+    implementation(libs.okhttp.logging)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

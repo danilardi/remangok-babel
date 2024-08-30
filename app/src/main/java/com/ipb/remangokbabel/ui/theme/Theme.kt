@@ -1,6 +1,5 @@
 package com.ipb.remangokbabel.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -18,9 +17,9 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
+    primary = Blue60,
+    secondary = Blue100,
+    tertiary = Purple80
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -37,7 +36,7 @@ private val LightColorScheme = lightColorScheme(
 fun RemangokBabelTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -46,7 +45,7 @@ fun RemangokBabelTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+//        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 
