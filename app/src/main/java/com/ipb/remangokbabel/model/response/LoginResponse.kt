@@ -1,4 +1,4 @@
-package com.ipb.remangokbabel.model
+package com.ipb.remangokbabel.model.response
 
 import com.google.gson.annotations.SerializedName
 
@@ -19,14 +19,6 @@ data class DataLoginResponse(
     val roleId: String,
 )
 
-data class LogoutResponse(
-    @field:SerializedName("status")
-    val status: String,
-    @field:SerializedName("message")
-    val message: String,
-)
 
-data class ErrorResponse(
-    val message: String? = null,
-    val status: String? = null,
-)
+
+

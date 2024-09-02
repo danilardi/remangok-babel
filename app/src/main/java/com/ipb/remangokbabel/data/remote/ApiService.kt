@@ -1,8 +1,8 @@
 package com.ipb.remangokbabel.data.remote
 
-import com.ipb.remangokbabel.model.LoginRequest
-import com.ipb.remangokbabel.model.LoginResponse
-import com.ipb.remangokbabel.model.LogoutResponse
+import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.response.LoginResponse
+import com.ipb.remangokbabel.model.response.LogoutResponse
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.POST

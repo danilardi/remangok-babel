@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,33 +32,19 @@ fun BottomBar(
     NavigationBar(
         modifier = modifier,
         containerColor = MyStyle.colors.backgroundSecondary,
+        contentColor = MyStyle.colors.backgroundPrimary,
     ) {
         val navBackStackEntry by navController.currentBackStackEntryAsState()
-        var currentRoute = navBackStackEntry?.destination?.route
-
-        val navigationItems = listOf(
-            NavigationItem(
-                title = "Home",
-                icon = Icons.Default.Home,
-                screen = Screen.Home
-            ),
-            NavigationItem(
-                title = "Pesanan",
-                icon = Icons.AutoMirrored.Filled.StickyNote2,
-                screen = Screen.Order
-            ),
-            NavigationItem(
-                title = "Profil",
-                icon = Icons.Default.AccountCircle,
-                screen = Screen.Profile
-            ),
-        )
+        val currentRoute = navBackStackEntry?.destination?.route
 
         navigationItems.map { item ->
             NavigationBarItem(
                 icon = { Icon(item.icon, contentDescription = item.title) },
                 label = { Text(item.title) },
                 selected = currentRoute == item.screen.route,
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = MyStyle.colors.primaryFocus,
+                ),
                 onClick = {
                     navController.navigate(item.screen.route) {
                         popUpTo(navController.graph.findStartDestination().id) {

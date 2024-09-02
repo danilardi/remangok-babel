@@ -3,7 +3,7 @@ package com.ipb.remangokbabel.utils
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
-import com.ipb.remangokbabel.model.ErrorResponse
+import com.ipb.remangokbabel.model.response.ErrorResponse
 import com.ipb.remangokbabel.ui.common.UiState
 import retrofit2.HttpException
 

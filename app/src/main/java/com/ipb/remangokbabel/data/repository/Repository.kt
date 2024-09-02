@@ -3,9 +3,9 @@ package com.ipb.remangokbabel.data.repository
 import androidx.compose.runtime.Composable
 import com.ipb.remangokbabel.data.remote.ApiConfig
 import com.ipb.remangokbabel.data.remote.ApiService
-import com.ipb.remangokbabel.model.LoginRequest
-import com.ipb.remangokbabel.model.LoginResponse
-import com.ipb.remangokbabel.model.LogoutResponse
+import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.response.LoginResponse
+import com.ipb.remangokbabel.model.response.LogoutResponse
 
 class Repository(private val apiService: ApiService) {
     suspend fun login(data: LoginRequest): LoginResponse {

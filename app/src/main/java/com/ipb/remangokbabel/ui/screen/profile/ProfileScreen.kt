@@ -21,7 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.model.ErrorResponse
+import com.ipb.remangokbabel.model.response.ErrorResponse
 import com.ipb.remangokbabel.ui.ViewModelFactory
 import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.ui.navigation.Screen

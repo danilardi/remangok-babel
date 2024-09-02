@@ -24,8 +24,8 @@ fun ButtonCustom(
     Button(
         onClick = onClick,
         shape = RoundedCornerShape(8.sdp),
-        border = BorderStroke(1.sdp, MyStyle.colors.tertiaryBorder),
-        colors = ButtonDefaults.buttonColors(containerColor = MyStyle.colors.tertiaryMain),
+        border = BorderStroke(1.sdp, MyStyle.colors.primaryBorder),
+        colors = ButtonDefaults.buttonColors(containerColor = MyStyle.colors.primaryMain),
         modifier = modifier
             .fillMaxWidth()
             .height(34.sdp),

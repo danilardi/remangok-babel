@@ -78,28 +78,28 @@ class MyColors {
     val neutral100 = Color(0xFF0A0A0A)
 
     /* Primary Colors (Maritime Theme) */
-    val primaryMain = Color(0xFF0D3B66)      // Biru Tua (Laut Dalam)
-    val primarySurface = Color(0xFFEAF0F6)   // Biru Muda Pucat (Air Laut Jernih)
-    val primaryBorder = Color(0xFF08305C)    // Biru Lebih Gelap (Aksen Laut)
-    val primaryHover = Color(0xFF165A91)     // Biru Tua Sedikit Lebih Cerah (Hover)
-    val primaryPressed = Color(0xFF092D4A)   // Biru Lebih Gelap (Saat Ditekan)
-    val primaryFocus = Color(0x330D3B66)     // Fokus (Biru dengan Opacity)
+    val primaryMain = Color(0xFF009688)     // Hijau Teal (Kesan Tropis dan Segar)
+    val primarySurface = Color(0xFFE0F2F1)  // Hijau Teal Muda (Latar Belakang Lembut)
+    val primaryBorder = Color(0xFF00796B)   // Hijau Teal Gelap (Aksen)
+    val primaryHover = Color(0xFF00897B)    // Hijau Teal Lebih Gelap (Hover)
+    val primaryPressed = Color(0xFF00695C)  // Hijau Teal Lebih Gelap (Saat Ditekan)
+    val primaryFocus = Color(0x33009688)    // Fokus (Hijau Teal dengan Opacity)
 
     /* Secondary Colors (Crab and Sand) */
-    val secondaryMain = Color(0xFFE63946)    // Merah Karang (Warna Kepiting)
-    val secondarySurface = Color(0xFFF9EBEA) // Merah Pucat (Latar Belakang Lembut)
-    val secondaryBorder = Color(0xFFCD2D3D)  // Merah Lebih Gelap (Aksen)
-    val secondaryHover = Color(0xFFC9283A)   // Merah Tua (Hover)
-    val secondaryPressed = Color(0xFFB12432) // Merah Sangat Tua (Saat Ditekan)
-    val secondaryFocus = Color(0x33E63946)   // Fokus (Merah dengan Opacity)
+    val secondaryMain = Color(0xFF0D3B66)      // Biru Tua (Laut Dalam)
+    val secondarySurface = Color(0xFFEAF0F6)   // Biru Muda Pucat (Air Laut Jernih)
+    val secondaryHover = Color(0xFF08305C)    // Biru Lebih Gelap (Aksen Laut)
+    val secondaryPressed = Color(0xFF165A91)     // Biru Tua Sedikit Lebih Cerah (Hover)
+    val secondaryBorder = Color(0xFF092D4A)   // Biru Lebih Gelap (Saat Ditekan)
+    val secondaryFocus = Color(0x330D3B66)     // Fokus (Biru dengan Opacity)
 
     /* Tertiary Colors (Accent and Highlight) */
-    val tertiaryMain = Color(0xFF009688)     // Hijau Teal (Kesan Tropis dan Segar)
-    val tertiarySurface = Color(0xFFE0F2F1)  // Hijau Teal Muda (Latar Belakang Lembut)
-    val tertiaryBorder = Color(0xFF00796B)   // Hijau Teal Gelap (Aksen)
-    val tertiaryHover = Color(0xFF00897B)    // Hijau Teal Lebih Gelap (Hover)
-    val tertiaryPressed = Color(0xFF00695C)  // Hijau Teal Lebih Gelap (Saat Ditekan)
-    val tertiaryFocus = Color(0x33009688)    // Fokus (Hijau Teal dengan Opacity)
+    val tertiaryMain = Color(0xFFE63946)    // Merah Karang (Warna Kepiting)
+    val tertiarySurface = Color(0xFFF9EBEA) // Merah Pucat (Latar Belakang Lembut)
+    val tertiaryBorder = Color(0xFFC9283A)   // Merah Tua (Hover)
+    val tertiaryHover = Color(0xFFB12432) // Merah Sangat Tua (Saat Ditekan)
+    val tertiaryPressed = Color(0xFFCD2D3D)  // Merah Lebih Gelap (Aksen)
+    val tertiaryFocus = Color(0x33E63946)   // Fokus (Merah dengan Opacity)
 
     /* Neutral Colors (Text and Background) */
     val neutralMain = Color(0xFF2B2D42)      // Abu-Abu Gelap (Teks Utama)

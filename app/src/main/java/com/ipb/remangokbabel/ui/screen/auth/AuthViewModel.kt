@@ -3,9 +3,9 @@ package com.ipb.remangokbabel.ui.screen.auth
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ipb.remangokbabel.data.repository.Repository
-import com.ipb.remangokbabel.model.LoginRequest
-import com.ipb.remangokbabel.model.LoginResponse
-import com.ipb.remangokbabel.model.LogoutResponse
+import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.response.LoginResponse
+import com.ipb.remangokbabel.model.response.LogoutResponse
 import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.utils.handleException
 import kotlinx.coroutines.flow.MutableStateFlow
