@@ -42,6 +42,8 @@ android {
             isDebuggable = true
             applicationIdSuffix = ".debug"
             versionNameSuffix = "-debug"
+
+            buildConfigField("String", "BASE_URL", "\"${Url.urlDev}\"")
         }
         release {
             isMinifyEnabled = true
@@ -53,6 +55,8 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "BASE_URL", "\"${Url.urlProd}\"")
         }
     }
     compileOptions {
@@ -82,18 +86,26 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.androidx.lifecycle.livedata)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.navigation.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.iconsExtended)
     implementation(libs.coil.kt.compose)
     implementation(libs.github.sdp.compose)
+    implementation(libs.github.jetpack.loading)
+    implementation(libs.github.paperdb)
     implementation(libs.okhttp3)
     implementation(libs.okhttp.logging)
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.accompanist.systemuicontroller)
+    implementation(libs.kotlinx.serialization.json)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

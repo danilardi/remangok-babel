@@ -2,6 +2,7 @@ package com.ipb.remangokbabel.ui.screen.basic
 
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -18,17 +19,20 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.ipb.remangokbabel.ui.navigation.Screen
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
-import com.ipb.remangokbabel.utils.navigateTo
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.delay
 
 @Composable
 fun SplashScreen(
-    navController: NavHostController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSplashFinished: () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+    systemUiController.setStatusBarColor(color = MyStyle.colors.backgroundSecondary)
+    systemUiController.setNavigationBarColor(color = MyStyle.colors.backgroundSecondary)
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
@@ -37,11 +41,12 @@ fun SplashScreen(
             animationSpec = tween(500)
         )
         delay(1000)
-        navController.graph.setStartDestination(Screen.Login.route)
-        navigateTo(navController, Screen.Login.route)
+        onSplashFinished()
     }
     Box(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize()
+            .background(MyStyle.colors.backgroundSecondary),
         contentAlignment = Alignment.Center
     ) {
         Text(
@@ -63,9 +68,7 @@ private fun SplashScreenPreview() {
                 .fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            SplashScreen(
-                navController = navController,
-            )
+            SplashScreen() {}
         }
     }
 }

@@ -5,7 +5,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.googlefonts.Font
+import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.unit.sp
+import com.ipb.remangokbabel.R
 import ir.kaaveh.sdpcompose.ssp
 
 // Set of Material typography styles to start with
@@ -21,26 +24,38 @@ val Typography = Typography(
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
-        lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        fontSize = 22.ssp,
+        lineHeight = 28.ssp,
+        letterSpacing = 0.ssp
     ),
     labelSmall = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        fontSize = 11.ssp,
+        lineHeight = 16.ssp,
+        letterSpacing = 0.5.ssp
     )
     */
 )
 
 class MyTypography {
+    val provider = GoogleFont.Provider(
+        providerAuthority = "com.google.android.gms.fonts",
+        providerPackage = "com.google.android.gms",
+        certificates = R.array.com_google_android_gms_fonts_certs
+    )
+
+    val fontName = GoogleFont("Nunito")
+
+    val fontFamily = FontFamily(
+        Font(googleFont = fontName, fontProvider = provider)
+    )
+
     private val baseFont: TextStyle
         @Composable get() = TextStyle(
-            fontFamily = FontFamily.Default,
+            fontFamily = fontFamily,
             letterSpacing = 0.05.sp,
-            color = MyStyle.myColors.textBlack
+            color = MyStyle.colors.textBlack
         )
 
     /* XSSSS */
