@@ -35,6 +35,10 @@ fun navigateToAndMakeTop(navController: NavHostController, route: String) {
     }
 }
 
+fun navigateToBack(navController: NavHostController) {
+    navController.popBackStack()
+}
+
 fun handleException2(exception: Exception): UiState.Error<ErrorResponse> {
     val errorResponse = when (exception) {
         is HttpException -> parseError(exception.response()?.errorBody()?.string())

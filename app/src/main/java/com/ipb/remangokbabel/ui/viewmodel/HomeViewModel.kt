@@ -1,19 +1,18 @@
 package com.ipb.remangokbabel.ui.viewmodel
 
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ipb.remangokbabel.data.repository.Repository
-import com.ipb.remangokbabel.model.response.ProductResponse
+import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.utils.handleException2
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
-class HomeViewModel(private val repository: Repository) : ViewModel() {
-    private val _productState: MutableStateFlow<UiState<ProductResponse>> =
+class HomeViewModel(private val repository: Repository) : BaseViewModel() {
+    private val _productState: MutableStateFlow<UiState<GetAllProductResponse>> =
         MutableStateFlow(UiState.Idle)
 
-    val productState: MutableStateFlow<UiState<ProductResponse>>
+    val productState: MutableStateFlow<UiState<GetAllProductResponse>>
         get() = _productState
 
     fun getAllProducts(limit: Int = 10, offset: Int = 0) {

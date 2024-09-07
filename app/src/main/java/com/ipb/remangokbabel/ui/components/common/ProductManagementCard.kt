@@ -36,6 +36,8 @@ import ir.kaaveh.sdpcompose.sdp
 fun ProductManagementCard(
     product: ProdukItem,
     modifier: Modifier = Modifier,
+    onEditClick: () -> Unit = {},
+    onDeleteClick: () -> Unit = {},
 ) {
     Card(
         onClick = { /*TODO*/ },
@@ -130,6 +132,7 @@ fun ProductManagementCard(
                         .weight(1f)
                         .padding(horizontal = 16.sdp, vertical = 8.sdp)
                 ) {
+                    onEditClick()
                 }
                 ButtonCustom(
                     text = "Hapus",
@@ -138,6 +141,7 @@ fun ProductManagementCard(
                         .weight(1f)
                         .padding(horizontal = 16.sdp, vertical = 8.sdp)
                 ) {
+                    onDeleteClick()
                 }
             }
         }
@@ -163,11 +167,10 @@ private fun ProductManagementCardPreview() {
     Surface(
         modifier = Modifier
             .fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
+        color = MyStyle.colors.bgSecondary
     ) {
         ProductManagementCard(
             product = product,
-            modifier = Modifier.padding(16.sdp)
         )
     }
 

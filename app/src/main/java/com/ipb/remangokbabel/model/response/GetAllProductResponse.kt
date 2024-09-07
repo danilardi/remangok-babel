@@ -2,7 +2,7 @@ package com.ipb.remangokbabel.model.response
 
 import com.google.gson.annotations.SerializedName
 
-data class ProductResponse(
+data class GetAllProductResponse(
 
 	@field:SerializedName("data")
 	val data: DataProduct,

@@ -1,5 +1,6 @@
 package com.ipb.remangokbabel.ui.screen.product
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -63,6 +64,13 @@ fun ManagementProductScreen(
             }
         }
         coroutineScope.launch {
+            viewModel.deleteProductResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                productList = emptyList()
+                offset = 0
+            }
+        }
+        coroutineScope.launch {
             viewModel.showLoading.collect {
                 showLoading = it
             }
@@ -72,7 +80,6 @@ fun ManagementProductScreen(
         viewModel.getAllProducts(10, offset)
     }
     LaunchedEffect(listState) {
-        println("cekkk: ${listState}")
         snapshotFlow { listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisibleItemIndex ->
                 // Jika posisi item terakhir terlihat mendekati akhir daftar, muat data lebih banyak
@@ -98,7 +105,7 @@ fun ManagementProductScreen(
                 modifier = Modifier.padding(8.sdp)
             ) {
                 navigateTo(navController, Screen.AddProduct.route)
-                println("cekkk: ${productList.size}")
+//                println("cekkk: ${productList.size}")
             }
         },
     ) { innerPadding ->
@@ -111,6 +118,13 @@ fun ManagementProductScreen(
             items(productList, key = { it.id }) { product ->
                 ProductManagementCard(
                     product = product,
+                    onEditClick = {
+                        navigateTo(navController, Screen.EditProduct.createRoute(product.id))
+                    },
+                    onDeleteClick = {
+                        viewModel.deleteProduct(product.id)
+                    },
+                    modifier = Modifier.padding(vertical = 4.sdp)
                 )
             }
         }

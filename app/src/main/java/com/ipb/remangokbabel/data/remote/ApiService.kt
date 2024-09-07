@@ -3,8 +3,9 @@ package com.ipb.remangokbabel.data.remote
 import com.ipb.remangokbabel.model.request.LoginRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
+import com.ipb.remangokbabel.model.response.GetAllProductResponse
+import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.LoginResponse
-import com.ipb.remangokbabel.model.response.ProductResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
 import com.ipb.remangokbabel.model.response.StatusMessageResponse
 import com.ipb.remangokbabel.model.response.UploadImageResponse
@@ -14,6 +15,7 @@ import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -36,7 +38,12 @@ interface ApiService {
     suspend fun getAllProducts(
         @Query ("limit") limit: Int,
         @Query ("offset") offset: Int
-    ): ProductResponse
+    ): GetAllProductResponse
+
+    @GET("products/{id}")
+    suspend fun getProduct(
+        @Path("id") id: Int
+    ): GetDetailProductResponse
 
     @Multipart
     @POST("products/upload")
@@ -52,5 +59,16 @@ interface ApiService {
     @POST("products")
     suspend fun uploadProduct(
         @Body data: UploadProductRequest
+    ): StatusMessageResponse
+
+    @PUT("products/{id}")
+    suspend fun updateProduct(
+        @Path("id") id: Int,
+        @Body data: UploadProductRequest
+    ): StatusMessageResponse
+
+    @DELETE("products/{id}")
+    suspend fun deleteProduct(
+        @Path("id") id: Int
     ): StatusMessageResponse
 }

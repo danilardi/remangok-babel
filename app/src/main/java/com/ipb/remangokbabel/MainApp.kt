@@ -15,10 +15,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.ui.components.common.BottomBar
 import com.ipb.remangokbabel.ui.navigation.NavigationItem
@@ -109,12 +111,22 @@ fun MainApp(
             }
             composable(Screen.ManagementStock.route) {
                  ManagementProductScreen(
-                     navController = navController
+                     navController = navController,
                  )
             }
             composable(Screen.AddProduct.route) {
                 AddProductScreen(
                     navController = navController
+                )
+            }
+            composable(
+                route = Screen.EditProduct.route,
+                arguments = listOf(navArgument("productId") { type = NavType.IntType })
+            ) {
+                val productId = it.arguments?.getInt("productId") ?: -1
+                AddProductScreen(
+                    navController = navController,
+                    productId = productId
                 )
             }
         }

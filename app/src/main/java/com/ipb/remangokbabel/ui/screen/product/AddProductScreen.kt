@@ -39,7 +39,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
@@ -53,8 +52,8 @@ import com.ipb.remangokbabel.ui.components.product.AddImageLayout
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
-import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.reduceFileImage
 import com.ipb.remangokbabel.utils.uriToFile
 import ir.kaaveh.sdpcompose.sdp
@@ -67,10 +66,13 @@ fun AddProductScreen(
     viewModel: ProductViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
+    productId: Int = -1,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
+
+    var isEdit by remember { mutableStateOf(false) }
 
     var productImagesUri by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var productName by remember { mutableStateOf("") }
@@ -89,21 +91,42 @@ fun AddProductScreen(
     val productFaseItems = listOf("telur", "dewasa")
 
     LaunchedEffect(Unit) {
-        if (BuildConfig.DEBUG) {
-            productName = "Kepiting"
-            productWeight = 100
-            productFase = "telur"
-            productPrice = 10000
-            productDescription = "Product Description"
-            productStock = 10
+//        if (BuildConfig.DEBUG) {
+//            productName = "Kepiting"
+//            productWeight = 100
+//            productFase = "telur"
+//            productPrice = 10000
+//            productDescription = "Product Description"
+//            productStock = 10
+//        }
+
+        if (productId != -1) {
+            isEdit = true
+            viewModel.getProduct(productId)
         }
+
+        coroutineScope.launch {
+            viewModel.getProductResponse.collect { it ->
+                val product = it.detailProductData.detailProduk
+                productName = product.nama
+                productWeight = product.berat
+                productFase = product.faseHidup
+                productPrice = product.hargaSatuan
+                productDescription = product.deskripsi
+                productStock = product.jumlahStok
+                productImages = product.gambar.map { it.toUri() }
+                productImagesUri = productImages
+            }
+
+        }
+
         coroutineScope.launch {
             viewModel.uploadImageResponse.collect { uploadImageResponse ->
                 productImages = productImages.toMutableList().apply {
                     add(uploadImageResponse.data.filename.toUri())
                 }.distinct()
                 if (productImages.size == productImagesUri.size) {
-                    viewModel.showLoading(false)
+                    viewModel.showLoading.emit(false)
                 }
             }
         }
@@ -116,7 +139,7 @@ fun AddProductScreen(
         coroutineScope.launch {
             viewModel.uploadProductResponse.collect {
                 Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                navigateTo(navController, Screen.ManagementStock.route)
+                navigateToBack(navController)
             }
         }
         coroutineScope.launch {
@@ -126,7 +149,7 @@ fun AddProductScreen(
         }
         coroutineScope.launch {
             viewModel.errorResponse.collect { errorResponse ->
-                viewModel.showLoading(false)
+                viewModel.showLoading.emit(false)
                 Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
                 if (errorResponse.message == "token anda tidak valid") {
                     paperPrefs.deleteAllData()
@@ -137,8 +160,8 @@ fun AddProductScreen(
     }
 
     LaunchedEffect(productImagesUri) {
-        if (productImagesUri.isNotEmpty()) {
-            viewModel.showLoading(true)
+        if (productImagesUri.isNotEmpty() && productImagesUri.size > productImages.size) {
+            viewModel.showLoading.emit(true)
             productImagesUri.forEachIndexed { index, image ->
                 if (index >= productImages.size) {
                     val imageFile = uriToFile(image, context).reduceFileImage()
@@ -153,7 +176,7 @@ fun AddProductScreen(
     }
 
     Scaffold(topBar = {
-        AppTopBar(title = "Tambah Produk") {
+        AppTopBar(title = if (isEdit) "Edit Produk" else "Tambah Produk") {
             navController.popBackStack()
         }
     }, bottomBar = {
@@ -171,7 +194,12 @@ fun AddProductScreen(
                     berat = productWeight,
                     gambar = productImages.map { it.toString() }
                 )
-                viewModel.uploadProduct(request)
+                if (isEdit) {
+                    viewModel.updateProduct(productId, request)
+                }
+                else {
+                    viewModel.uploadProduct(request)
+                }
             },
         )
     }) { innerPadding ->
