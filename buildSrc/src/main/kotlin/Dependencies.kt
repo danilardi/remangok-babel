@@ -14,6 +14,6 @@ object KeyStore {
 }
 
 object Url {
-    const val urlDev = "https://mekarsarimart.com/remangok/api/"
-    const val urlProd = "https://mekarsarimart.com/api/v1/"
+    const val urlDev = "https://dev.remangokbabel.my.id"
+    const val urlProd = "https://prod.remangokbabel.my.id"
 }

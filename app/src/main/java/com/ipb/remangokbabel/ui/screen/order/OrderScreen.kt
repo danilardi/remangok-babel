@@ -11,9 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
-fun OrderScreen(modifier: Modifier = Modifier) {
+fun OrderScreen(
+    modifier: Modifier = Modifier,
+) {
     Column(
         modifier = modifier
             .fillMaxSize(),

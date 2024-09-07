@@ -11,15 +11,29 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
 
 private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
+    primary = MyStyle.colors.primaryMain,
+    secondary = MyStyle.colors.secondaryMain,
+    tertiary = MyStyle.colors.tertiaryMain,
+    background = MyStyle.colors.bgSecondary,
+    surface = MyStyle.colors.primarySurface,
+    onPrimary = MyStyle.colors.primaryBorder,
+    onSecondary = MyStyle.colors.secondaryBorder,
+    onTertiary = MyStyle.colors.tertiaryBorder,
+    onBackground = MyStyle.colors.primaryMain,
+    onSurface = MyStyle.colors.secondarySurface,
+    )
 
 private val LightColorScheme = lightColorScheme(
-    primary = Blue60,
-    secondary = Blue100,
-    tertiary = Purple80
+    primary = MyStyle.colors.primaryMain,
+    secondary = MyStyle.colors.secondaryMain,
+    tertiary = MyStyle.colors.tertiaryMain,
+    background = MyStyle.colors.bgSecondary,
+    surface = MyStyle.colors.primarySurface,
+    onPrimary = MyStyle.colors.primaryBorder,
+    onSecondary = MyStyle.colors.secondaryBorder,
+    onTertiary = MyStyle.colors.tertiaryBorder,
+    onBackground = MyStyle.colors.primaryMain,
+    onSurface = MyStyle.colors.secondarySurface,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),
@@ -36,7 +50,7 @@ private val LightColorScheme = lightColorScheme(
 fun RemangokBabelTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = false,
+    dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
@@ -45,7 +59,7 @@ fun RemangokBabelTheme(
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-//        darkTheme -> DarkColorScheme
+        darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
 

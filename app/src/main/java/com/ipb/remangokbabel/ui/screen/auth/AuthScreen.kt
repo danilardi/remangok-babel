@@ -2,7 +2,6 @@ package com.ipb.remangokbabel.ui.screen.auth
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,12 +27,13 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.ui.ViewModelFactory
 import com.ipb.remangokbabel.ui.components.auth.LoginForm
 import com.ipb.remangokbabel.ui.components.auth.RegisterForm
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
+import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import com.ipb.remangokbabel.utils.navigateTo
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -47,20 +47,20 @@ fun AuthScreen(
     )
 ) {
     val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(color = MyStyle.colors.backgroundPrimary)
-    systemUiController.setNavigationBarColor(color = MyStyle.colors.backgroundSecondary)
+    systemUiController.setStatusBarColor(color = MyStyle.colors.bgPrimary)
+    systemUiController.setNavigationBarColor(color = MyStyle.colors.bgSecondary)
 
     var pageActive by remember { mutableIntStateOf(0) }
+
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = MyStyle.colors.backgroundPrimary)
+            .background(color = MyStyle.colors.bgPrimary)
     ) {
-        Box(
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .weight(0.5f)
+                .fillMaxWidth()
         ) {
             Text(
                 text = "Remangok Babel",
@@ -68,34 +68,32 @@ fun AuthScreen(
                 fontSize = 28.ssp,
                 color = MyStyle.colors.textWhite,
                 modifier = Modifier
-                    .align(Alignment.TopCenter)
-                    .padding(top = 48.sdp)
+                    .padding(top = 24.sdp)
+                    .align(Alignment.CenterHorizontally),
             )
             Column(
                 modifier = Modifier
-                    .align(Alignment.BottomStart)
-                    .padding(start = 24.sdp)
+                    .padding(start = 24.sdp, top = 16.sdp)
             ) {
                 Text(
                     text = "Hai!,",
                     style = MyStyle.typography.baseMedium,
-                    fontSize = 28.ssp,
+                    fontSize = 24.ssp,
                     color = MyStyle.colors.textWhite,
                 )
                 Text(
                     text = "Selamat datang🦀",
                     style = MyStyle.typography.baseMedium,
-                    fontSize = 24.ssp,
+                    fontSize = 16.ssp,
                     color = MyStyle.colors.textWhite,
                 )
             }
         }
         Column(
             modifier = Modifier
-                .weight(1f)
                 .fillMaxSize()
                 .clip(RoundedCornerShape(topStart = 32.sdp, topEnd = 32.sdp))
-                .background(color = MyStyle.colors.backgroundSecondary)
+                .background(color = MyStyle.colors.bgSecondary)
         ) {
             Row(
                 modifier = Modifier
@@ -120,11 +118,11 @@ fun AuthScreen(
             if (pageActive == 0) {
                 LoginForm(modifier = modifier, viewModel = viewModel) {
                    navigateTo(navController, Screen.Home.route)
-                    systemUiController.setStatusBarColor(color = MyStyle.colors.colorBgWhite)
-                    systemUiController.setNavigationBarColor(color = MyStyle.colors.backgroundSecondary)
                 }
             } else {
-                RegisterForm()
+                RegisterForm(modifier = modifier, viewModel = viewModel) {
+                    pageActive = 0
+                }
             }
         }
     }
@@ -140,6 +138,7 @@ fun SelectorPageAuth(
     Column(
         modifier = modifier
             .padding(horizontal = 16.sdp)
+            .clip(RoundedCornerShape(8.sdp))
             .clickable {
                 onClick()
             }
@@ -154,11 +153,11 @@ fun SelectorPageAuth(
         )
         HorizontalDivider(
             modifier = Modifier
-                .padding(top = 4.sdp)
+                .padding(top = 2.sdp)
                 .clip(RoundedCornerShape(8.sdp))
                 .alpha(if (isActive) 1f else 0f),
             thickness = 4.sdp,
-            color = MyStyle.colors.backgroundPrimary,
+            color = MyStyle.colors.bgPrimary,
         )
     }
 }

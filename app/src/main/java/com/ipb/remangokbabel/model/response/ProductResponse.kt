@@ -5,50 +5,50 @@ import com.google.gson.annotations.SerializedName
 data class ProductResponse(
 
 	@field:SerializedName("data")
-	val data: Data? = null,
+	val data: DataProduct,
 
 	@field:SerializedName("status")
-	val status: String? = null
+	val status: String
 )
 
 data class ProdukItem(
 
 	@field:SerializedName("jumlah_stok")
-	val jumlahStok: Int? = null,
+	val jumlahStok: Int,
 
 	@field:SerializedName("nama")
-	val nama: String? = null,
+	val nama: String,
 
 	@field:SerializedName("harga_satuan")
-	val hargaSatuan: Int? = null,
+	val hargaSatuan: Int,
 
 	@field:SerializedName("updated_at")
-	val updatedAt: String? = null,
+	val updatedAt: String,
 
 	@field:SerializedName("id_owner")
-	val idOwner: String? = null,
+	val idOwner: String,
 
 	@field:SerializedName("berat")
-	val berat: Int? = null,
+	val berat: Int,
 
 	@field:SerializedName("fase_hidup")
-	val faseHidup: String? = null,
+	val faseHidup: String,
 
 	@field:SerializedName("created_at")
-	val createdAt: String? = null,
+	val createdAt: String,
 
 	@field:SerializedName("id")
-	val id: Int? = null,
+	val id: Int,
 
 	@field:SerializedName("deskripsi")
-	val deskripsi: String? = null,
+	val deskripsi: String,
 
 	@field:SerializedName("gambar")
-	val gambar: List<String?>? = null
+	val gambar: List<String>
 )
 
-data class Data(
+data class DataProduct(
 
 	@field:SerializedName("produk")
-	val produk: List<ProdukItem?>? = null
+	val produk: List<ProdukItem>
 )

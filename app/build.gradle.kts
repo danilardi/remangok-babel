@@ -106,6 +106,7 @@ dependencies {
     implementation(libs.retrofit.gson)
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.okhttp3.cookie.helper)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

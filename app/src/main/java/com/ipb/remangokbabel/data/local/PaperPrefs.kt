@@ -7,6 +7,7 @@ import io.paperdb.Paper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.coroutines.CoroutineContext
@@ -58,52 +59,61 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
         return Paper.book().read(key, default)!!
     }
 
-    private fun saveStringToPaperPref(key: String, value: String) {
-        launch {
-            withContext(Dispatchers.IO) {
-                Paper.book().write(key, value)
-            }
-        }
-    }
-
-    private fun saveBooleanToPaperPref(key: String, value: Boolean) {
-        launch {
-            withContext(Dispatchers.IO) {
-                try{
+    private suspend fun saveStringToPaperPref(key: String, value: String) {
+        coroutineScope {
+            launch {
+                withContext(Dispatchers.IO) {
                     Paper.book().write(key, value)
                 }
-                catch (ex: Exception){
+            }
+        }
+    }
 
+    private suspend fun saveBooleanToPaperPref(key: String, value: Boolean) {
+        coroutineScope {
+            launch {
+                withContext(Dispatchers.IO) {
+                    try {
+                        Paper.book().write(key, value)
+                    } catch (_: Exception) {
+
+                    }
                 }
             }
         }
     }
 
-    private fun saveIntToPaperPref(key: String, value: Int) {
-        launch {
-            withContext(Dispatchers.IO) {
-                Paper.book().write(key, value)
+    private suspend fun saveIntToPaperPref(key: String, value: Int) {
+        coroutineScope {
+            launch {
+                withContext(Dispatchers.IO) {
+                    Paper.book().write(key, value)
+                }
             }
         }
     }
 
-    private fun saveLongToPaperPref(key: String, value: Long) {
-        launch {
-            withContext(Dispatchers.IO) {
-                Paper.book().write(key, value)
+    private suspend fun saveLongToPaperPref(key: String, value: Long) {
+        coroutineScope {
+            launch {
+                withContext(Dispatchers.IO) {
+                    Paper.book().write(key, value)
+                }
             }
         }
     }
 
-    private fun saveDoubleToPaperPref(key: String, value: Double) {
-        launch {
-            withContext(Dispatchers.IO) {
-                Paper.book().write(key, value)
+    private suspend fun saveDoubleToPaperPref(key: String, value: Double) {
+        coroutineScope {
+            launch {
+                withContext(Dispatchers.IO) {
+                    Paper.book().write(key, value)
+                }
             }
         }
     }
 
-    fun setAccessToken(token: String) {
+    suspend fun setAccessToken(token: String) {
         saveStringToPaperPref("ACCESS_TOKEN", token)
     }
 
@@ -111,7 +121,7 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
         return getStringFromPaperPrefAsync("ACCESS_TOKEN")
     }
 
-    fun setRefreshToken(token: String) {
+    suspend fun setRefreshToken(token: String) {
         saveStringToPaperPref("REFRESH_TOKEN", token)
     }
 

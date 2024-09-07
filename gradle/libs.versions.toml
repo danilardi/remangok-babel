@@ -20,6 +20,7 @@ googleFonts = "1.6.8"
 serializationJson = "1.7.1"
 jetpackLoading = "1.1.0"
 paperDb = "2.7.2"
+cookieHelper = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -51,6 +52,7 @@ accompanist-systemuicontroller = { group = "com.google.accompanist", name = "acc
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serializationJson" }
 github-jetpack-loading = { group = "com.github.MahboubehSeyedpour", name = "jetpack-loading", version.ref = "jetpackLoading" }
 github-paperdb = { group = "io.github.pilgr", name = "paperdb", version.ref = "paperDb" }
+okhttp3-cookie-helper = { group = "org.riversun", name = "okhttp3-cookie-helper", version.ref = "cookieHelper" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

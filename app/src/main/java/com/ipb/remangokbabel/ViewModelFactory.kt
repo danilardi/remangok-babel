@@ -1,10 +1,12 @@
-package com.ipb.remangokbabel.ui
+package com.ipb.remangokbabel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.ipb.remangokbabel.data.repository.Repository
-import com.ipb.remangokbabel.ui.screen.auth.AuthViewModel
-import com.ipb.remangokbabel.ui.screen.home.HomeViewModel
+import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
+import com.ipb.remangokbabel.ui.viewmodel.HomeViewModel
+import com.ipb.remangokbabel.ui.viewmodel.MainViewModel
+import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 
 class ViewModelFactory(private val repository: Repository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -17,6 +19,8 @@ class ViewModelFactory(private val repository: Repository) :
             return AuthViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             return HomeViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(ProductViewModel::class.java)) {
+            return ProductViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

@@ -27,6 +27,8 @@ import com.ipb.remangokbabel.ui.screen.auth.AuthScreen
 import com.ipb.remangokbabel.ui.screen.basic.SplashScreen
 import com.ipb.remangokbabel.ui.screen.home.HomeScreen
 import com.ipb.remangokbabel.ui.screen.order.OrderScreen
+import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
+import com.ipb.remangokbabel.ui.screen.product.ManagementProductScreen
 import com.ipb.remangokbabel.ui.screen.profile.ProfileScreen
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 
@@ -60,7 +62,11 @@ fun MainApp(
 
     Scaffold(
         bottomBar = {
-            if (currentRoute != Screen.Splash.route && currentRoute != Screen.Auth.route) {
+            if (
+                currentRoute == Screen.Home.route ||
+                currentRoute == Screen.Order.route ||
+                currentRoute == Screen.Profile.route
+            ) {
                 BottomBar(
                     navController = navController,
                     navigationItems = navigationItems
@@ -76,7 +82,9 @@ fun MainApp(
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen() {
-                    val destination = if (paperPref.getAccessToken().isEmpty()) Screen.Auth.route else Screen.Home.route
+                    val destination = if (paperPref.getAccessToken()
+                            .isEmpty()
+                    ) Screen.Auth.route else Screen.Home.route
                     startDestination = destination
                     navigateToAndMakeTop(navController, destination)
                 }
@@ -87,7 +95,9 @@ fun MainApp(
                 )
             }
             composable(Screen.Home.route) {
-                HomeScreen()
+                HomeScreen(
+                    navController = navController
+                )
             }
             composable(Screen.Order.route) {
                 OrderScreen()
@@ -95,6 +105,16 @@ fun MainApp(
             composable(Screen.Profile.route) {
                 ProfileScreen(
                     navController = navController,
+                )
+            }
+            composable(Screen.ManagementStock.route) {
+                 ManagementProductScreen(
+                     navController = navController
+                 )
+            }
+            composable(Screen.AddProduct.route) {
+                AddProductScreen(
+                    navController = navController
                 )
             }
         }

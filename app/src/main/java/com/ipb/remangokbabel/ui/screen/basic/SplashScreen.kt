@@ -31,8 +31,8 @@ fun SplashScreen(
     onSplashFinished: () -> Unit
 ) {
     val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(color = MyStyle.colors.backgroundSecondary)
-    systemUiController.setNavigationBarColor(color = MyStyle.colors.backgroundSecondary)
+    systemUiController.setStatusBarColor(color = MyStyle.colors.bgSecondary)
+    systemUiController.setNavigationBarColor(color = MyStyle.colors.bgSecondary)
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(key1 = true) {
@@ -46,7 +46,7 @@ fun SplashScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MyStyle.colors.backgroundSecondary),
+            .background(MyStyle.colors.bgSecondary),
         contentAlignment = Alignment.Center
     ) {
         Text(

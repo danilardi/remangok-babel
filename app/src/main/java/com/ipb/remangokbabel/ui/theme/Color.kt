@@ -109,11 +109,12 @@ class MyColors {
     val neutralPressed = Color(0xFFCFD8DC)   // Abu-Abu Lebih Gelap (Saat Ditekan)
     val neutralFocus = Color(0x332B2D42)     // Fokus (Abu-Abu Gelap dengan Opacity)
 
-    val backgroundBiruTua = Color(0xFF0D3B66)
-    val backgroundPrimary = Color(0xFF00796B)
-    val backgroundSecondary = Color(0xFFEAF0F6)
-    val backgroundHijauTealMuda = Color(0xFFE0F2F1)
-    val backgroundKuningPucat = Color(0xFFFFF9C4)
+    val bgBiruTua = Color(0xFF0D3B66)
+    val bgPrimary = Color(0xFF00796B)
+    val bgSecondary = Color(0xFFEAF0F6)
+    val bgHijauTealMuda = Color(0xFFE0F2F1)
+    val bgKuningPucat = Color(0xFFFFF9C4)
+    val bgWhite = Color(0xFFFFFFFF)
 
     /* Error */
     val errorMain = Color(0xFFCB3A31)
