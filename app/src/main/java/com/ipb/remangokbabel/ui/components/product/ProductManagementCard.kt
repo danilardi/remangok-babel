@@ -1,4 +1,4 @@
-package com.ipb.remangokbabel.ui.components.common
+package com.ipb.remangokbabel.ui.components.product
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -28,6 +28,7 @@ import coil.compose.AsyncImage
 import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.response.ProdukItem
+import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp

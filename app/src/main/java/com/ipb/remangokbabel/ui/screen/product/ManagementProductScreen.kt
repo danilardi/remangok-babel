@@ -29,10 +29,10 @@ import androidx.navigation.compose.rememberNavController
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.response.ProdukItem
-import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
-import com.ipb.remangokbabel.ui.components.common.ProductManagementCard
+import com.ipb.remangokbabel.ui.components.product.ProductManagementCard
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
@@ -67,7 +67,11 @@ fun ManagementProductScreen(
             viewModel.deleteProductResponse.collect {
                 Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 productList = emptyList()
-                offset = 0
+                if (offset == 0) {
+                    viewModel.getAllProducts(10, offset)
+                } else {
+                    offset = 0
+                }
             }
         }
         coroutineScope.launch {
@@ -95,7 +99,7 @@ fun ManagementProductScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = "Manajemen Produk") {
+            BackTopBar(title = "Manajemen Produk") {
                 navController.popBackStack()
             }
         },

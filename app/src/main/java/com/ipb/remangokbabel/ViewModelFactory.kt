@@ -6,7 +6,9 @@ import com.ipb.remangokbabel.data.repository.Repository
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import com.ipb.remangokbabel.ui.viewmodel.HomeViewModel
 import com.ipb.remangokbabel.ui.viewmodel.MainViewModel
+import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
+import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 
 class ViewModelFactory(private val repository: Repository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -21,6 +23,10 @@ class ViewModelFactory(private val repository: Repository) :
             return HomeViewModel(repository) as T
         } else if (modelClass.isAssignableFrom(ProductViewModel::class.java)) {
             return ProductViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(OrderViewModel::class.java)) {
+            return OrderViewModel(repository) as T
+        } else if (modelClass.isAssignableFrom(ProfileViewModel::class.java)) {
+            return ProfileViewModel(repository) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class: " + modelClass.name)
     }

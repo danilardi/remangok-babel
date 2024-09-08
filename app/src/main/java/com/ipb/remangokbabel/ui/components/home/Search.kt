@@ -2,6 +2,7 @@ package com.ipb.remangokbabel.ui.components.home
 
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -22,7 +23,6 @@ import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 fun Search(
     modifier: Modifier = Modifier,
     ) {
-
     SearchBar(
         windowInsets = WindowInsets(top = 0.dp),
         query = "",
@@ -43,8 +43,8 @@ fun Search(
             containerColor = MyStyle.colors.bgSecondary,
         ),
         modifier = modifier
+            .height(SearchBarDefaults.InputFieldHeight)
             .fillMaxWidth(),
-
     ) {
 
     }

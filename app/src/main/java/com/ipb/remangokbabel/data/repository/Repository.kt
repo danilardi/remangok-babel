@@ -1,13 +1,20 @@
 package com.ipb.remangokbabel.data.repository
 
 import androidx.compose.runtime.Composable
+import com.ipb.remangokbabel.data.remote.ApiAddressService
 import com.ipb.remangokbabel.data.remote.ApiConfig
 import com.ipb.remangokbabel.data.remote.ApiService
+import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
+import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
+import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
+import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
+import com.ipb.remangokbabel.model.response.GetProfileResponse
+import com.ipb.remangokbabel.model.response.GetProvinsiResponseItem
 import com.ipb.remangokbabel.model.response.LoginResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
 import com.ipb.remangokbabel.model.response.StatusMessageResponse
@@ -17,7 +24,7 @@ import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
-class Repository(private val apiService: ApiService) {
+class Repository(private val apiService: ApiService, private val apiAddressService: ApiAddressService) {
     suspend fun login(data: LoginRequest): LoginResponse {
         return apiService.login(data)
     }
@@ -64,6 +71,38 @@ class Repository(private val apiService: ApiService) {
         return apiService.deleteProduct(id)
     }
 
+    suspend fun getProfile(): GetProfileResponse {
+        return apiService.getProfile()
+    }
+
+    suspend fun addProfile(data: AddProfileRequest): StatusMessageResponse {
+        return apiService.addProfile(data)
+    }
+
+    suspend fun updateProfile(id: String, data: AddProfileRequest): StatusMessageResponse {
+        return apiService.updateProfile(id, data)
+    }
+
+    suspend fun deleteProfile(id: String): StatusMessageResponse {
+        return apiService.deleteProfile(id)
+    }
+
+    suspend fun getProvinsi(): List<GetProvinsiResponseItem> {
+        return apiAddressService.getProvinsi()
+    }
+
+    suspend fun getKabupatenKota(provinsiId: String): List<GetKabupatenKotaResponseItem> {
+        return apiAddressService.getKabupatenKota(provinsiId)
+    }
+
+    suspend fun getKecamatan(kabupatenKotaId: String): List<GetKecamatanResponseItem> {
+        return apiAddressService.getKecamatan(kabupatenKotaId)
+    }
+
+    suspend fun getKelurahan(kecamatanId: String): List<GetKelurahanResponseItem> {
+        return apiAddressService.getKelurahan(kecamatanId)
+    }
+
     companion object {
         @Volatile
         private var instance: Repository? = null
@@ -72,7 +111,8 @@ class Repository(private val apiService: ApiService) {
         fun getInstance(): Repository =
             instance ?: synchronized(this) {
                 val apiService = ApiConfig.getApiService()
-                Repository(apiService).apply {
+                val apiAddressService = ApiConfig.getApiAddressService()
+                Repository(apiService, apiAddressService).apply {
                     instance = this
                 }
             }

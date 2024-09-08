@@ -36,7 +36,7 @@ fun navigateToAndMakeTop(navController: NavHostController, route: String) {
 }
 
 fun navigateToBack(navController: NavHostController) {
-    navController.popBackStack()
+    navController.navigateUp()
 }
 
 fun handleException2(exception: Exception): UiState.Error<ErrorResponse> {

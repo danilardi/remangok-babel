@@ -31,7 +31,10 @@ import com.ipb.remangokbabel.ui.screen.home.HomeScreen
 import com.ipb.remangokbabel.ui.screen.order.OrderScreen
 import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
 import com.ipb.remangokbabel.ui.screen.product.ManagementProductScreen
+import com.ipb.remangokbabel.ui.screen.profile.AddProfileScreen
+import com.ipb.remangokbabel.ui.screen.profile.ListProfileScreen
 import com.ipb.remangokbabel.ui.screen.profile.ProfileScreen
+import com.ipb.remangokbabel.ui.screen.profile.SelectAddressScreen
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 
 @Composable
@@ -86,8 +89,7 @@ fun MainApp(
                 SplashScreen() {
                     val destination = if (paperPref.getAccessToken()
                             .isEmpty()
-                    ) Screen.Auth.route else Screen.Home.route
-                    startDestination = destination
+                    ) Screen.Auth.route else Screen.AddProfile.route
                     navigateToAndMakeTop(navController, destination)
                 }
             }
@@ -109,10 +111,26 @@ fun MainApp(
                     navController = navController,
                 )
             }
+            composable(Screen.ListProfile.route) {
+                ListProfileScreen(
+                    navController = navController
+                )
+            }
+            composable(Screen.AddProfile.route) {
+                AddProfileScreen(
+                    navController = navController
+                )
+            }
+            composable(Screen.SelectAddress.route) {
+                SelectAddressScreen(
+                    navController = navController
+                )
+            }
+
             composable(Screen.ManagementStock.route) {
-                 ManagementProductScreen(
-                     navController = navController,
-                 )
+                ManagementProductScreen(
+                    navController = navController,
+                )
             }
             composable(Screen.AddProduct.route) {
                 AddProductScreen(

@@ -43,7 +43,7 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.UploadProductRequest
-import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
@@ -91,15 +91,6 @@ fun AddProductScreen(
     val productFaseItems = listOf("telur", "dewasa")
 
     LaunchedEffect(Unit) {
-//        if (BuildConfig.DEBUG) {
-//            productName = "Kepiting"
-//            productWeight = 100
-//            productFase = "telur"
-//            productPrice = 10000
-//            productDescription = "Product Description"
-//            productStock = 10
-//        }
-
         if (productId != -1) {
             isEdit = true
             viewModel.getProduct(productId)
@@ -176,7 +167,7 @@ fun AddProductScreen(
     }
 
     Scaffold(topBar = {
-        AppTopBar(title = if (isEdit) "Edit Produk" else "Tambah Produk") {
+        BackTopBar(title = if (isEdit) "Edit Produk" else "Tambah Produk") {
             navController.popBackStack()
         }
     }, bottomBar = {

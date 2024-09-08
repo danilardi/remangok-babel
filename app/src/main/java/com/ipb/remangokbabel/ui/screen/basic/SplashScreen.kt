@@ -35,7 +35,7 @@ fun SplashScreen(
     systemUiController.setNavigationBarColor(color = MyStyle.colors.bgSecondary)
     val alpha = remember { Animatable(0f) }
 
-    LaunchedEffect(key1 = true) {
+    LaunchedEffect(Unit) {
         alpha.animateTo(
             targetValue = 1f,
             animationSpec = tween(500)

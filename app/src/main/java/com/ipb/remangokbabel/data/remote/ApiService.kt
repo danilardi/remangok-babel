@@ -1,10 +1,14 @@
 package com.ipb.remangokbabel.data.remote
 
+import com.ipb.remangokbabel.model.request.AddOrderRequest
+import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
+import com.ipb.remangokbabel.model.response.GetOrderResponse
+import com.ipb.remangokbabel.model.response.GetProfileResponse
 import com.ipb.remangokbabel.model.response.LoginResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
 import com.ipb.remangokbabel.model.response.StatusMessageResponse
@@ -71,4 +75,38 @@ interface ApiService {
     suspend fun deleteProduct(
         @Path("id") id: Int
     ): StatusMessageResponse
+
+    @GET("orders")
+    suspend fun getOrders(): GetOrderResponse
+
+    @POST("orders")
+    suspend fun createOrder(
+        @Body data: AddOrderRequest
+    ): StatusMessageResponse
+
+    @PUT("orders/{id}")
+    suspend fun updateOrder(
+        @Path("id") id: Int,
+        @Body data: AddOrderRequest
+    ): StatusMessageResponse
+
+    @GET("profiles")
+    suspend fun getProfile(): GetProfileResponse
+
+    @POST("profiles")
+    suspend fun addProfile(
+        @Body data: AddProfileRequest
+    ): StatusMessageResponse
+
+    @PUT("profiles/{id}")
+    suspend fun updateProfile(
+        @Path("id") id: String,
+        @Body data: AddProfileRequest
+    ): StatusMessageResponse
+
+    @DELETE("profiles/{id}")
+    suspend fun deleteProfile(
+        @Path("id") id: String
+    ): StatusMessageResponse
+
 }

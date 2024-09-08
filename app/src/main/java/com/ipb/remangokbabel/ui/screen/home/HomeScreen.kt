@@ -4,21 +4,15 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,9 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,16 +34,15 @@ import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.response.ErrorResponse
 import com.ipb.remangokbabel.model.response.ProdukItem
 import com.ipb.remangokbabel.ui.common.UiState
+import com.ipb.remangokbabel.ui.components.common.AppTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ProductCard
-import com.ipb.remangokbabel.ui.components.home.Search
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.HomeViewModel
 import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import ir.kaaveh.sdpcompose.sdp
-import ir.kaaveh.sdpcompose.ssp
 
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 @Composable
@@ -70,96 +61,73 @@ fun HomeScreen(
 
     var onSearch by remember { mutableStateOf(false) }
 
-    Column(modifier = modifier
-        .fillMaxSize()
-        .background(MyStyle.colors.bgWhite)
-        .clickable(
-            interactionSource = remember { MutableInteractionSource() }, indication = null
-        ) {
-            onSearch = false
-        }) {
-        if (onSearch) {
-            Search(
-                modifier = Modifier
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .padding(vertical = 8.sdp, horizontal = 16.sdp)
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = "Remangok Babel",
-                    style = MyStyle.typography.baseBold,
-                    fontSize = 20.ssp,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier
-                        .align(Alignment.CenterStart)
-                )
-                IconButton(
-                    onClick = {
-                        onSearch = true
-                    },
-                    modifier = Modifier
-                        .align(Alignment.CenterEnd)
-                        .clip(CircleShape)
-                        .background(MyStyle.colors.bgSecondary)
+    Scaffold(
+        topBar = {
+            AppTopBar(title = "Remangok Babel", onSearch = onSearch, onSearchChange = { onSearch = it }, search = true)
+        },
+        modifier = modifier
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .background(MyStyle.colors.bgWhite)
+                .clickable(
+                    interactionSource = remember { MutableInteractionSource() }, indication = null
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                    )
+                    onSearch = false
                 }
-            }
-        }
-
-        /* Menu */
-        /* Management Stok */
-        ButtonCustom(
-            text = "Management Stok",
-            modifier = Modifier
-                .padding(horizontal = 16.sdp, vertical = 8.sdp)
         ) {
-            navigateTo(navController, Screen.ManagementStock.route)
-        }
+            /* Menu */
+            /* Management Stok */
+            ButtonCustom(
+                text = "Management Stok",
+                modifier = Modifier
+                    .padding(horizontal = 16.sdp, vertical = 8.sdp)
+            ) {
+                navigateTo(navController, Screen.ManagementStock.route)
+            }
 
-        Text(
-            text = "Produk",
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier
-                .padding(horizontal = 16.sdp)
-        )
+            Text(
+                text = "Produk",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier
+                    .padding(horizontal = 16.sdp)
+            )
 
-        viewModel.productState.collectAsState(initial = UiState.Idle).value.let { productState ->
-            when (productState) {
-                is UiState.Idle -> {
-                    viewModel.getAllProducts()
-                }
+            viewModel.productState.collectAsState(initial = UiState.Idle).value.let { productState ->
+                when (productState) {
+                    is UiState.Idle -> {
+                        viewModel.getAllProducts()
+                    }
 
-                is UiState.Loading -> {
+                    is UiState.Loading -> {
 //                    LoadingDialog()
-                }
+                    }
 
-                is UiState.Success -> {
-                    ProductRow(listProduct = productState.data.data.produk)
-                }
+                    is UiState.Success -> {
+                        ProductRow(listProduct = productState.data.data.produk)
+                    }
 
-                is UiState.Error<*> -> {
-                    val errorResponse = productState.errorData
-                    if (errorResponse is ErrorResponse) {
-                        Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                        if (errorResponse.message == "token anda tidak valid") {
-                            paperPrefs.deleteAllData()
-                            navigateToAndMakeTop(navController, Screen.Auth.route)
-                        } else {
-                            viewModel.getAllProducts()
+                    is UiState.Error<*> -> {
+                        val errorResponse = productState.errorData
+                        if (errorResponse is ErrorResponse) {
+                            Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT)
+                                .show()
+                            if (errorResponse.message == "token anda tidak valid") {
+                                paperPrefs.deleteAllData()
+                                navigateToAndMakeTop(navController, Screen.Auth.route)
+                            } else {
+                                viewModel.getAllProducts()
+                            }
                         }
                     }
                 }
             }
         }
     }
+
+
 }
 
 @Composable
@@ -167,9 +135,9 @@ fun ProductRow(
     listProduct: List<ProdukItem>,
     modifier: Modifier = Modifier
 ) {
-    LazyRow(
-        horizontalArrangement = Arrangement.spacedBy(16.sdp),
-        contentPadding = PaddingValues(horizontal = 16.sdp),
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(2),
+        contentPadding = PaddingValues(horizontal = 8.sdp),
         modifier = modifier
     ) {
         items(listProduct, key = { it.id }) { product ->
