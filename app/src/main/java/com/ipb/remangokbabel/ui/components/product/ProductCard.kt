@@ -1,6 +1,5 @@
-package com.ipb.remangokbabel.ui.components.common
+package com.ipb.remangokbabel.ui.components.product
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -10,17 +9,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,13 +24,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import com.ipb.remangokbabel.R
+import coil.compose.AsyncImage
+import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.model.response.ProdukItem
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
@@ -45,7 +40,6 @@ import ir.kaaveh.sdpcompose.sdp
 fun ProductCard(
     product: ProdukItem,
     modifier: Modifier = Modifier,
-    onAddToCartClick: () -> Unit = {},
     onViewDetailsClick: () -> Unit = {}
 ) {
     Card(
@@ -58,23 +52,33 @@ fun ProductCard(
         ),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 4.sdp
-        )
+        ),
+        onClick = onViewDetailsClick
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.sdp)
         ) {
-            Image(
-//                painter = rememberAsyncImagePainter(product.gambar.firstOrNull() ?: ""),
-                painter = painterResource(R.drawable.kepiting),
+            AsyncImage(
+                model = if (product.gambar.isNotEmpty()) "${BuildConfig.BASE_URL}${product.gambar.first()}" else "",
                 contentDescription = product.nama,
-                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(120.sdp)
                     .clip(RoundedCornerShape(8.sdp))
             )
+//            Image(
+//                painter = rememberAsyncImagePainter(product.gambar.firstOrNull() ?: ""),
+////                painter = painterResource(R.drawable.kepiting),
+//                contentDescription = product.nama,
+////                contentScale = ContentScale.Crop,
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(120.sdp)
+//                    .clip(RoundedCornerShape(8.sdp))
+//            )
+            HorizontalDivider()
             Spacer(modifier = Modifier.height(8.sdp))
 
             Text(
@@ -85,11 +89,23 @@ fun ProductCard(
                     fontWeight = FontWeight.ExtraBold
                 ),
             )
-            Text(
-                text = product.hargaSatuan.toRupiah(),
-                style = MaterialTheme.typography.titleSmall,
-                color = MyStyle.colors.textPrimary
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = product.hargaSatuan.toRupiah(),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MyStyle.colors.textPrimary,
+                    modifier = Modifier.weight(1f)
+                )
+                val fase = if (product.faseHidup == "dewasa") "Kepiting" else "Benih"
+                Text(
+                    text = fase,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
 
             Spacer(modifier = Modifier.height(4.sdp))
 
@@ -98,22 +114,38 @@ fun ProductCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 // Rating Indicator
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
+//                Row(
+//                    verticalAlignment = Alignment.CenterVertically,
+//                ) {
+////                    Icon(
+////                        imageVector = Icons.Default.Star,
+////                        contentDescription = null,
+////                        tint = MyStyle.colors.textKuning,
+////                        modifier = Modifier.size(14.sdp)
+////                    )
+////                    Text(
+////                        text = "4.5",
+////                        style = MaterialTheme.typography.bodySmall,
+////                        color = MyStyle.colors.textPrimary
+////                    )
+//
+//                }
+
+                Text(
+                    text = "Grade: ",
+                    style = MaterialTheme . typography . bodySmall,
+                    color = MyStyle.colors.textGrey
+                )
+                val grade =
+                    if (product.berat >= 500) "A"
+                    else if (product.berat >= 200) "B"
+                    else "C"
+                Text(
+                    text = grade,
+                    style = MaterialTheme . typography . bodySmall,
+                    color = MyStyle.colors.textPrimary,
                     modifier = Modifier.weight(1f)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Star,
-                        contentDescription = null,
-                        tint = MyStyle.colors.textKuning,
-                        modifier = Modifier.size(14.sdp)
-                    )
-                    Text(
-                        text = "4.5",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MyStyle.colors.textPrimary
-                    )
-                }
+                )
 
                 // Stock Indicator
                 Text(
@@ -125,18 +157,18 @@ fun ProductCard(
 
             Spacer(modifier = Modifier.height(8.sdp))
 
-            // Action Buttons
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                ButtonCustom(
-                    text = "Add to Cart",
-                    shape = RoundedCornerShape(16.sdp),
-                ) {
-
-                }
-            }
+//            // Action Buttons
+//            Row(
+//                modifier = Modifier.fillMaxWidth(),
+//                horizontalArrangement = Arrangement.SpaceBetween
+//            ) {
+//                ButtonCustom(
+//                    text = "Add to Cart",
+//                    shape = RoundedCornerShape(16.sdp),
+//                ) {
+//
+//                }
+//            }
         }
     }
 }

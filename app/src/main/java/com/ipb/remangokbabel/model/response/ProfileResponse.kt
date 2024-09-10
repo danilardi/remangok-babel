@@ -36,7 +36,7 @@ data class ProfilesItem(
     val namaProvinsi: String,
 
     @field:SerializedName("nama_kota_kabupaten")
-    val namaKotaKabupaten: String,
+    val namaKabupatenKota: String,
 
     @field:SerializedName("nomor_telepon")
     val nomorTelepon: String,

@@ -1,11 +1,9 @@
 package com.ipb.remangokbabel.ui.components.common
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -52,11 +50,10 @@ fun BottomBar(
             Box(
                 modifier = Modifier
                     .weight(1f)
-                    .height(36.sdp)
-                    .padding(horizontal = 16.sdp)
-                    .clip(RoundedCornerShape(8.sdp))
-                    .background(if (currentRoute == item.screen.route) MyStyle.colors.primaryFocus else MyStyle.colors.bgSecondary)
-                    .clickable {
+                    .clip(RoundedCornerShape(16.sdp))
+                    .clickable(
+//                        interactionSource = remember { MutableInteractionSource() }, indication = null
+                    ) {
                         navController.navigate(item.screen.route) {
                             popUpTo(navController.graph.findStartDestination().id) {
                                 saveState = true
@@ -65,6 +62,7 @@ fun BottomBar(
                             launchSingleTop = true
                         }
                     }
+                    .padding(horizontal = 8.sdp, vertical = 8.sdp)
             ) {
                 Column(
                     modifier = Modifier
@@ -75,11 +73,11 @@ fun BottomBar(
                 Icon(
                     imageVector = item.icon,
                     contentDescription = null,
-                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    tint = if (currentRoute == item.screen.route) MyStyle.colors.primaryMain else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = item.title,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                    color = if (currentRoute == item.screen.route) MyStyle.colors.primaryMain else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 }
 
@@ -116,7 +114,7 @@ private fun BottomBarPreview() {
         NavigationItem(
             title = "Profil",
             icon = Icons.Default.AccountCircle,
-            screen = Screen.Profile
+            screen = Screen.Setting
         ),
     )
     BottomBar(

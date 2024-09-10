@@ -101,8 +101,12 @@ fun ProductManagementCard(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        val grade =
+                            if (product.berat >= 500) "A"
+                            else if (product.berat >= 200) "B"
+                            else "C"
                         Text(text = "Grade : ", style = MaterialTheme.typography.titleSmall)
-                        Text(text = "A", style = MaterialTheme.typography.bodySmall)
+                        Text(text = grade, style = MaterialTheme.typography.bodySmall)
                     }
                     Row(
                         verticalAlignment = Alignment.CenterVertically

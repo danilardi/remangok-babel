@@ -4,18 +4,23 @@ import androidx.compose.runtime.Composable
 import com.ipb.remangokbabel.data.remote.ApiAddressService
 import com.ipb.remangokbabel.data.remote.ApiConfig
 import com.ipb.remangokbabel.data.remote.ApiService
+import com.ipb.remangokbabel.model.request.AddOrderRequest
 import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
+import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
+import com.ipb.remangokbabel.model.response.GetOrderResponse
 import com.ipb.remangokbabel.model.response.GetProfileResponse
 import com.ipb.remangokbabel.model.response.GetProvinsiResponseItem
 import com.ipb.remangokbabel.model.response.LoginResponse
+import com.ipb.remangokbabel.model.response.RefreshTokenResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
 import com.ipb.remangokbabel.model.response.StatusMessageResponse
 import com.ipb.remangokbabel.model.response.UploadImageResponse
@@ -27,6 +32,10 @@ import java.io.File
 class Repository(private val apiService: ApiService, private val apiAddressService: ApiAddressService) {
     suspend fun login(data: LoginRequest): LoginResponse {
         return apiService.login(data)
+    }
+
+    suspend fun refreshToken(data: RefreshTokenRequest): RefreshTokenResponse {
+        return apiService.refreshToken(data)
     }
 
     suspend fun register(data: RegisterRequest): RegisterResponse {
@@ -101,6 +110,26 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
 
     suspend fun getKelurahan(kecamatanId: String): List<GetKelurahanResponseItem> {
         return apiAddressService.getKelurahan(kecamatanId)
+    }
+
+    suspend fun getOrders(): GetOrderResponse {
+        return apiService.getOrders()
+    }
+
+    suspend fun createOrder(data: AddOrderRequest): StatusMessageResponse {
+        return apiService.createOrder(data)
+    }
+
+    suspend fun updateOrder(id: Int, data: AddOrderRequest): StatusMessageResponse {
+        return apiService.updateOrder(id, data)
+    }
+
+    suspend fun deleteOrder(id: String): StatusMessageResponse {
+        return apiService.deleteOrder(id)
+    }
+
+    suspend fun updateTransactions(data: UpdateTransactionRequest): StatusMessageResponse {
+        return apiService.updateTransactions(data)
     }
 
     companion object {

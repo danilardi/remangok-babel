@@ -8,7 +8,7 @@ import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -66,6 +66,8 @@ fun InputLayout(
     isExpanse: Boolean = false,
     isDropdown: Boolean = false,
     isRow: Boolean = false,
+    isLongInput: Boolean = false,
+    maxLength: Int = -1,
     onValueChange: (String) -> Unit
 ) {
     var isFocused by remember { mutableStateOf(false) }
@@ -92,7 +94,11 @@ fun InputLayout(
                         onValueChange(filtered)
                     }
                 } else {
-                    onValueChange(it)
+                    if (maxLength != -1 && it.length > maxLength) {
+                        onValueChange(it.substring(0, maxLength))
+                    } else {
+                        onValueChange(it)
+                    }
                 }
             },
             modifier = Modifier
@@ -112,8 +118,8 @@ fun InputLayout(
                     }
                 )
                 .fillMaxWidth()
-                .height(40.sdp),
-            singleLine = true,
+                .heightIn(min = 40.sdp, max = if (isLongInput) 120.sdp else 40.sdp),
+            singleLine = !isLongInput,
             textStyle = textStyle.copy(
                 color = textColor,
                 textAlign = if (isRow && prefix.isEmpty()) TextAlign.End else TextAlign.Start
@@ -199,7 +205,7 @@ fun InputLayout(
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 private fun InputLayoutPreview() {
-    var username by rememberSaveable { mutableStateOf("0") }
+    var username by rememberSaveable { mutableStateOf("kepiting segar, kepiting beku, hingga olahan kepiting seperti daging kepiting kalengan atau produk siap saji seperti kepiting saus padang, kepiting asam manis, dan lain-lain.kepiting segar, kepiting beku, hingga olahan kepiting seperti daging kepiting kalengan atau produk siap saji seperti kepiting saus padang, kepiting asam manis, dan lain-lain.kepiting segar, kepiting beku, hingga olahan kepiting seperti daging kepiting kalengan atau produk siap saji seperti kepiting saus padang, kepiting asam manis, dan lain-lain.") }
     var password by rememberSaveable { mutableStateOf("") }
 
     RemangokBabelTheme {
@@ -212,8 +218,8 @@ private fun InputLayoutPreview() {
                 title = "Username",
                 value = username,
                 hint = "Username",
-                prefix = "Rp",
-                isRow = true,
+                border = false,
+                isLongInput = true,
                 modifier = Modifier
                     .padding(horizontal = 16.sdp)
                     .padding(top = 12.sdp),

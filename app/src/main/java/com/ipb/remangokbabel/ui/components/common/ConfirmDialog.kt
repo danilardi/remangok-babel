@@ -26,6 +26,7 @@ import ir.kaaveh.sdpcompose.sdp
 fun ConfirmDialog(
     modifier: Modifier = Modifier,
     onDismiss: () -> Unit = {},
+    onPrimaryClick: () -> Unit = {}
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -59,14 +60,18 @@ fun ConfirmDialog(
                     modifier = Modifier
                         .weight(1f)
                         .padding(end = 4.sdp)
-                ){}
+                ){
+                    onDismiss()
+                }
                 ButtonCustom(
                     text = "Ya",
                     type = ButtonType.Primary,
                     modifier = Modifier
                         .weight(1f)
                         .padding(start = 4.sdp)
-                ){}
+                ) {
+                    onPrimaryClick()
+                }
             }
         }
     }

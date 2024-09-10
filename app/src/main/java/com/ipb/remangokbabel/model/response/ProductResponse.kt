@@ -26,9 +26,6 @@ data class DetailProduk(
     @field:SerializedName("updated_at")
     val updatedAt: String,
 
-    @field:SerializedName("id_owner")
-    val idOwner: String,
-
     @field:SerializedName("berat")
     val berat: Int,
 
@@ -45,7 +42,10 @@ data class DetailProduk(
     val deskripsi: String,
 
     @field:SerializedName("gambar")
-    val gambar: List<String>
+    val gambar: List<String>,
+
+    @field:SerializedName("data_penjual")
+    val dataPenjual: DataPenjualProduct
 )
 
 data class DetailProductData(
@@ -53,6 +53,19 @@ data class DetailProductData(
     @field:SerializedName("produk")
     val detailProduk: DetailProduk
 )
+
+data class DataPenjualProduct(
+
+    @field:SerializedName("nama")
+    val nama: String,
+
+    @field:SerializedName("nomor_telepon")
+    val nomorTelepon: String,
+
+    @field:SerializedName("email")
+    val email: String
+)
+
 
 
 data class GetAllProductResponse(

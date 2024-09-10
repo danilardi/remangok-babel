@@ -1,6 +1,6 @@
 package com.ipb.remangokbabel.ui.components.product
 
-import androidx.compose.foundation.Image
+import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -31,89 +31,99 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.AsyncImage
 import com.ipb.remangokbabel.BuildConfig
-import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ViewModelFactory
+import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.component.ButtonType
+import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
+import com.ipb.remangokbabel.model.response.DataPenjualProduct
+import com.ipb.remangokbabel.model.response.DetailOrderedItem
 import com.ipb.remangokbabel.model.response.DetailProduk
 import com.ipb.remangokbabel.model.response.OrderedItem
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ConfirmDialog
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
+import com.ipb.remangokbabel.utils.openWhatsApp
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
 import kotlinx.coroutines.launch
 
 @Composable
 fun ProductOrderCard(
-    order: OrderedItem,
+    id: String,
+    detailOrder: DetailOrderedItem,
     modifier: Modifier = Modifier,
     viewModel: ProductViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
+    onUpdateData: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var showDialog by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val paperPrefs = PaperPrefs(context)
 
-    var product by remember {
-        mutableStateOf(
-            DetailProduk(
-                id = 1,
-                nama = "Kepiting Bacang",
-                gambar = listOf("kepiting"),
-                hargaSatuan = 100000,
-                berat = 100,
-                deskripsi = "kepiting tak tau entah dimana",
-                faseHidup = "telur",
-                jumlahStok = 100,
-                idOwner = "1",
-                createdAt = "2021-08-01T00:00:00.000Z",
-                updatedAt = "2021-08-02T00:00:00.000Z",
-            )
-        )
-    }
+    var showDialogConfirm by remember { mutableStateOf(false) }
+    var showDialogStatus by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        if (BuildConfig.DEBUG) {
-            product = DetailProduk(
-                id = 1,
-                nama = "Kepiting Bacang Balikjaldhs fjhasdkhf ajshdfh ljsadhf",
-                gambar = listOf("kepiting"),
-                hargaSatuan = 100000,
-                berat = 100,
-                deskripsi = "kepiting tak tau entah dimana",
-                faseHidup = "telur",
-                jumlahStok = 100,
-                idOwner = "1",
-                createdAt = "2021-08-01T00:00:00.000Z",
-                updatedAt = "2021-08-02T00:00:00.000Z",
-            )
-        }
-
-        viewModel.getProduct(order.idProduk)
-
         coroutineScope.launch {
-//            viewModel.getProductResponse.collect {
-//                product = it.detailProductData.detailProduk
-//            }
+            viewModel.updateTransactionResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                onUpdateData()
+            }
         }
     }
 
-    if (showDialog) {
+    if (showDialogConfirm) {
         ConfirmDialog(
-            onDismiss = { showDialog = false }
+            onDismiss = { showDialogConfirm = false },
+            onPrimaryClick = {
+                when (showDialogStatus) {
+                    "tolak" -> {
+                        val data = UpdateTransactionRequest(
+                            idOrder = id,
+                            status = "ditolak"
+                        )
+                        viewModel.updateTransactions(data)
+                    }
+
+                    "hapus" -> {
+                        viewModel.deleteOrder(id)
+                    }
+
+                    "proses" -> {
+                        val data = UpdateTransactionRequest(
+                            idOrder = id,
+                            status = "diproses"
+                        )
+                        viewModel.updateTransactions(data)
+                    }
+
+                    "selesai" -> {
+                        val data = UpdateTransactionRequest(
+                            idOrder = id,
+                            status = "diterima"
+                        )
+                        viewModel.updateTransactions(data)
+                    }
+                }
+                showDialogConfirm = false
+            }
         )
     }
 
     Card(
-        onClick = { },
+        onClick = {
+            println("cekkk1 $detailOrder")
+        },
         modifier = modifier
             .fillMaxWidth()
             .wrapContentHeight(),
@@ -138,7 +148,7 @@ fun ProductOrderCard(
                         .size(24.sdp)
                 )
                 Text(
-                    text = order.idPembeli,
+                    text = detailOrder.dataPenjual.fullname,
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.sdp),
@@ -146,21 +156,12 @@ fun ProductOrderCard(
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
-                    text = order.status ?: "Belum dikonfirmasi",
+                    text = detailOrder.status ?: "Belum dikonfirmasi",
                 )
             }
             Row {
-//                AsyncImage(
-//                    model = "${BuildConfig.BASE_URL}${product.gambar.first()}",
-//                    contentDescription = null,
-//                    modifier = Modifier
-//                        .padding(16.sdp)
-//                        .size(120.sdp)
-//                        .clip(RoundedCornerShape(8.sdp))
-//                        .border(1.sdp, MyStyle.colors.disableBorder, RoundedCornerShape(8.sdp))
-//                )
-                Image(
-                    painter = painterResource(id = R.drawable.kepiting),
+                AsyncImage(
+                    model = "${BuildConfig.BASE_URL}${detailOrder.dataProduk.gambar.first()}",
                     contentDescription = null,
                     modifier = Modifier
                         .padding(16.sdp)
@@ -175,13 +176,13 @@ fun ProductOrderCard(
                         .height(120.sdp),
                 ) {
                     Text(
-                        text = product.nama,
+                        text = detailOrder.dataProduk.nama,
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = product.faseHidup,
+                        text = detailOrder.dataProduk.faseHidup,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MyStyle.colors.textGrey
                     )
@@ -194,7 +195,7 @@ fun ProductOrderCard(
                             .align(Alignment.End)
                     )
                     Text(
-                        text = product.hargaSatuan.toRupiah(),
+                        text = detailOrder.dataProduk.hargaSatuan.toRupiah(),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(top = 8.sdp)
@@ -213,7 +214,7 @@ fun ProductOrderCard(
                     modifier = Modifier
                 )
                 Text(
-                    text = product.hargaSatuan.toRupiah(),
+                    text = (detailOrder.dataProduk.hargaSatuan * order.jumlahPesanan).toRupiah(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier
@@ -223,21 +224,67 @@ fun ProductOrderCard(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                ButtonCustom(
-                    text = "Tolak Pesanan",
-                    type = ButtonType.Danger,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.sdp, vertical = 8.sdp),
-                ) {
-                }
-                ButtonCustom(
-                    text = "Proses Pesanan",
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(horizontal = 16.sdp, vertical = 8.sdp),
-                ) {
-                    showDialog = true
+                if (paperPrefs.getRole() == "penjual") {
+                    if (order.status == null) {
+                        ButtonCustom(
+                            text = "Tolak Pesanan",
+                            type = ButtonType.Danger,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                        ) {
+                            showDialogStatus = "tolak"
+                            showDialogConfirm = true
+                        }
+                        ButtonCustom(
+                            text = "Proses Pesanan",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                        ) {
+                            showDialogStatus = "proses"
+                            showDialogConfirm = true
+                        }
+                    }
+                } else {
+                    if (order.status == null) {
+                        ButtonCustom(
+                            text = "Batalkan Pesanan",
+                            type = ButtonType.Danger,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                        ) {
+                            showDialogStatus = "hapus"
+                            showDialogConfirm = true
+                        }
+                        ButtonCustom(
+                            text = "Hubungi Penjual",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                        ) {
+                            val message =
+                                "Halo, saya ingin konfirmasi pesanan saya pada aplikasi Remangok Babel dengan nomor pesanan ${order.id}"
+                            openWhatsApp(
+                                context = context,
+                                phoneNumber = "6281268457825",
+                                message = message
+                            )
+                        }
+                    }
+                    if (order.status == "diproses") {
+                        ButtonCustom(
+                            text = "Selesaikan Pesanan",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                        ) {
+                            showDialogStatus = "selesai"
+                            showDialogConfirm = true
+                        }
+                    }
+
                 }
             }
         }
@@ -259,6 +306,23 @@ private fun ProductOrderCardPreview() {
         createdAt = "2024-09-01T15:59:14.025Z",
         updatedAt = "2024-09-01T15:59:14.025Z"
     )
+    val product = DetailProduk(
+        id = 4,
+        nama = "Kepiting Bakau",
+        gambar = listOf("kepiting"),
+        hargaSatuan = 100000,
+        berat = 100,
+        deskripsi = "kepiting",
+        faseHidup = "telur",
+        jumlahStok = 100,
+        createdAt = "2024-09-01T15:59:14.025Z",
+        updatedAt = "2024-09-01T15:59:14.025Z",
+        dataPenjual = DataPenjualProduct(
+            nama = "Penjual",
+            nomorTelepon = "08123456789",
+            email = ""
+        )
+    )
     Surface(
         modifier = Modifier
             .fillMaxSize(),
@@ -266,6 +330,7 @@ private fun ProductOrderCardPreview() {
     ) {
         ProductOrderCard(
             order = order,
+            product = product,
         )
     }
 }

@@ -17,9 +17,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 import ir.kaaveh.sdpcompose.ssp
@@ -30,9 +27,6 @@ fun SplashScreen(
     modifier: Modifier = Modifier,
     onSplashFinished: () -> Unit
 ) {
-    val systemUiController = rememberSystemUiController()
-    systemUiController.setStatusBarColor(color = MyStyle.colors.bgSecondary)
-    systemUiController.setNavigationBarColor(color = MyStyle.colors.bgSecondary)
     val alpha = remember { Animatable(0f) }
 
     LaunchedEffect(Unit) {
@@ -61,7 +55,6 @@ fun SplashScreen(
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 private fun SplashScreenPreview() {
-    val navController: NavHostController = rememberNavController()
     RemangokBabelTheme {
         Surface(
             modifier = Modifier

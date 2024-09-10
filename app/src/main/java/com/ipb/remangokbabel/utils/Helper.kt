@@ -1,9 +1,12 @@
 package com.ipb.remangokbabel.utils
 
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.widget.Toast
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import com.google.gson.Gson
@@ -68,7 +71,6 @@ fun parseError(json: String?): ErrorResponse {
     }
 }
 
-// create function to convert Int to rupiah
 fun Int.toRupiah(): String {
     val rupiah = StringBuilder()
     val value = this.toString()
@@ -80,6 +82,19 @@ fun Int.toRupiah(): String {
         }
     }
     return "Rp. ${rupiah.reverse()}"
+}
+
+fun Int.toRupiah2(): String {
+    val rupiah = StringBuilder()
+    val value = this.toString()
+    val reverseValue = value.reversed()
+    for (i in reverseValue.indices) {
+        rupiah.append(reverseValue[i])
+        if ((i + 1) % 3 == 0 && i != reverseValue.length - 1) {
+            rupiah.append(".")
+        }
+    }
+    return "${rupiah.reverse()}"
 }
 
 fun createCustomTempFile(context: Context): File {
@@ -117,4 +132,22 @@ fun File.reduceFileImage(): File {
 
 fun String.toOnlyNumber(): String {
     return this.replace(Regex("[^0-9]"), "")
+}
+
+fun String.capitalizeEachWord(): String {
+    return this.lowercase().split(" ").joinToString(" ") { word ->
+        word.replaceFirstChar { if (it.isLowerCase()) it.titlecase() else it.toString() }
+    }
+}
+
+fun openWhatsApp(context: Context, phoneNumber: String, message: String) {
+    val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=${Uri.encode(message)}"
+    val intent = Intent(Intent.ACTION_VIEW)
+    intent.data = Uri.parse(url)
+
+    try {
+        context.startActivity(intent)
+    } catch (e: ActivityNotFoundException) {
+        Toast.makeText(context, "WhatsApp is not installed.", Toast.LENGTH_SHORT).show()
+    }
 }

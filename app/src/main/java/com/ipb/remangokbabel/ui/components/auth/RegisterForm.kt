@@ -1,6 +1,7 @@
 package com.ipb.remangokbabel.ui.components.auth
 
 import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -40,7 +41,8 @@ import kotlinx.coroutines.launch
 fun RegisterForm(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel,
-    onSuccessRegis: () -> Unit
+    onClickLogin: () -> Unit,
+    onSuccessRegis: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -185,6 +187,9 @@ fun RegisterForm(
             Text(
                 text = "Masuk",
                 modifier = Modifier
+                    .clickable {
+                        onClickLogin()
+                    }
                     .padding(start = 4.sdp),
                 color = MyStyle.colors.textHijau,
             )
@@ -204,6 +209,6 @@ private fun RegisterFormPreview() {
         factory = ViewModelFactory(Injection.provideRepository())
     )
     RemangokBabelTheme {
-        RegisterForm(viewModel = viewModel, onSuccessRegis = {})
+        RegisterForm(viewModel = viewModel, onSuccessRegis = {}, onClickLogin = {})
     }
 }

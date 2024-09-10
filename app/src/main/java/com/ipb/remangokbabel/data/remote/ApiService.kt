@@ -3,13 +3,16 @@ package com.ipb.remangokbabel.data.remote
 import com.ipb.remangokbabel.model.request.AddOrderRequest
 import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
+import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetOrderResponse
 import com.ipb.remangokbabel.model.response.GetProfileResponse
 import com.ipb.remangokbabel.model.response.LoginResponse
+import com.ipb.remangokbabel.model.response.RefreshTokenResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
 import com.ipb.remangokbabel.model.response.StatusMessageResponse
 import com.ipb.remangokbabel.model.response.UploadImageResponse
@@ -29,6 +32,12 @@ interface ApiService {
     suspend fun login(
         @Body data: LoginRequest
     ): LoginResponse
+
+
+    @PUT("authentications")
+    suspend fun refreshToken(
+        @Body data: RefreshTokenRequest
+    ): RefreshTokenResponse
 
     @DELETE("authentications")
     suspend fun logout(): StatusMessageResponse
@@ -90,6 +99,11 @@ interface ApiService {
         @Body data: AddOrderRequest
     ): StatusMessageResponse
 
+    @DELETE("orders/{id}")
+    suspend fun deleteOrder(
+        @Path("id") id: String
+    ): StatusMessageResponse
+
     @GET("profiles")
     suspend fun getProfile(): GetProfileResponse
 
@@ -107,6 +121,11 @@ interface ApiService {
     @DELETE("profiles/{id}")
     suspend fun deleteProfile(
         @Path("id") id: String
+    ): StatusMessageResponse
+
+    @POST("transactions")
+    suspend fun updateTransactions(
+        @Body data: UpdateTransactionRequest
     ): StatusMessageResponse
 
 }

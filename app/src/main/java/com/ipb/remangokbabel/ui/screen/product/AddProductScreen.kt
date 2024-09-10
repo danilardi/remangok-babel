@@ -31,6 +31,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
@@ -144,7 +146,7 @@ fun AddProductScreen(
                 Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
                 if (errorResponse.message == "token anda tidak valid") {
                     paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Auth.route)
+                    navigateToAndMakeTop(navController, Screen.Login.route)
                 }
             }
         }
@@ -173,7 +175,14 @@ fun AddProductScreen(
     }, bottomBar = {
         ButtonCustom(
             text = "Simpan",
-            modifier = Modifier.padding(8.sdp),
+            modifier = Modifier
+                .shadow(
+                    elevation = 10.sdp, // Adjust the elevation as needed
+                    shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                    clip = false // Don't clip the content to the shape
+                )
+                .background(color = MyStyle.colors.bgWhite)
+                .padding(16.sdp),
             enabled = productImages.isNotEmpty() && productName.isNotEmpty() && productDescription.isNotEmpty() && productFase.isNotEmpty() && productWeight > 0 && productPrice > 0 && productStock > 0,
             onClick = {
                 val request = UploadProductRequest(
@@ -269,6 +278,7 @@ fun AddProductScreen(
                     value = productDescription,
                     hint = "Masukkan Deskripsi Produk",
                     border = false,
+                    isLongInput = true,
                     textStyle = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier.padding(horizontal = 8.sdp)
                 ) {

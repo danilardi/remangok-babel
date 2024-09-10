@@ -129,4 +129,12 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
         return getStringFromPaperPrefAsync("REFRESH_TOKEN")
     }
 
+    suspend fun setRole(role: String) {
+        saveStringToPaperPref("ROLE", role)
+    }
+
+    fun getRole(): String {
+        return getStringFromPaperPrefAsync("ROLE")
+    }
+
 }

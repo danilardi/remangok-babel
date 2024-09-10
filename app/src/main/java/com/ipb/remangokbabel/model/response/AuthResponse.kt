@@ -55,3 +55,18 @@ data class DataRegister(
     @field:SerializedName("addedUser")
     val addedUser: AddedUser
 )
+
+data class RefreshTokenResponse(
+
+    @field:SerializedName("data")
+    val data: TokenData,
+
+    @field:SerializedName("status")
+    val status: String
+)
+
+data class TokenData(
+
+    @field:SerializedName("access_token")
+    val accessToken: String
+)

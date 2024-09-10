@@ -30,4 +30,6 @@ data class AddProfileRequest(
 
     @field:SerializedName("alamat")
     val alamat: String
+
+
 )

@@ -36,7 +36,8 @@ import com.ipb.remangokbabel.model.response.ProdukItem
 import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.ui.components.common.AppTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
-import com.ipb.remangokbabel.ui.components.common.ProductCard
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
+import com.ipb.remangokbabel.ui.components.product.ProductCard
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.HomeViewModel
@@ -63,15 +64,21 @@ fun HomeScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = "Remangok Babel", onSearch = onSearch, onSearchChange = { onSearch = it }, search = true)
+            AppTopBar(
+                title = "Remangok Babel",
+                onClickIcon = {
+
+                },
+                icon = true
+            )
         },
         modifier = modifier
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
                 .background(MyStyle.colors.bgWhite)
+                .padding(top = innerPadding.calculateTopPadding())
+                .fillMaxSize()
                 .clickable(
                     interactionSource = remember { MutableInteractionSource() }, indication = null
                 ) {
@@ -80,12 +87,14 @@ fun HomeScreen(
         ) {
             /* Menu */
             /* Management Stok */
-            ButtonCustom(
-                text = "Management Stok",
-                modifier = Modifier
-                    .padding(horizontal = 16.sdp, vertical = 8.sdp)
-            ) {
-                navigateTo(navController, Screen.ManagementStock.route)
+            if (paperPrefs.getRole() == "penjual") {
+                ButtonCustom(
+                    text = "Management Stok",
+                    modifier = Modifier
+                        .padding(horizontal = 16.sdp, vertical = 8.sdp)
+                ) {
+                    navigateTo(navController, Screen.ManagementStock.route)
+                }
             }
 
             Text(
@@ -102,11 +111,15 @@ fun HomeScreen(
                     }
 
                     is UiState.Loading -> {
-//                    LoadingDialog()
+                        LoadingDialog()
                     }
 
                     is UiState.Success -> {
-                        ProductRow(listProduct = productState.data.data.produk)
+                        ProductRow(
+                            listProduct = productState.data.data.produk,
+                            onViewDetailsClick = {
+                                navigateTo(navController, Screen.DetailProduct.createRoute(it))
+                            })
                     }
 
                     is UiState.Error<*> -> {
@@ -116,7 +129,7 @@ fun HomeScreen(
                                 .show()
                             if (errorResponse.message == "token anda tidak valid") {
                                 paperPrefs.deleteAllData()
-                                navigateToAndMakeTop(navController, Screen.Auth.route)
+                                navigateToAndMakeTop(navController, Screen.Login.route)
                             } else {
                                 viewModel.getAllProducts()
                             }
@@ -133,6 +146,7 @@ fun HomeScreen(
 @Composable
 fun ProductRow(
     listProduct: List<ProdukItem>,
+    onViewDetailsClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     LazyVerticalGrid(
@@ -141,7 +155,10 @@ fun ProductRow(
         modifier = modifier
     ) {
         items(listProduct, key = { it.id }) { product ->
-            ProductCard(product = product)
+            ProductCard(
+                product = product,
+                onViewDetailsClick = { onViewDetailsClick(product.id) }
+            )
         }
     }
 }

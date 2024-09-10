@@ -1,5 +1,6 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,77 +38,125 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
+import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateTo
+import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
+import kotlinx.coroutines.launch
 
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun AddProfileScreen(
-    data: ProfilesItem = ProfilesItem(
-        id = "1",
-        namaDepan = "Danil",
-        namaBelakang = "Ardi",
-        nomorTelepon = "081122334455",
-        alamat = "rumahh",
-        namaKelurahan = "Kelurahan",
-        namaKecamatan = "Kecamatan",
-        namaKotaKabupaten = "Kota Kabupaten",
-        namaProvinsi = "Provinsi",
-        kodePos = "213123",
-        createdAt = "Created At",
-        updatedAt = "Updated At",
-    ),
-    navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
+    data: ProfilesItem? = null,
+    navController: NavHostController = rememberNavController(),
     viewModel: ProfileViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    val paperPrefs = PaperPrefs(context)
+    var showLoading by remember { mutableStateOf(false) }
+
     val returnedData = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("data_key") ?: listOf("", "", "", "")
 
     var isEdit by remember { mutableStateOf(false) }
 
-    var namaDepan by remember { mutableStateOf("") }
-    var namaBelakang by remember { mutableStateOf("") }
-    var nomorTelepon by remember { mutableStateOf("") }
-    var alamat by remember { mutableStateOf("") }
-    var namaKelurahan by remember { mutableStateOf("") }
-    var namaKecamatan by remember { mutableStateOf("") }
-    var namaKotaKabupaten by remember { mutableStateOf("") }
-    var namaProvinsi by remember { mutableStateOf("") }
-    var kodePos by remember { mutableStateOf("") }
+    var namaDepan by rememberSaveable { mutableStateOf("") }
+    var namaBelakang by rememberSaveable { mutableStateOf("") }
+    var nomorTelepon by rememberSaveable { mutableStateOf("") }
+    var alamat by rememberSaveable { mutableStateOf("") }
+    var namaKelurahan by rememberSaveable { mutableStateOf("") }
+    var namaKecamatan by rememberSaveable { mutableStateOf("") }
+    var namaKabupatenKota by rememberSaveable { mutableStateOf("") }
+    var namaProvinsi by rememberSaveable { mutableStateOf("") }
+    var kodePos by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         if (BuildConfig.DEBUG) {
+//            namaDepan = "Danil"
+//            namaBelakang = "Ardi"
+//            nomorTelepon = "081122334455"
+//            alamat = "rumahh"
+//            namaKelurahan = "Kelurahan"
+//            namaKecamatan = "Kecamatan"
+//            namaKotaKabupaten = "Kota Kabupaten"
+//            namaProvinsi = "Provinsi"
+//            kodePos = "21313"
+        }
+        if (data != null) {
+            isEdit = true
             namaDepan = data.namaDepan
             namaBelakang = data.namaBelakang
             nomorTelepon = data.nomorTelepon
             alamat = data.alamat
-//            namaKelurahan = data.namaKelurahan
-//            namaKecamatan = data.namaKecamatan
-//            namaKotaKabupaten = data.namaKotaKabupaten
-//            namaProvinsi = data.namaProvinsi
+            namaKelurahan = data.namaKelurahan
+            namaKecamatan = data.namaKecamatan
+            namaKabupatenKota = data.namaKabupatenKota
+            namaProvinsi = data.namaProvinsi
             kodePos = data.kodePos
-            isEdit = true
+        }
+
+        coroutineScope.launch {
+            viewModel.addProfileResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                navigateToBack(navController)
+            }
+        }
+
+        coroutineScope.launch {
+            viewModel.updateProfileResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                navigateToBack(navController)
+            }
+        }
+
+        coroutineScope.launch {
+            viewModel.deleteProfileResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                navigateToBack(navController)
+            }
+        }
+
+        coroutineScope.launch {
+            viewModel.showLoading.collect {
+                showLoading = it
+            }
+        }
+        coroutineScope.launch {
+            viewModel.errorResponse.collect { errorResponse ->
+                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+                if (errorResponse.message == "token anda tidak valid") {
+                    paperPrefs.deleteAllData()
+                    navigateToAndMakeTop(navController, Screen.Login.route)
+                }
+            }
         }
     }
     LaunchedEffect(returnedData) {
-        namaProvinsi = returnedData[0]
-        namaKotaKabupaten = returnedData[1]
-        namaKecamatan = returnedData[2]
-        namaKelurahan = returnedData[3]
+        if (returnedData[3].isNotEmpty()) {
+            namaKelurahan = returnedData[3].capitalizeEachWord()
+            namaKecamatan = returnedData[2].capitalizeEachWord()
+            namaKabupatenKota = returnedData[1].capitalizeEachWord()
+            namaProvinsi = returnedData[0].capitalizeEachWord()
+        }
+    }
+
+    if (showLoading) {
+        LoadingDialog()
     }
 
     Scaffold(topBar = {
@@ -113,38 +164,54 @@ fun AddProfileScreen(
             navigateToBack(navController)
         }
     }, bottomBar = {
-        ButtonCustom(
-            text = "Simpan",
-            modifier = Modifier.padding(16.sdp),
-            enabled = namaDepan.isNotEmpty() &&
-                    namaBelakang.isNotEmpty() &&
-                    nomorTelepon.isNotEmpty() &&
-                    alamat.isNotEmpty() &&
-                    namaKelurahan.isNotEmpty() &&
-                    namaKecamatan.isNotEmpty() &&
-                    namaKotaKabupaten.isNotEmpty() &&
-                    namaProvinsi.isNotEmpty() &&
-                    kodePos.isNotEmpty(),
-            onClick = {
-                val request = AddProfileRequest(
-                    namaDepan = namaDepan,
-                    namaBelakang = namaBelakang,
-                    nomorTelepon = nomorTelepon,
-                    alamat = alamat,
-                    namaKelurahan = namaKelurahan,
-                    namaKecamatan = namaKecamatan,
-                    namaKotaKabupaten = namaKotaKabupaten,
-                    namaProvinsi = namaProvinsi,
-                    kodePos = kodePos
+        Row {
+            if(isEdit) {
+                ButtonCustom(
+                    text = "Hapus",
+                    type = ButtonType.Danger,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(16.sdp),
+                    onClick = {
+                        viewModel.deleteProfile(data!!.id)
+                    },
                 )
-                println(request)
-//                if (isEdit) {
-//                    viewModel.updateProfile(data.id, request)
-//                } else {
-//                    viewModel.addProfile(request)
-//                }
-            },
-        )
+            }
+            ButtonCustom(
+                text = "Simpan",
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(16.sdp),
+                enabled = namaDepan.isNotEmpty() &&
+                        namaBelakang.isNotEmpty() &&
+                        nomorTelepon.isNotEmpty() &&
+                        alamat.isNotEmpty() &&
+                        namaKelurahan.isNotEmpty() &&
+                        namaKecamatan.isNotEmpty() &&
+                        namaKabupatenKota.isNotEmpty() &&
+                        namaProvinsi.isNotEmpty() &&
+                        kodePos.isNotEmpty(),
+                onClick = {
+                    val request = AddProfileRequest(
+                        namaDepan = namaDepan,
+                        namaBelakang = namaBelakang,
+                        nomorTelepon = nomorTelepon,
+                        alamat = alamat,
+                        namaKelurahan = namaKelurahan,
+                        namaKecamatan = namaKecamatan,
+                        namaKotaKabupaten = namaKabupatenKota,
+                        namaProvinsi = namaProvinsi,
+                        kodePos = kodePos
+                    )
+                    println(request)
+                    if (isEdit) {
+                        viewModel.updateProfile(data!!.id, request)
+                    } else {
+                        viewModel.addProfile(request)
+                    }
+                },
+            )
+        }
     }) { innerPadding ->
         Column(
             modifier = modifier
@@ -155,9 +222,8 @@ fun AddProfileScreen(
                 .imePadding()
         ) {
             Text(
-                text = "Data Diri", style = MaterialTheme.typography.bodySmall,
+                text = "Data Diri", style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
-                    .padding(top = 4.sdp)
                     .fillMaxWidth()
                     .background(MyStyle.colors.bgWhite)
                     .padding(horizontal = 16.sdp)
@@ -167,7 +233,7 @@ fun AddProfileScreen(
                 value = namaDepan,
                 hint = "Nama Depan",
                 border = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Light
                 ),
                 modifier = Modifier
@@ -182,7 +248,7 @@ fun AddProfileScreen(
                 value = namaBelakang,
                 hint = "Nama Belakang",
                 border = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Light
                 ),
                 modifier = Modifier
@@ -198,7 +264,7 @@ fun AddProfileScreen(
                 value = nomorTelepon,
                 hint = "Nomor Telepon",
                 border = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Light
                 ),
                 modifier = Modifier
@@ -211,7 +277,7 @@ fun AddProfileScreen(
                 nomorTelepon = it
             }
             Text(
-                text = "Alamat", style = MaterialTheme.typography.bodySmall,
+                text = "Alamat", style = MaterialTheme.typography.bodyLarge,
                 modifier = Modifier
                     .padding(top = 4.sdp)
                     .fillMaxWidth()
@@ -229,8 +295,8 @@ fun AddProfileScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = if (returnedData[3].isNotEmpty()) "${returnedData[0]}\n${returnedData[1]}\n${returnedData[2]}\n${returnedData[3]}" else "Pilih Alamat",
-                    style = MaterialTheme.typography.bodySmall,
+                    text = if (namaKelurahan.isNotEmpty()) "${namaKelurahan}\n${namaKecamatan}\n${namaKabupatenKota}\n${namaProvinsi}" else "Pilih Alamat",
+                    style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .weight(1f)
                 )
@@ -245,7 +311,7 @@ fun AddProfileScreen(
                 value = alamat,
                 hint = "Detail Alamat (ex: Rumah kuning, RT/RW, dll)",
                 border = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Light
                 ),
                 modifier = Modifier
@@ -260,7 +326,8 @@ fun AddProfileScreen(
                 value = kodePos,
                 hint = "Kode Pos",
                 border = false,
-                textStyle = MaterialTheme.typography.bodySmall.copy(
+                maxLength = 5,
+                textStyle = MaterialTheme.typography.bodyMedium.copy(
                     fontWeight = FontWeight.Light
                 ),
                 modifier = Modifier
@@ -273,4 +340,31 @@ fun AddProfileScreen(
             }
         }
     }
+}
+
+@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
+@Composable
+private fun AddProfileScreenPreview() {
+    val data = ProfilesItem(
+    id = "1",
+    namaDepan = "danil",
+    namaBelakang = "Ardi",
+    nomorTelepon = "",
+    alamat = "",
+    namaKelurahan = "",
+    namaKecamatan = "",
+    namaKabupatenKota = "",
+    namaProvinsi = "",
+    kodePos = "",
+    createdAt = "",
+    updatedAt = "",
+    )
+    Surface(
+        modifier = Modifier
+            .fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
+        AddProfileScreen(data = data)
+    }
+
 }

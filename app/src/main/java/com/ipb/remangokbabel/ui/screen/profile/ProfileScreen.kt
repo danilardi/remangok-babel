@@ -1,145 +1,166 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
-import android.widget.Toast
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
-import com.ipb.remangokbabel.ViewModelFactory
-import com.ipb.remangokbabel.data.local.PaperPrefs
-import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.ui.components.common.AppTopBar
-import com.ipb.remangokbabel.ui.navigation.Screen
-import com.ipb.remangokbabel.ui.theme.MyStyle
-import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
-import com.ipb.remangokbabel.utils.navigateTo
-import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.R
+import com.ipb.remangokbabel.model.component.ButtonType
+import com.ipb.remangokbabel.ui.components.common.ButtonCustom
+import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun ProfileScreen(
-    navController: NavHostController = rememberNavController(),
-    modifier: Modifier = Modifier,
-    viewModel: ProfileViewModel = viewModel(
-        factory = ViewModelFactory(Injection.provideRepository())
-    )
+    name: String,
+    province: String,
+    city: String,
+    address: String,
+    postalCode: String,
+    phoneNumber: String,
 ) {
-    val coroutineScope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val paperPrefs = PaperPrefs(context)
-
-    var showLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            viewModel.logoutResponse.collect {
-                Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
-                paperPrefs.deleteAllData()
-                navigateToAndMakeTop(navController, Screen.Auth.route)
-            }
-        }
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Auth.route)
-                }
-            }
-        }
+    val profileData = remember {
+        Profile(
+            name = name,
+            province = province,
+            city = city,
+            address = address,
+            postalCode = postalCode,
+            phoneNumber = phoneNumber
+        )
     }
-
-    Scaffold(
-        topBar = {
-            AppTopBar(title = "Profile")
-        },
-        modifier = modifier
-    ) { innerPadding ->
+    Surface(
+        modifier = Modifier.fillMaxSize(),
+        color = MaterialTheme.colorScheme.background
+    ) {
         Column(
             modifier = Modifier
-                .padding(innerPadding)
+                .padding(16.sdp)
                 .fillMaxSize()
-                .background(MyStyle.colors.bgSecondary),
         ) {
-            MenuItem(
-                title = "Daftar Alamat",
-                onClick = {
-                    navigateTo(navController, Screen.ListProfile.route)
-                },
-                modifier = Modifier
-                    .padding(top = 2.sdp)
+            Text(
+                text = "Profile",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold
             )
-            MenuItem(
-                title = "Keluar",
-                onClick = {
-                    viewModel.logout()
-                },
-                modifier = Modifier
-                    .padding(top = 2.sdp)
+            Spacer(modifier = Modifier.height(16.sdp))
+
+            ProfileImage(
+                Modifier
+                    .size(100.sdp)
+                    .clip(RoundedCornerShape(8.sdp))
+                    .align(Alignment.CenterHorizontally)
             )
+
+            Spacer(modifier = Modifier.height(16.sdp))
+
+            ProfileItem(label = "Nama", value = profileData.name)
+            ProfileItem(label = "Provinsi", value = profileData.province)
+            ProfileItem(label = "Kabupaten/Kota", value = profileData.city)
+            ProfileItem(label = "Alamat", value = profileData.address)
+            ProfileItem(label = "Kode Pos", value = profileData.postalCode)
+            ProfileItem(label = "Nomor Telepon", value = profileData.phoneNumber)
+
+            Spacer(modifier = Modifier.height(16.sdp))
+
+            Row {
+                ButtonCustom(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
+                    text = "Edit Profil",
+                    onClick = { /* TODO: Implement edit profile */ }
+                )
+
+                Spacer(modifier = Modifier.width(8.sdp))
+
+                ButtonCustom(
+                    type = ButtonType.Danger,
+                    modifier = Modifier
+                        .weight(1f),
+                    text = "Hapus Profil",
+                    onClick = { /* TODO: Implement delete profile */ }
+                )
+
+            }
+
+            Spacer(modifier = Modifier.height(16.sdp))
+
+            //Button Logout//
+//            Button(
+//                onClick = {},
+//                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error),
+//                modifier = Modifier
+//                    .fillMaxWidth()
+//                    .height(34.sdp)
+//                    .clip(RoundedCornerShape(8.sdp))
+//            ) { Text("Logout") }
         }
     }
 }
 
 @Composable
-fun MenuItem(
-    title: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Box(
+fun ProfileImage(modifier: Modifier = Modifier) {
+    Image(
+        painter = painterResource(id = R.drawable.avatar_example),
+        contentDescription = "Profile Image",
         modifier = modifier
-            .background(MyStyle.colors.bgWhite)
-            .fillMaxWidth()
-            .clickable {
-                    onClick()
-            },
-        ) {
+    )
+}
+
+@Composable
+fun ProfileItem(label: String, value: String) {
+    Column(modifier = Modifier.padding(bottom = 8.sdp)) {
         Text(
-            text = title,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .padding(horizontal = 16.sdp, vertical = 16.sdp)
+            text = "$label",
+            style = MaterialTheme.typography.titleSmall,
+            fontWeight = FontWeight.Bold
         )
-        Icon(
-            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .padding(end = 16.sdp)
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge
         )
     }
-    HorizontalDivider()
+}
+
+data class Profile(
+    val name: String,
+    val province: String,
+    val city: String,
+    val address: String,
+    val postalCode: String,
+    val phoneNumber: String,
+)
+
+@Preview(showBackground = true)
+@Composable
+fun Profile2Preview() {
+    RemangokBabelTheme {
+        ProfileScreen(
+            name = "Mas Zikri",
+            province = "Jawa Timur",
+            city = "Surabaya",
+            address = "Jl. Raya No. 456",
+            postalCode = "40234",
+            phoneNumber = "+62 812 3456 7890"
+        )
+    }
 }

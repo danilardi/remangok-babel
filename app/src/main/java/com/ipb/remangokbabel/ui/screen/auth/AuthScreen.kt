@@ -116,13 +116,15 @@ fun AuthScreen(
                 )
             }
             if (pageActive == 0) {
-                LoginForm(modifier = modifier, viewModel = viewModel) {
-                   navigateTo(navController, Screen.Home.route)
-                }
+                LoginForm(
+                    modifier = modifier,
+                    viewModel = viewModel,
+                    onClickRegister = { pageActive = 1 },
+                    onSuccessLogin = {
+                        navigateTo(navController, Screen.Home.route)
+                    })
             } else {
-                RegisterForm(modifier = modifier, viewModel = viewModel) {
-                    pageActive = 0
-                }
+                RegisterForm(modifier = modifier, viewModel = viewModel, onClickLogin = {pageActive = 0}, onSuccessRegis = {pageActive=0})
             }
         }
     }

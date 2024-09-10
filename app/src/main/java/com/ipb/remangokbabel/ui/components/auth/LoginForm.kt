@@ -1,6 +1,6 @@
 package com.ipb.remangokbabel.ui.components.auth
 
-import android.widget.Toast
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,7 +18,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
@@ -31,13 +29,13 @@ import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginForm(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel,
-    onSuccessLogin: () -> Unit
+    onSuccessLogin: () -> Unit,
+    onClickRegister: () -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -47,31 +45,34 @@ fun LoginForm(
     var password by remember { mutableStateOf("") }
     var showLoading by remember { mutableStateOf(false) }
 
-    LaunchedEffect(Unit) {
-        if (BuildConfig.DEBUG) {
-            email = "sumbul2"
-            password = "password"
-        }
-        coroutineScope.launch {
-            viewModel.loginResponse.collect { loginResponse ->
-                println("Masuk LaunchedEffect loginResponse")
-                paperPrefs.setAccessToken(loginResponse.dataLoginResponse.accessToken)
-                paperPrefs.setRefreshToken(loginResponse.dataLoginResponse.refreshToken)
-                Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-                onSuccessLogin()
-            }
-        }
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
+//    LaunchedEffect(Unit) {
+//        if (BuildConfig.DEBUG) {
+////            email = "sumbul2"
+////            password = "password"
+//            email = "medomeckz"
+//            password = "password001"
+//        }
+//        coroutineScope.launch {
+//            viewModel.loginResponse.collect { loginResponse ->
+//                println("Masuk LaunchedEffect loginResponse")
+//                paperPrefs.setAccessToken(loginResponse.dataLoginResponse.accessToken)
+//                paperPrefs.setRefreshToken(loginResponse.dataLoginResponse.refreshToken)
+//                paperPrefs.setRole(loginResponse.dataLoginResponse.roleId)
+//                Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
+//                onSuccessLogin()
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//            }
+//        }
+//    }
 
     Column(modifier) {
         InputLayout(
@@ -115,9 +116,12 @@ fun LoginForm(
             Text(text = "Belum punya akun?")
             Text(
                 text = "Daftar disini",
-                modifier = Modifier
-                    .padding(start = 4.sdp),
                 color = MyStyle.colors.textHijau,
+                modifier = Modifier
+                    .clickable {
+                        onClickRegister()
+                    }
+                    .padding(start = 4.sdp),
             )
         }
 
@@ -135,7 +139,7 @@ private fun LoginFormPreview() {
     )
     RemangokBabelTheme {
         Column {
-            LoginForm(viewModel = viewModel) {}
+            LoginForm(viewModel = viewModel, onClickRegister = {}, onSuccessLogin = {})
         }
     }
 }

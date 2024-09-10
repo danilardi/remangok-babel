@@ -1,12 +1,9 @@
 package com.ipb.remangokbabel.ui.components.profile
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,17 +15,15 @@ import ir.kaaveh.sdpcompose.sdp
 @Composable
 fun ProfileAddressCard(
     item: ProfilesItem,
+    modifier: Modifier = Modifier,
     onClickDetail: () -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(MyStyle.colors.bgWhite)
-            .padding(horizontal = 16.sdp, vertical = 16.sdp)
+        modifier = modifier
             .clickable {
                 onClickDetail()
             }
+            .padding(horizontal = 16.sdp, vertical = 8.sdp)
     ) {
         Row {
             Text(
@@ -47,13 +42,9 @@ fun ProfileAddressCard(
             color = MyStyle.colors.textGrey
         )
         Text(
-            text = "${item.namaKelurahan}, ${item.namaKecamatan}, ${item.namaKotaKabupaten}, ${item.namaProvinsi}, ${item.kodePos}",
+            text = "${item.namaKelurahan}, ${item.namaKecamatan}, ${item.namaKabupatenKota}, ${item.namaProvinsi}, ${item.kodePos}",
             style = MaterialTheme.typography.bodySmall,
             color = MyStyle.colors.textGrey
         )
     }
-    HorizontalDivider(
-        thickness = 1.sdp,
-        color = MyStyle.colors.bgSecondary
-    )
 }

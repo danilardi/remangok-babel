@@ -27,8 +27,8 @@ import ir.kaaveh.sdpcompose.sdp
 
 @Composable
 fun ButtonCustom(
+    text: String,
     modifier: Modifier = Modifier,
-    text: String = "",
     enabled: Boolean = true,
     shape: RoundedCornerShape = RoundedCornerShape(8.sdp),
     type: ButtonType = ButtonType.Primary,
