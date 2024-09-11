@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -28,6 +29,7 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.response.DetailOrderedItem
 import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BottomBar
 import com.ipb.remangokbabel.ui.navigation.NavigationItem
@@ -37,6 +39,7 @@ import com.ipb.remangokbabel.ui.screen.auth.LoginScreen
 import com.ipb.remangokbabel.ui.screen.auth.RegisterScreen
 import com.ipb.remangokbabel.ui.screen.basic.SplashScreen
 import com.ipb.remangokbabel.ui.screen.home.HomeScreen
+import com.ipb.remangokbabel.ui.screen.order.OrderDetailScreen
 import com.ipb.remangokbabel.ui.screen.order.OrderScreen
 import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
 import com.ipb.remangokbabel.ui.screen.product.DetailProductScreen
@@ -83,27 +86,21 @@ fun MainApp(
         ),
     )
 
-    if (currentRoute == Screen.Splash.route) {
-        LaunchedEffect(Unit) {
-            enableEdgeToEdge(
-                SystemBarStyle.light(
-                    MyStyle.colors.bgSecondary.toArgb(), MyStyle.colors.bgSecondary.toArgb(),
-                ),
-                SystemBarStyle.light(
-                    MyStyle.colors.bgSecondary.toArgb(), MyStyle.colors.bgSecondary.toArgb(),
-                ),
-            )
-        }
-    } else {
-        LaunchedEffect(Unit) {
-            enableEdgeToEdge(
-                SystemBarStyle.light(
-                    MyStyle.colors.bgWhite.toArgb(), MyStyle.colors.bgWhite.toArgb(),
-                ),
-                SystemBarStyle.light(
-                    MyStyle.colors.bgWhite.toArgb(), MyStyle.colors.bgWhite.toArgb(),
-                ),
-            )
+    fun setTopNavBarColor(topColor: Color, bottomColor: Color) {
+        println("cekkk $topColor")
+        enableEdgeToEdge(
+            SystemBarStyle.light(topColor.toArgb(), topColor.toArgb()),
+            SystemBarStyle.light(bottomColor.toArgb(), bottomColor.toArgb()),
+        )
+    }
+
+    LaunchedEffect(currentRoute) {
+        when (currentRoute) {
+            Screen.Splash.route -> setTopNavBarColor(MyStyle.colors.bgSecondary, MyStyle.colors.bgSecondary)
+            Screen.Home.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
+            Screen.Order.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
+            Screen.Setting.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
+            else -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgWhite)
         }
     }
 
@@ -160,6 +157,17 @@ fun MainApp(
             composable(Screen.Order.route) {
                 OrderScreen(
                     navController = navController
+                )
+            }
+            composable(
+                route = Screen.DetailOrder.route,
+                arguments = listOf(navArgument("orderData") { type = NavType.StringType })
+            ) {
+                val jsonOrderData = it.arguments?.getString("orderData") ?: ""
+                val orderData = Gson().fromJson(jsonOrderData, DetailOrderedItem::class.java)
+                OrderDetailScreen(
+                    navController = navController,
+                    orderData = orderData
                 )
             }
             composable(Screen.Setting.route) {

@@ -7,6 +7,7 @@ import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
+import com.ipb.remangokbabel.model.response.DetailOrderResponse
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetOrderResponse
@@ -87,6 +88,11 @@ interface ApiService {
 
     @GET("orders")
     suspend fun getOrders(): GetOrderResponse
+
+    @GET("orders/{id}")
+    suspend fun getDetailOrder(
+        @Path("id") id: String
+    ): DetailOrderResponse
 
     @POST("orders")
     suspend fun createOrder(

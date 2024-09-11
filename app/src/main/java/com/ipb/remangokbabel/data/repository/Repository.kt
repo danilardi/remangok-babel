@@ -11,6 +11,7 @@ import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
+import com.ipb.remangokbabel.model.response.DetailOrderResponse
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
 import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
@@ -114,6 +115,10 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
 
     suspend fun getOrders(): GetOrderResponse {
         return apiService.getOrders()
+    }
+
+    suspend fun getDetailOrder(id: String): DetailOrderResponse {
+        return apiService.getDetailOrder(id)
     }
 
     suspend fun createOrder(data: AddOrderRequest): StatusMessageResponse {

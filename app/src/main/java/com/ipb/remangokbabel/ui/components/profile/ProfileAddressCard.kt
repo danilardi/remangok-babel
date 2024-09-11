@@ -16,7 +16,7 @@ import ir.kaaveh.sdpcompose.sdp
 fun ProfileAddressCard(
     item: ProfilesItem,
     modifier: Modifier = Modifier,
-    onClickDetail: () -> Unit,
+    onClickDetail: () -> Unit ={},
 ) {
     Column(
         modifier = modifier

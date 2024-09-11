@@ -35,12 +35,13 @@ import androidx.navigation.compose.rememberNavController
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.model.response.DetailProduk
+import com.ipb.remangokbabel.model.response.DetailOrderedItem
 import com.ipb.remangokbabel.model.response.OrderedItem
 import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
-import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
+import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import ir.kaaveh.sdpcompose.sdp
 import kotlinx.coroutines.launch
@@ -51,7 +52,7 @@ import kotlinx.coroutines.launch
 fun OrderScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    productViewModel: ProductViewModel = viewModel(
+    orderViewModel: OrderViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
 ) {
@@ -72,32 +73,30 @@ fun OrderScreen(
     )
 
     var orderList by remember { mutableStateOf(emptyList<OrderedItem>()) }
-    var orderProductData by remember { mutableStateOf(emptyList<DetailProduk>()) }
+    var orderDetailData by remember { mutableStateOf(emptyList<DetailOrderedItem>()) }
 
     LaunchedEffect(Unit) {
-        productViewModel.getOrders()
+        orderViewModel.getOrders()
 
         coroutineScope.launch {
-            productViewModel.getOrdersResponse.collect { response ->
-                // filter order based on status
-//                orderList = response.data.ordered.filter { it.status == status }
+            orderViewModel.getOrdersResponse.collect { response ->
                 orderList = response.data.ordered
             }
         }
 
         coroutineScope.launch {
-            productViewModel.getProductResponse.collect { response ->
-                orderProductData += response.detailProductData.detailProduk
+            orderViewModel.getDetailOrderResponse.collect { response ->
+                orderDetailData += response.data.ordered
             }
         }
 
         coroutineScope.launch {
-            productViewModel.showLoading.collect {
+            orderViewModel.showLoading.collect {
                 showLoading = it
             }
         }
         coroutineScope.launch {
-            productViewModel.errorResponse.collect { errorResponse ->
+            orderViewModel.errorResponse.collect { errorResponse ->
                 Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
                 if (errorResponse.message == "token anda tidak valid") {
                     paperPrefs.deleteAllData()
@@ -110,8 +109,12 @@ fun OrderScreen(
 
     LaunchedEffect(orderList) {
         orderList.forEach { order ->
-            productViewModel.getProduct(order.idProduk)
+            orderViewModel.getDetailOrder(order.id)
         }
+    }
+
+    if (showLoading) {
+        LoadingDialog()
     }
 
     Scaffold(
@@ -164,42 +167,38 @@ fun OrderScreen(
             ) { page ->
                 if (page == 0) {
                     OrderListItemScreen(
-                        orderList = orderList.filter { it.status == null },
-                        orderProductData = orderProductData,
+                        orderList = orderDetailData.filter { it.status == null },
                         navController = navController,
                         onUpdateData = {
-                            orderProductData = emptyList()
-                            productViewModel.getOrders()
+                            orderDetailData = emptyList()
+                            orderViewModel.getOrders()
                         }
                     )
                 } else if (page == 1) {
                     OrderListItemScreen(
-                        orderList = orderList.filter { it.status == "diproses" },
-                        orderProductData = orderProductData,
+                        orderList = orderDetailData.filter { it.status == "diproses" },
                         navController = navController,
                         onUpdateData = {
-                            orderProductData = emptyList()
-                            productViewModel.getOrders()
+                            orderDetailData = emptyList()
+                            orderViewModel.getOrders()
                         }
                     )
                 } else if (page == 2) {
                     OrderListItemScreen(
-                        orderList = orderList.filter { it.status == "diterima" },
-                        orderProductData = orderProductData,
+                        orderList = orderDetailData.filter { it.status == "diterima" },
                         navController = navController,
                         onUpdateData = {
-                            orderProductData = emptyList()
-                            productViewModel.getOrders()
+                            orderDetailData = emptyList()
+                            orderViewModel.getOrders()
                         }
                     )
                 } else {
                     OrderListItemScreen(
-                        orderList = orderList.filter { it.status == "ditolak" },
-                        orderProductData = orderProductData,
+                        orderList = orderDetailData.filter { it.status == "ditolak" },
                         navController = navController,
                         onUpdateData = {
-                            orderProductData = emptyList()
-                            productViewModel.getOrders()
+                            orderDetailData = emptyList()
+                            orderViewModel.getOrders()
                         }
                     )
                 }

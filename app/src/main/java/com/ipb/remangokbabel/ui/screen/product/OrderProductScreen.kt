@@ -60,6 +60,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.components.profile.ProfileAddressCard
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
+import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateTo
@@ -78,6 +79,9 @@ fun OrderProductScreen(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
     productViewModel: ProductViewModel = viewModel(
+        factory = ViewModelFactory(Injection.provideRepository())
+    ),
+    orderViewModel: OrderViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
     productId: Int = -1,
@@ -111,7 +115,7 @@ fun OrderProductScreen(
         }
 
         coroutineScope.launch {
-            productViewModel.createOrderResponse.collect {
+            orderViewModel.createOrderResponse.collect {
                 Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 navigateToAndMakeTop(navController, Screen.Home.route)
             }
@@ -130,6 +134,12 @@ fun OrderProductScreen(
         }
 
         coroutineScope.launch {
+            orderViewModel.showLoading.collect {
+                showLoading = it
+            }
+        }
+
+        coroutineScope.launch {
             profileViewModel.errorResponse.collect { errorResponse ->
                 Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
                 if (errorResponse.message == "token anda tidak valid") {
@@ -141,6 +151,16 @@ fun OrderProductScreen(
 
         coroutineScope.launch {
             productViewModel.errorResponse.collect { errorResponse ->
+                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+                if (errorResponse.message == "token anda tidak valid") {
+                    paperPrefs.deleteAllData()
+                    navigateToAndMakeTop(navController, Screen.Login.route)
+                }
+            }
+        }
+
+        coroutineScope.launch {
+            orderViewModel.errorResponse.collect { errorResponse ->
                 Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
                 if (errorResponse.message == "token anda tidak valid") {
                     paperPrefs.deleteAllData()
@@ -179,7 +199,7 @@ fun OrderProductScreen(
                     idProfile = selectedAddress!!.id,
                     jumlahPesanan = quantityProduct
                 )
-                productViewModel.createOrder(request)
+                orderViewModel.createOrder(request)
             }
         },
         modifier = modifier

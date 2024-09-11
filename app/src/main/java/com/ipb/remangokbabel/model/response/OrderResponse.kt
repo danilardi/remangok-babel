@@ -78,6 +78,9 @@ data class DataPenjualOrder(
 
 data class DetailOrderedItem(
 
+    @field:SerializedName("id")
+    val id: String,
+
     @field:SerializedName("data_pembeli")
     val dataPembeli: DataPembeli,
 
@@ -121,7 +124,7 @@ data class DataPembeli(
     val nomorTelepon: String,
 
     @field:SerializedName("namaKotaKabupaten")
-    val namaKotaKabupaten: String,
+    val namaKabupatenKota: String,
 
     @field:SerializedName("namaKecamatan")
     val namaKecamatan: String,

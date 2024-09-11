@@ -1,5 +1,6 @@
 package com.ipb.remangokbabel.ui.components.product
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
@@ -36,21 +37,28 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import coil.compose.AsyncImage
+import com.google.gson.Gson
 import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
-import com.ipb.remangokbabel.model.response.DataPenjualProduct
+import com.ipb.remangokbabel.model.response.DataPembeli
+import com.ipb.remangokbabel.model.response.DataPenjualOrder
+import com.ipb.remangokbabel.model.response.DataProduk
 import com.ipb.remangokbabel.model.response.DetailOrderedItem
-import com.ipb.remangokbabel.model.response.DetailProduk
-import com.ipb.remangokbabel.model.response.OrderedItem
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ConfirmDialog
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
+import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
-import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
+import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
+import com.ipb.remangokbabel.utils.navigateTo
+import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.openWhatsApp
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
@@ -58,26 +66,52 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ProductOrderCard(
-    id: String,
-    detailOrder: DetailOrderedItem,
+    order: DetailOrderedItem,
     modifier: Modifier = Modifier,
-    viewModel: ProductViewModel = viewModel(
+    showButton: Boolean = true,
+    navController: NavHostController = rememberNavController(),
+    viewModel: OrderViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
+    fromDetail: Boolean = false,
     onUpdateData: () -> Unit = {},
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
 
+    var showLoading by remember { mutableStateOf(false) }
+
     var showDialogConfirm by remember { mutableStateOf(false) }
     var showDialogStatus by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
         coroutineScope.launch {
+            viewModel.deleteOrderResponse.collect {
+                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+                onUpdateData()
+            }
+        }
+
+        coroutineScope.launch {
             viewModel.updateTransactionResponse.collect {
                 Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
                 onUpdateData()
+            }
+        }
+
+        coroutineScope.launch {
+            viewModel.showLoading.collect {
+                showLoading = it
+            }
+        }
+        coroutineScope.launch {
+            viewModel.errorResponse.collect { errorResponse ->
+                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+                if (errorResponse.message == "token anda tidak valid") {
+                    paperPrefs.deleteAllData()
+                    navigateToAndMakeTop(navController, Screen.Login.route)
+                }
             }
         }
     }
@@ -89,19 +123,19 @@ fun ProductOrderCard(
                 when (showDialogStatus) {
                     "tolak" -> {
                         val data = UpdateTransactionRequest(
-                            idOrder = id,
+                            idOrder = order.id,
                             status = "ditolak"
                         )
                         viewModel.updateTransactions(data)
                     }
 
                     "hapus" -> {
-                        viewModel.deleteOrder(id)
+                        viewModel.deleteOrder(order.id)
                     }
 
                     "proses" -> {
                         val data = UpdateTransactionRequest(
-                            idOrder = id,
+                            idOrder = order.id,
                             status = "diproses"
                         )
                         viewModel.updateTransactions(data)
@@ -109,7 +143,7 @@ fun ProductOrderCard(
 
                     "selesai" -> {
                         val data = UpdateTransactionRequest(
-                            idOrder = id,
+                            idOrder = order.id,
                             status = "diterima"
                         )
                         viewModel.updateTransactions(data)
@@ -120,9 +154,14 @@ fun ProductOrderCard(
         )
     }
 
+    if (showLoading) {
+        LoadingDialog()
+    }
     Card(
         onClick = {
-            println("cekkk1 $detailOrder")
+            if (fromDetail) return@Card
+            val data = Uri.encode(Gson().toJson(order))
+            navigateTo(navController, Screen.DetailOrder.createRoute(data))
         },
         modifier = modifier
             .fillMaxWidth()
@@ -148,20 +187,26 @@ fun ProductOrderCard(
                         .size(24.sdp)
                 )
                 Text(
-                    text = detailOrder.dataPenjual.fullname,
+                    text = order.dataPenjual.fullname,
                     modifier = Modifier
                         .weight(1f)
                         .padding(horizontal = 8.sdp),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
+                val status = when (order.status) {
+                    "diproses" -> "Sedang Diproses"
+                    "diterima" -> "Pesanan Selesai"
+                    "ditolak" -> "Pesanan Dibatalkan"
+                    else -> "Belum dikonfirmasi"
+                }
                 Text(
-                    text = detailOrder.status ?: "Belum dikonfirmasi",
+                    text = status,
                 )
             }
             Row {
                 AsyncImage(
-                    model = "${BuildConfig.BASE_URL}${detailOrder.dataProduk.gambar.first()}",
+                    model = "${BuildConfig.BASE_URL}${order.dataProduk.gambar.first()}",
                     contentDescription = null,
                     modifier = Modifier
                         .padding(16.sdp)
@@ -176,13 +221,13 @@ fun ProductOrderCard(
                         .height(120.sdp),
                 ) {
                     Text(
-                        text = detailOrder.dataProduk.nama,
+                        text = order.dataProduk.nama,
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
                     Text(
-                        text = detailOrder.dataProduk.faseHidup,
+                        text = order.dataProduk.faseHidup,
                         style = MaterialTheme.typography.bodyMedium,
                         color = MyStyle.colors.textGrey
                     )
@@ -195,7 +240,7 @@ fun ProductOrderCard(
                             .align(Alignment.End)
                     )
                     Text(
-                        text = detailOrder.dataProduk.hargaSatuan.toRupiah(),
+                        text = order.dataProduk.hargaSatuan.toRupiah(),
                         style = MaterialTheme.typography.bodyMedium,
                         modifier = Modifier
                             .padding(top = 8.sdp)
@@ -214,13 +259,14 @@ fun ProductOrderCard(
                     modifier = Modifier
                 )
                 Text(
-                    text = (detailOrder.dataProduk.hargaSatuan * order.jumlahPesanan).toRupiah(),
+                    text = (order.dataProduk.hargaSatuan * order.jumlahPesanan).toRupiah(),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier
                 )
             }
             HorizontalDivider()
+            if (showButton)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -231,7 +277,8 @@ fun ProductOrderCard(
                             type = ButtonType.Danger,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                                .padding(vertical = 8.sdp)
+                                .padding(start = 8.sdp, end = 4.sdp),
                         ) {
                             showDialogStatus = "tolak"
                             showDialogConfirm = true
@@ -240,7 +287,8 @@ fun ProductOrderCard(
                             text = "Proses Pesanan",
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                                .padding(vertical = 8.sdp)
+                                .padding(start = 4.sdp, end = 8.sdp),
                         ) {
                             showDialogStatus = "proses"
                             showDialogConfirm = true
@@ -253,7 +301,8 @@ fun ProductOrderCard(
                             type = ButtonType.Danger,
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                                .padding(vertical = 8.sdp)
+                                .padding(start = 8.sdp, end = 4.sdp),
                         ) {
                             showDialogStatus = "hapus"
                             showDialogConfirm = true
@@ -262,13 +311,14 @@ fun ProductOrderCard(
                             text = "Hubungi Penjual",
                             modifier = Modifier
                                 .weight(1f)
-                                .padding(horizontal = 16.sdp, vertical = 8.sdp),
+                                .padding(vertical = 8.sdp)
+                                .padding(start = 4.sdp, end = 8.sdp),
                         ) {
                             val message =
-                                "Halo, saya ingin konfirmasi pesanan saya pada aplikasi Remangok Babel dengan nomor pesanan ${order.id}"
+                                "Halo, saya ${order.dataPembeli.namaDepan} ingin konfirmasi pesanan saya pada aplikasi Remangok Babel dengan nomor pesanan ${order.id}"
                             openWhatsApp(
                                 context = context,
-                                phoneNumber = "6281268457825",
+                                phoneNumber = order.dataPenjual.nomorTelepon,
                                 message = message
                             )
                         }
@@ -294,33 +344,34 @@ fun ProductOrderCard(
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 private fun ProductOrderCardPreview() {
-    val order = OrderedItem(
-        id = "order-uBafvoKcXPxJxEniUOzle",
-        idPenjual = "user-cd1ZN_-9pNVpRb7XXs75Z",
-        idPembeli = "Pembeli",
-        idProduk = 4,
-        idProfile = "profile-WRxyAQfVXgM1qBhliGiLU",
+    val order = DetailOrderedItem(
+        id = "0",
         jumlahPesanan = 100,
-        hargaSatuan = 100000,
         status = null,
         createdAt = "2024-09-01T15:59:14.025Z",
-        updatedAt = "2024-09-01T15:59:14.025Z"
-    )
-    val product = DetailProduk(
-        id = 4,
-        nama = "Kepiting Bakau",
-        gambar = listOf("kepiting"),
-        hargaSatuan = 100000,
-        berat = 100,
-        deskripsi = "kepiting",
-        faseHidup = "telur",
-        jumlahStok = 100,
-        createdAt = "2024-09-01T15:59:14.025Z",
         updatedAt = "2024-09-01T15:59:14.025Z",
-        dataPenjual = DataPenjualProduct(
-            nama = "Penjual",
+        dataPenjual = DataPenjualOrder(
             nomorTelepon = "08123456789",
-            email = ""
+            email = "",
+            fullname = "Penjual"
+        ),
+        dataProduk = DataProduk(
+            nama = "Kepiting Bakau",
+            hargaSatuan = 100000,
+            berat = 100,
+            gambar = listOf("kepiting"),
+            faseHidup = "telur",
+        ),
+        dataPembeli = DataPembeli(
+            nomorTelepon = "08123456789",
+            namaDepan = "Pembeli",
+            namaBelakang = "",
+            alamat = "Jl. Jalan",
+            namaKelurahan = "Kelurahan",
+            namaKecamatan = "Kecamatan",
+            namaKabupatenKota = "Kota",
+            namaProvinsi = "Provinsi",
+            kodePos = "12345"
         )
     )
     Surface(
@@ -330,7 +381,6 @@ private fun ProductOrderCardPreview() {
     ) {
         ProductOrderCard(
             order = order,
-            product = product,
         )
     }
 }
