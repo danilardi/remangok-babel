@@ -31,9 +31,11 @@ import com.google.gson.Gson
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.component.ScreenType
 import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
+import com.ipb.remangokbabel.ui.components.common.EmptyScreen
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.components.profile.ProfileAddressCard
 import com.ipb.remangokbabel.ui.navigation.Screen
@@ -119,6 +121,9 @@ fun ListProfileScreen(
                 .padding(innerPadding)
                 .fillMaxSize()
         ) {
+            if (address.isEmpty()) {
+                EmptyScreen(type = ScreenType.Empty)
+            }
             LazyColumn {
                 items(address, key = { it.id }) { item ->
                     ProfileAddressCard(item = item, onClickDetail = {

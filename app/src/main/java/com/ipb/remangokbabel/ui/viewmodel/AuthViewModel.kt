@@ -6,24 +6,26 @@ import com.ipb.remangokbabel.model.request.LoginRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.response.LoginResponse
 import com.ipb.remangokbabel.model.response.RegisterResponse
+import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.utils.handleException
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class AuthViewModel(private val repository: Repository) : BaseViewModel() {
 
-    val loginResponse = MutableSharedFlow<LoginResponse>()
+    val loginState = MutableStateFlow<UiState<LoginResponse>>(UiState.Idle)
     val registerResponse = MutableSharedFlow<RegisterResponse>()
 
     fun login(data: LoginRequest) {
         viewModelScope.launch {
-            showLoading.emit(true)
+            showLoading2.value = true
             try {
-                loginResponse.emit(repository.login(data))
+                loginState.value = UiState.Success(repository.login(data))
             } catch (e: Exception) {
-                errorResponse.emit(handleException(e))
+                errorResponse2.value = handleException(e)
             }
-            showLoading.emit(false)
+            showLoading2.value = false
         }
     }
 

@@ -42,7 +42,7 @@ fun ProfileAddressCard(
             color = MyStyle.colors.textGrey
         )
         Text(
-            text = "${item.namaKelurahan}, ${item.namaKecamatan}, ${item.namaKabupatenKota}, ${item.namaProvinsi}, ${item.kodePos}",
+            text = "${item.namaKelurahan}, ${item.namaKecamatan}, ${item.namaKotaKabupaten}, ${item.namaProvinsi}, ${item.kodePos}",
             style = MaterialTheme.typography.bodySmall,
             color = MyStyle.colors.textGrey
         )

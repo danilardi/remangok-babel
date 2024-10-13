@@ -1,5 +1,7 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
+import android.content.Intent
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -45,8 +47,8 @@ import kotlinx.coroutines.launch
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun SettingScreen(
-    navController: NavHostController = rememberNavController(),
     modifier: Modifier = Modifier,
+    navController: NavHostController = rememberNavController(),
     viewModel: ProfileViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     )
@@ -100,6 +102,16 @@ fun SettingScreen(
                 title = "Daftar Alamat",
                 onClick = {
                     navigateTo(navController, Screen.ListProfile.route)
+                },
+                modifier = Modifier
+                    .padding(top = 2.sdp)
+            )
+            MenuItem(
+                title = "Bantuan",
+                onClick = {
+                    val url = "https://drive.google.com/drive/folders/1-yfATreiuyU7REd_dQRorx0heRbzO1-q"
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    context.startActivity(intent)
                 },
                 modifier = Modifier
                     .padding(top = 2.sdp)

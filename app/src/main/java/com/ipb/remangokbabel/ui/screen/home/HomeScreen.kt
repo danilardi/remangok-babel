@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +32,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.response.DataProfile
 import com.ipb.remangokbabel.model.response.ErrorResponse
 import com.ipb.remangokbabel.model.response.ProdukItem
 import com.ipb.remangokbabel.ui.common.UiState
@@ -61,6 +63,50 @@ fun HomeScreen(
     val paperPrefs = PaperPrefs(context)
 
     var onSearch by remember { mutableStateOf(false) }
+    var profileData by remember { mutableStateOf(null as DataProfile?) }
+
+    LaunchedEffect(true) {
+        viewModel.getProfile()
+    }
+
+    LaunchedEffect(profileData) {
+        if (profileData != null && paperPrefs.getRole() == "penjual") {
+            if (profileData?.profiles.isNullOrEmpty()) {
+                Toast.makeText(context, "Anda belum memiliki profile\nSilahkan Tambahkan terlebih dahulu", Toast.LENGTH_SHORT).show()
+                navigateTo(navController, Screen.ListProfile.route)
+            }
+        }
+    }
+
+    viewModel.profileState.collectAsState(initial = UiState.Idle).value.let { profileState ->
+        when (profileState) {
+            is UiState.Idle -> {
+                viewModel.getAllProducts()
+            }
+
+            is UiState.Loading -> {
+                LoadingDialog()
+            }
+
+            is UiState.Success -> {
+                profileData = profileState.data.data
+            }
+
+            is UiState.Error<*> -> {
+                val errorResponse = profileState.errorData
+                if (errorResponse is ErrorResponse) {
+                    Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT)
+                        .show()
+                    if (errorResponse.message == "token anda tidak valid") {
+                        paperPrefs.deleteAllData()
+                        navigateToAndMakeTop(navController, Screen.Login.route)
+                    } else {
+                        viewModel.getAllProducts()
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -93,6 +139,7 @@ fun HomeScreen(
                     modifier = Modifier
                         .padding(horizontal = 16.sdp, vertical = 8.sdp)
                 ) {
+
                     navigateTo(navController, Screen.ManagementStock.route)
                 }
             }

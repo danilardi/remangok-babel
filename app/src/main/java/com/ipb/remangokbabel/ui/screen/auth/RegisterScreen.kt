@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -37,6 +38,7 @@ import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ExposedDropdownMenuBox
 import com.ipb.remangokbabel.ui.components.common.InputLayout
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import com.ipb.remangokbabel.utils.navigateToBack
@@ -94,6 +96,10 @@ fun RegisterScreen(
         }
     }
 
+    if (showLoading) {
+        LoadingDialog()
+    }
+
     Scaffold(
         bottomBar = {
             Column(
@@ -125,7 +131,7 @@ fun RegisterScreen(
                             password = password,
                             fullname = fullname,
                             nomor_telepon = phone,
-                            role = role
+                            role = role.lowercase()
                         )
                     )
                 }
@@ -136,9 +142,10 @@ fun RegisterScreen(
                         .padding(top = 16.sdp, bottom = 24.sdp),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Sudah punya akun?")
+                    Text(text = "Sudah punya akun?", style = MyStyle.typography.xsMedium)
                     Text(
                         text = "Masuk",
+                        style = MyStyle.typography.xsMedium,
                         color = MyStyle.colors.textHijau,
                         modifier = Modifier
                             .padding(start = 4.sdp)
@@ -157,6 +164,7 @@ fun RegisterScreen(
                 .background(color = MyStyle.colors.bgWhite)
                 .padding(horizontal = 16.sdp)
                 .verticalScroll(rememberScrollState())
+                .imePadding()
         ) {
             Text(
                 text = "Remangok Babel",
@@ -175,7 +183,7 @@ fun RegisterScreen(
             )
             Text(
                 text = "Silahkan Daftar",
-                style = MyStyle.typography.xssMedium,
+                style = MyStyle.typography.xsMedium,
                 color = MyStyle.colors.textGrey,
             )
             ExposedDropdownMenuBox(

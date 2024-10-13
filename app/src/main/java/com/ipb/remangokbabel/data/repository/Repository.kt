@@ -47,8 +47,8 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
         return apiService.logout()
     }
 
-    suspend fun getAllProducts(limit: Int, offset: Int): GetAllProductResponse {
-        return apiService.getAllProducts(limit, offset)
+    suspend fun getAllProducts(limit: Int, offset: Int, isOwner: Boolean = false): GetAllProductResponse {
+        return apiService.getAllProducts(limit, offset, isOwner)
     }
 
     suspend fun getProduct(id: Int): GetDetailProductResponse {

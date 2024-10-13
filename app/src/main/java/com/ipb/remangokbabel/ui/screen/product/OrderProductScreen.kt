@@ -323,7 +323,7 @@ fun OrderProductScreen(
                         overflow = TextOverflow.Ellipsis,
                     )
                     val fase =
-                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Benih"
+                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Kepiting"
                     Text(
                         text = fase,
                         style = MaterialTheme.typography.bodyMedium,
@@ -383,7 +383,7 @@ fun OrderProductScreen(
                     )
                 }
                 Text(
-                    text = quantityProduct.toString(),
+                    text = "$quantityProduct kg",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .padding(horizontal = 16.sdp)

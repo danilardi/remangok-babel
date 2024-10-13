@@ -87,7 +87,6 @@ fun MainApp(
     )
 
     fun setTopNavBarColor(topColor: Color, bottomColor: Color) {
-        println("cekkk $topColor")
         enableEdgeToEdge(
             SystemBarStyle.light(topColor.toArgb(), topColor.toArgb()),
             SystemBarStyle.light(bottomColor.toArgb(), bottomColor.toArgb()),
@@ -96,7 +95,7 @@ fun MainApp(
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
-            Screen.Splash.route -> setTopNavBarColor(MyStyle.colors.bgSecondary, MyStyle.colors.bgSecondary)
+            Screen.Splash.route -> setTopNavBarColor(MyStyle.colors.bgSplash, MyStyle.colors.bgSplash)
             Screen.Home.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
             Screen.Order.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
             Screen.Setting.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)

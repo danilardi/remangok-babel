@@ -13,10 +13,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,15 +31,17 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.response.ErrorResponse
+import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import com.ipb.remangokbabel.utils.navigateTo
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -50,7 +52,6 @@ fun LoginScreen(
         factory = ViewModelFactory(Injection.provideRepository())
     )
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
 
@@ -59,33 +60,47 @@ fun LoginScreen(
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(true) {
         if (BuildConfig.DEBUG) {
-//            email = "sumbul2"
-//            password = "password"
-            email = "medomeckz"
-            password = "password001"
+            val role = 2
+            if (role == 1) {
+                email = "sumbul2"
+                password = "password"
+            } else {
+                email = "medomeckz"
+                password = "password"
+            }
         }
-        coroutineScope.launch {
-            viewModel.loginResponse.collect { loginResponse ->
-                paperPrefs.setAccessToken(loginResponse.dataLoginResponse.accessToken)
-                paperPrefs.setRefreshToken(loginResponse.dataLoginResponse.refreshToken)
-                paperPrefs.setRole(loginResponse.dataLoginResponse.roleId)
+    }
 
-                Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-                navigateTo(navController, Screen.Home.route)
-            }
+    val loginState by viewModel.loginState.collectAsState(initial = UiState.Idle)
+    val errorResponse by viewModel.errorResponse2.collectAsState(initial = ErrorResponse())
+
+    LaunchedEffect(loginState) {
+        if (loginState is UiState.Success) {
+            val state = loginState as UiState.Success
+            paperPrefs.setAccessToken(state.data.dataLoginResponse.accessToken)
+            paperPrefs.setRefreshToken(state.data.dataLoginResponse.refreshToken)
+            paperPrefs.setRole(state.data.dataLoginResponse.roleId)
+            Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
+            navigateTo(navController, Screen.Home.route)
         }
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
+        viewModel.loginState.value = UiState.Idle
+    }
+
+    LaunchedEffect(errorResponse) {
+        if (errorResponse.message?.isNotEmpty() == true) {
+            Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
         }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-            }
-        }
+        viewModel.errorResponse2.value = ErrorResponse()
+    }
+
+    viewModel.showLoading2.collectAsState().value.let {
+        showLoading = it
+    }
+
+    if (showLoading) {
+        LoadingDialog()
     }
 
     Column(
@@ -101,7 +116,11 @@ fun LoginScreen(
             color = MyStyle.colors.textPrimary,
             modifier = Modifier
                 .padding(top = 24.sdp)
-                .align(Alignment.CenterHorizontally),
+                .align(Alignment.CenterHorizontally)
+                .clickable {
+                    println("$loginState")
+                    println("${viewModel.showLoading2.value}")
+                },
         )
         Text(
             text = "Hai, Selamat Datang di Remangok Babel 🦀",
@@ -111,11 +130,11 @@ fun LoginScreen(
         )
         Text(
             text = "Silahkan Masuk",
-            style = MyStyle.typography.xssMedium,
+            style = MyStyle.typography.xsMedium,
             color = MyStyle.colors.textGrey,
         )
         InputLayout(
-            title = "Email",
+            title = "Email/Nama Pengguna/No. HP",
             value = email,
             hint = "Silahkan masukkan email anda",
             modifier = Modifier
@@ -147,9 +166,10 @@ fun LoginScreen(
                 .padding(top = 16.sdp, bottom = 24.sdp),
             horizontalArrangement = Arrangement.Center,
         ) {
-            Text(text = "Belum punya akun?")
+            Text(text = "Belum punya akun?", style = MyStyle.typography.xsMedium)
             Text(
                 text = "Daftar disini",
+                style = MyStyle.typography.xsMedium,
                 color = MyStyle.colors.textHijau,
                 modifier = Modifier
                     .padding(start = 4.sdp)

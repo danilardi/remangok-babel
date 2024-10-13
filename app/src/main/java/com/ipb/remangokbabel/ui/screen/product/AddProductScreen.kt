@@ -9,14 +9,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -34,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.net.toUri
@@ -49,7 +43,6 @@ import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
-import com.ipb.remangokbabel.ui.components.common.SelectableDialog
 import com.ipb.remangokbabel.ui.components.product.AddImageLayout
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
@@ -79,7 +72,7 @@ fun AddProductScreen(
     var productImagesUri by remember { mutableStateOf<List<Uri>>(emptyList()) }
     var productName by remember { mutableStateOf("") }
     var productWeight by remember { mutableIntStateOf(0) }
-    var productFase by remember { mutableStateOf("") }
+    var productFase by remember { mutableStateOf("dewasa") }
     var productPrice by remember { mutableIntStateOf(0) }
     var productDescription by remember { mutableStateOf("") }
     var productStock by remember { mutableIntStateOf(0) }
@@ -103,7 +96,7 @@ fun AddProductScreen(
                 val product = it.detailProductData.detailProduk
                 productName = product.nama
                 productWeight = product.berat
-                productFase = product.faseHidup
+                productFase = "dewasa"
                 productPrice = product.hargaSatuan
                 productDescription = product.deskripsi
                 productStock = product.jumlahStok
@@ -196,8 +189,7 @@ fun AddProductScreen(
                 )
                 if (isEdit) {
                     viewModel.updateProduct(productId, request)
-                }
-                else {
+                } else {
                     viewModel.uploadProduct(request)
                 }
             },
@@ -291,43 +283,43 @@ fun AddProductScreen(
                     .fillMaxWidth()
                     .background(MyStyle.colors.bgWhite)
             ) {
-                Row(
-                    Modifier
-                        .padding(start = 8.sdp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        text = "Fase",
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(start = 8.sdp)
-                    )
-                    Text(
-                        text = productFase,
-                        style = MaterialTheme.typography.bodyMedium,
-                        textAlign = TextAlign.End,
-                        modifier = Modifier.weight(1f)
-                    )
-                    IconButton(onClick = {
-                        showDialogFase = true
-                    }) {
-                        Icon(
-                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
-                            contentDescription = null,
-                            tint = MyStyle.colors.primaryMain,
-                            modifier = Modifier.size(16.sdp)
-                        )
-                    }
-                    SelectableDialog(showDialog = showDialogFase,
-                        selectableItems = productFaseItems,
-                        selectedItem = productFase,
-                        onDismissRequest = { showDialogFase = false },
-                        onSelectedItemChange = {
-                            productFase = it
-                        })
-                }
-                HorizontalDivider(
-                    color = MyStyle.colors.bgSecondary,
-                )
+//                Row(
+//                    Modifier
+//                        .padding(start = 8.sdp),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                ) {
+//                    Text(
+//                        text = "Fase",
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        modifier = Modifier.padding(start = 8.sdp)
+//                    )
+//                    Text(
+//                        text = productFase,
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        textAlign = TextAlign.End,
+//                        modifier = Modifier.weight(1f)
+//                    )
+//                    IconButton(onClick = {
+//                        showDialogFase = true
+//                    }) {
+//                        Icon(
+//                            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+//                            contentDescription = null,
+//                            tint = MyStyle.colors.primaryMain,
+//                            modifier = Modifier.size(16.sdp)
+//                        )
+//                    }
+//                    SelectableDialog(showDialog = showDialogFase,
+//                        selectableItems = productFaseItems,
+//                        selectedItem = productFase,
+//                        onDismissRequest = { showDialogFase = false },
+//                        onSelectedItemChange = {
+//                            productFase = it
+//                        })
+//                }
+//                HorizontalDivider(
+//                    color = MyStyle.colors.bgSecondary,
+//                )
                 Row(
                     modifier = Modifier.padding(horizontal = 8.sdp),
                     verticalAlignment = Alignment.CenterVertically
@@ -347,10 +339,15 @@ fun AddProductScreen(
                         modifier = Modifier
                             .padding(horizontal = 8.sdp)
                             .align(Alignment.CenterVertically)
-                            .fillMaxSize()
+                            .weight(1f)
                     ) {
                         productWeight = it.toInt()
                     }
+                    Text(
+                        text = "g",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                    )
                 }
                 HorizontalDivider(
                     color = MyStyle.colors.bgSecondary,
@@ -399,10 +396,18 @@ fun AddProductScreen(
                         border = false,
                         isRow = true,
                         textStyle = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 8.sdp)
+                        modifier = Modifier
+                            .padding(horizontal = 8.sdp)
+                            .align(Alignment.CenterVertically)
+                            .weight(1f)
                     ) {
                         productStock = it.toInt()
                     }
+                    Text(
+                        text = "KG",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                    )
                 }
             }
         }

@@ -5,6 +5,15 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        register("release") {
+            storeFile = file(KeyStore.storeFile)
+            storePassword = KeyStore.storePassword
+            keyAlias = KeyStore.keyAlias
+            keyPassword = KeyStore.keyPassword
+        }
+    }
+
     namespace = "com.ipb.remangokbabel"
     compileSdk = AndroidSdk.compile
 
@@ -21,21 +30,6 @@ android {
         }
     }
 
-//    signingConfigs {
-//        create("release") {
-//            storeFile = file(KeyStore.storeFile)
-//            storePassword = KeyStore.storePassword
-//            keyAlias = KeyStore.keyAlias
-//            keyPassword = KeyStore.keyPassword
-//        }
-//        create("debug") {
-//            storeFile = file(KeyStore.storeFile)
-//            storePassword = KeyStore.storePassword
-//            keyAlias = KeyStore.keyAlias
-//            keyPassword = KeyStore.keyPassword
-//        }
-//    }
-
     buildTypes {
         debug {
             isMinifyEnabled = false
@@ -44,19 +38,21 @@ android {
             versionNameSuffix = "-debug"
 
             buildConfigField("String", "BASE_URL", "\"${Url.urlDev}\"")
+            signingConfig = signingConfigs.getByName("debug")
         }
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             isDebuggable = false
-            isJniDebuggable = false
-            isPseudoLocalesEnabled = false
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+//            isJniDebuggable = false
+//            isPseudoLocalesEnabled = false
+//            isShrinkResources = true
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
 
             buildConfigField("String", "BASE_URL", "\"${Url.urlProd}\"")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

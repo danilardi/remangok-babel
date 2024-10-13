@@ -17,7 +17,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,8 +30,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Devices
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -81,7 +78,7 @@ fun AddProfileScreen(
     var alamat by rememberSaveable { mutableStateOf("") }
     var namaKelurahan by rememberSaveable { mutableStateOf("") }
     var namaKecamatan by rememberSaveable { mutableStateOf("") }
-    var namaKabupatenKota by rememberSaveable { mutableStateOf("") }
+    var namaKotaKabupaten by rememberSaveable { mutableStateOf("") }
     var namaProvinsi by rememberSaveable { mutableStateOf("") }
     var kodePos by rememberSaveable { mutableStateOf("") }
 
@@ -105,7 +102,7 @@ fun AddProfileScreen(
             alamat = data.alamat
             namaKelurahan = data.namaKelurahan
             namaKecamatan = data.namaKecamatan
-            namaKabupatenKota = data.namaKabupatenKota
+            namaKotaKabupaten = data.namaKotaKabupaten
             namaProvinsi = data.namaProvinsi
             kodePos = data.kodePos
         }
@@ -150,7 +147,7 @@ fun AddProfileScreen(
         if (returnedData[3].isNotEmpty()) {
             namaKelurahan = returnedData[3].capitalizeEachWord()
             namaKecamatan = returnedData[2].capitalizeEachWord()
-            namaKabupatenKota = returnedData[1].capitalizeEachWord()
+            namaKotaKabupaten = returnedData[1].capitalizeEachWord()
             namaProvinsi = returnedData[0].capitalizeEachWord()
         }
     }
@@ -188,7 +185,7 @@ fun AddProfileScreen(
                         alamat.isNotEmpty() &&
                         namaKelurahan.isNotEmpty() &&
                         namaKecamatan.isNotEmpty() &&
-                        namaKabupatenKota.isNotEmpty() &&
+                       namaKotaKabupaten.isNotEmpty() &&
                         namaProvinsi.isNotEmpty() &&
                         kodePos.isNotEmpty(),
                 onClick = {
@@ -199,7 +196,7 @@ fun AddProfileScreen(
                         alamat = alamat,
                         namaKelurahan = namaKelurahan,
                         namaKecamatan = namaKecamatan,
-                        namaKotaKabupaten = namaKabupatenKota,
+                        namaKotaKabupaten =namaKotaKabupaten,
                         namaProvinsi = namaProvinsi,
                         kodePos = kodePos
                     )
@@ -295,7 +292,7 @@ fun AddProfileScreen(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = if (namaKelurahan.isNotEmpty()) "${namaKelurahan}\n${namaKecamatan}\n${namaKabupatenKota}\n${namaProvinsi}" else "Pilih Alamat",
+                    text = if (namaKelurahan.isNotEmpty()) "${namaKelurahan}\n${namaKecamatan}\n$namaKotaKabupaten\n${namaProvinsi}" else "Pilih Alamat",
                     style = MaterialTheme.typography.bodyMedium,
                     modifier = Modifier
                         .weight(1f)
@@ -340,31 +337,4 @@ fun AddProfileScreen(
             }
         }
     }
-}
-
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
-@Composable
-private fun AddProfileScreenPreview() {
-    val data = ProfilesItem(
-    id = "1",
-    namaDepan = "danil",
-    namaBelakang = "Ardi",
-    nomorTelepon = "",
-    alamat = "",
-    namaKelurahan = "",
-    namaKecamatan = "",
-    namaKabupatenKota = "",
-    namaProvinsi = "",
-    kodePos = "",
-    createdAt = "",
-    updatedAt = "",
-    )
-    Surface(
-        modifier = Modifier
-            .fillMaxSize(),
-        color = MaterialTheme.colorScheme.background
-    ) {
-        AddProfileScreen(data = data)
-    }
-
 }

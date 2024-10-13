@@ -21,7 +21,7 @@ import ir.kaaveh.sdpcompose.sdp
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun EmptyScreen(
-    title: String = "Ga ada data",
+    title: String = "Data Kosong",
     type: ScreenType = ScreenType.Empty,
     modifier: Modifier = Modifier
 ) {

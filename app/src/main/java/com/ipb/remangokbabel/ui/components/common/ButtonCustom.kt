@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -71,9 +72,9 @@ fun ButtonCustom(
         colors = ButtonDefaults.buttonColors(containerColor = containerColor, contentColor = textColor, disabledContainerColor = containerColor, disabledContentColor = textColor),
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 34.sdp),
+            .heightIn(min = 36.sdp),
     ) {
-        Text(text, style = MyStyle.typography.xsMedium, color = textColor, textAlign = TextAlign.Center, modifier = Modifier.padding(0.sdp))
+        Text(text, style = MaterialTheme.typography.bodyMedium, color = textColor, textAlign = TextAlign.Center, modifier = Modifier.padding(0.sdp))
     }
 }
 

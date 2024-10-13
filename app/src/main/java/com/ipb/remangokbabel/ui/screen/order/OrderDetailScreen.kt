@@ -239,18 +239,16 @@ fun OrderDetailScreen(
                     id = "",
                     namaKelurahan = orderData?.dataPembeli?.namaKelurahan ?: "Testing",
                     namaKecamatan = orderData?.dataPembeli?.namaKecamatan ?: "Testing",
-                    namaKabupatenKota = orderData?.dataPembeli?.namaKabupatenKota ?: "Testing",
+                    namaKotaKabupaten = orderData?.dataPembeli?.namaKotaKabupaten ?: "Testing",
                     namaProvinsi = orderData?.dataPembeli?.namaProvinsi ?: "Testing",
                     kodePos = orderData?.dataPembeli?.kodePos ?: "Testing",
                     namaDepan = orderData?.dataPembeli?.namaDepan ?: "testing",
                     namaBelakang = orderData?.dataPembeli?.namaBelakang ?: "testing",
                     nomorTelepon = orderData?.dataPembeli?.nomorTelepon ?: "testing",
                     alamat = orderData?.dataPembeli?.alamat ?: "testing",
-                    createdAt = "",
-                    updatedAt = ""
-                )
+                                    )
             )
-            ProductOrderCard(order = orderData!!, showButton = false, fromDetail = true)
+            ProductOrderCard(order = orderData, showButton = false, fromDetail = true, navController = navController)
             Text(
                 text = "Butuh Bantuan?",
                 style = MaterialTheme.typography.titleSmall,
@@ -262,7 +260,7 @@ fun OrderDetailScreen(
                 title = "Hubungi Penjual",
                 onClick = {
                     val message =
-                        "Halo, saya ${orderData?.dataPembeli?.namaDepan} ingin konfirmasi pesanan saya pada aplikasi Remangok Babel dengan nomor pesanan ${orderData?.id}"
+                        "Halo, saya ${orderData?.dataPembeli?.namaDepan ?: ""} ingin konfirmasi pesanan saya pada aplikasi Remangok Babel dengan nomor pesanan ${orderData?.id}"
                     openWhatsApp(
                         context = context,
                         phoneNumber = orderData?.dataPenjual?.nomorTelepon ?: "",

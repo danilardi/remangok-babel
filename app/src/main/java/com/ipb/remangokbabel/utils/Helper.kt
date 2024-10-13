@@ -12,6 +12,8 @@ import androidx.navigation.NavHostController
 import com.google.gson.Gson
 import com.ipb.remangokbabel.model.response.ErrorResponse
 import com.ipb.remangokbabel.ui.common.UiState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import retrofit2.HttpException
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -21,7 +23,7 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 
-private const val MAXIMAL_SIZE = 50000 //1 MB
+private const val MAXIMAL_SIZE = 1000000 //1 MB
 private const val FILENAME_FORMAT = "yyyyMMdd_HHmmss"
 private val timeStamp: String = SimpleDateFormat(FILENAME_FORMAT, Locale.US).format(Date())
 
@@ -114,8 +116,8 @@ fun uriToFile(imageUri: Uri, context: Context): File {
     return myFile
 }
 
-fun File.reduceFileImage(): File {
-    val file = this
+suspend fun File.reduceFileImage(): File = withContext(Dispatchers.IO) {
+    val file = this@reduceFileImage
     val bitmap = BitmapFactory.decodeFile(file.path)
     var compressQuality = 100
     var streamLength: Int
@@ -124,10 +126,11 @@ fun File.reduceFileImage(): File {
         bitmap?.compress(Bitmap.CompressFormat.JPEG, compressQuality, bmpStream)
         val bmpPicByteArray = bmpStream.toByteArray()
         streamLength = bmpPicByteArray.size
-        compressQuality -= 5
-    } while (streamLength > MAXIMAL_SIZE)
+        println("$compressQuality, $streamLength")
+        compressQuality -= 10
+    } while (streamLength > MAXIMAL_SIZE && compressQuality > 10)
     bitmap?.compress(Bitmap.CompressFormat.JPEG, compressQuality, FileOutputStream(file))
-    return file
+    return@withContext file
 }
 
 fun String.toOnlyNumber(): String {
@@ -141,7 +144,13 @@ fun String.capitalizeEachWord(): String {
 }
 
 fun openWhatsApp(context: Context, phoneNumber: String, message: String) {
-    val url = "https://api.whatsapp.com/send?phone=$phoneNumber&text=${Uri.encode(message)}"
+//    jika phoneNumber tidak diawali dengan 62, maka ubah menjadi 62
+    val number = if (phoneNumber.startsWith("0")) {
+        phoneNumber.replaceFirst("0", "62")
+    } else {
+        phoneNumber
+    }
+    val url = "https://api.whatsapp.com/send?phone=$number&text=${Uri.encode(message)}"
     val intent = Intent(Intent.ACTION_VIEW)
     intent.data = Uri.parse(url)
 

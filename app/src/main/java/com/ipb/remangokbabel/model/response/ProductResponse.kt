@@ -14,26 +14,26 @@ data class GetDetailProductResponse(
 
 data class DetailProduk(
 
-    @field:SerializedName("jumlah_stok")
-    val jumlahStok: Int,
+    @field:SerializedName("owner")
+    val owner: Owner,
+
+    @field:SerializedName("createdAt")
+    val createdAt: String,
 
     @field:SerializedName("nama")
     val nama: String,
 
-    @field:SerializedName("harga_satuan")
+    @field:SerializedName("hargaSatuan")
     val hargaSatuan: Int,
 
-    @field:SerializedName("updated_at")
-    val updatedAt: String,
+    @field:SerializedName("faseHidup")
+    val faseHidup: String,
 
     @field:SerializedName("berat")
     val berat: Int,
 
-    @field:SerializedName("fase_hidup")
-    val faseHidup: String,
-
-    @field:SerializedName("created_at")
-    val createdAt: String,
+    @field:SerializedName("jumlahStok")
+    val jumlahStok: Int,
 
     @field:SerializedName("id")
     val id: Int,
@@ -44,8 +44,8 @@ data class DetailProduk(
     @field:SerializedName("gambar")
     val gambar: List<String>,
 
-    @field:SerializedName("data_penjual")
-    val dataPenjual: DataPenjualProduct
+    @field:SerializedName("updatedAt")
+    val updatedAt: String
 )
 
 data class DetailProductData(
@@ -53,20 +53,6 @@ data class DetailProductData(
     @field:SerializedName("produk")
     val detailProduk: DetailProduk
 )
-
-data class DataPenjualProduct(
-
-    @field:SerializedName("nama")
-    val nama: String,
-
-    @field:SerializedName("nomor_telepon")
-    val nomorTelepon: String,
-
-    @field:SerializedName("email")
-    val email: String
-)
-
-
 
 data class GetAllProductResponse(
 
@@ -79,29 +65,26 @@ data class GetAllProductResponse(
 
 data class ProdukItem(
 
-    @field:SerializedName("jumlah_stok")
-    val jumlahStok: Int,
+    @field:SerializedName("owner")
+    val owner: Owner,
+
+    @field:SerializedName("createdAt")
+    val createdAt: String,
 
     @field:SerializedName("nama")
     val nama: String,
 
-    @field:SerializedName("harga_satuan")
+    @field:SerializedName("hargaSatuan")
     val hargaSatuan: Int,
 
-    @field:SerializedName("updated_at")
-    val updatedAt: String,
-
-    @field:SerializedName("id_owner")
-    val idOwner: String,
+    @field:SerializedName("faseHidup")
+    val faseHidup: String,
 
     @field:SerializedName("berat")
     val berat: Int,
 
-    @field:SerializedName("fase_hidup")
-    val faseHidup: String,
-
-    @field:SerializedName("created_at")
-    val createdAt: String,
+    @field:SerializedName("jumlahStok")
+    val jumlahStok: Int,
 
     @field:SerializedName("id")
     val id: Int,
@@ -110,7 +93,10 @@ data class ProdukItem(
     val deskripsi: String,
 
     @field:SerializedName("gambar")
-    val gambar: List<String>
+    val gambar: List<String>,
+
+    @field:SerializedName("updatedAt")
+    val updatedAt: String
 )
 
 data class DataProduct(
@@ -118,6 +104,28 @@ data class DataProduct(
     @field:SerializedName("produk")
     val produk: List<ProdukItem>
 )
+
+data class Owner(
+
+    @field:SerializedName("role")
+    val role: String,
+
+    @field:SerializedName("profiles")
+    val profiles: List<ProfilesItem>,
+
+    @field:SerializedName("nomorTelepon")
+    val nomorTelepon: String,
+
+    @field:SerializedName("id")
+    val id: String,
+
+    @field:SerializedName("fullname")
+    val fullname: String,
+
+    @field:SerializedName("email")
+    val email: String
+)
+
 
 data class UploadImageResponse(
 

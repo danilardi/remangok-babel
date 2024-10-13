@@ -28,9 +28,11 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.component.ScreenType
 import com.ipb.remangokbabel.model.response.ProdukItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
+import com.ipb.remangokbabel.ui.components.common.EmptyScreen
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.components.product.ProductManagementCard
 import com.ipb.remangokbabel.ui.navigation.Screen
@@ -113,6 +115,9 @@ fun ManagementProductScreen(
             }
         },
     ) { innerPadding ->
+        if (productList.isEmpty()) {
+            EmptyScreen(type = ScreenType.Empty)
+        }
         LazyColumn(
             state = listState,
             modifier = Modifier

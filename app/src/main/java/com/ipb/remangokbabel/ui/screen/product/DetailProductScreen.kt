@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +18,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -217,7 +213,7 @@ fun DetailProductScreen(
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier.weight(1f)
                 )
-                val fase = if (product?.faseHidup == "dewasa") "Kepiting" else "Benih"
+                val fase = if (product?.faseHidup == "dewasa") "Kepiting" else "Kepiting"
                 Text(
                     text = fase,
                     style = MaterialTheme.typography.bodyLarge,
@@ -232,93 +228,95 @@ fun DetailProductScreen(
             Text(
                 text = "Detail Produk",
                 style = MaterialTheme.typography.titleSmall,
-                modifier = Modifier.padding(horizontal = 16.sdp, vertical = 8.sdp)
+                modifier = Modifier
+                    .padding(horizontal = 16.sdp)
+                    .padding(bottom = 4.sdp, top = 8.sdp)
             )
-            Row {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.sdp, bottom = 8.sdp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                    ) {
-                        Text(text = "Penjual : ", style = MaterialTheme.typography.titleSmall)
-                        Text(
-                            text = product?.dataPenjual?.nama ?: "",
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                    ) {
-                        val fase =
-                            if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Benih"
-                        Text(text = "Fase      : ", style = MaterialTheme.typography.titleSmall)
-                        Text(text = fase, style = MaterialTheme.typography.bodySmall)
-                    }
-                }
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 16.sdp, bottom = 8.sdp)
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                    ) {
-                        val grade =
-                            if ((product?.berat ?: 0) >= 500) "A"
-                            else if ((product?.berat ?: 0) >= 200) "B"
-                            else "C"
-                        Text(text = "Grade : ", style = MaterialTheme.typography.titleSmall)
-                        Text(text = grade, style = MaterialTheme.typography.bodySmall)
-                    }
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier
-                    ) {
-                        Text(text = "Berat  : ", style = MaterialTheme.typography.titleSmall)
-                        Text(
-                            text = (product?.berat ?: 0).toString(),
-                            style = MaterialTheme.typography.bodySmall
-                        )
-                    }
-                }
-            }
-            HorizontalDivider()
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(horizontal = 16.sdp, vertical = 8.sdp)
+            Column(
+                modifier = Modifier
+                    .padding(start = 24.sdp, bottom = 4.sdp)
             ) {
-                Text(
-                    text = "Deskripsi Produk",
-                    style = MaterialTheme.typography.titleSmall,
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = product?.dataPenjual?.nama ?: "",
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = null,
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
-                        .padding(start = 4.sdp)
-                        .size(24.sdp)
-                )
+                ) {
+                    val fase =
+                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Kepiting"
+                    Text(text = "Fase      : ", style = MaterialTheme.typography.titleSmall)
+                    Text(text = fase, style = MaterialTheme.typography.bodySmall)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                ) {
+                    Text(text = "Stock    : ", style = MaterialTheme.typography.titleSmall)
+                    Text(text = "${product?.jumlahStok ?: 0} kg", style = MaterialTheme.typography.bodySmall)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                ) {
+                    val grade =
+                        if ((product?.berat ?: 0) >= 500) "A"
+                        else if ((product?.berat ?: 0) >= 200) "B"
+                        else "C"
+                    Text(text = "Grade    : ", style = MaterialTheme.typography.titleSmall)
+                    Text(text = grade, style = MaterialTheme.typography.bodySmall)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                ) {
+                    Text(text = "Berat     : ", style = MaterialTheme.typography.titleSmall)
+                    Text(
+                        text = "${product?.berat ?: 0} gram",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
             }
+
             Text(
                 text = product?.deskripsi ?: "",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MyStyle.colors.textGrey,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.sdp)
-                    .padding(bottom = 36.sdp)
+                    .padding(horizontal = 24.sdp)
             )
+
+            Text(
+                text = "Data Penjual",
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier
+                    .padding(horizontal = 16.sdp)
+                    .padding(bottom = 4.sdp, top = 8.sdp)
+            )
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.sdp)
+                    .padding(bottom = 32.sdp)
+            ) {
+                Text(
+                    text = product?.owner?.fullname ?: "",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+                Text(
+                    text = product?.owner?.profiles?.get(0)?.nomorTelepon ?: "",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = product?.owner?.profiles?.get(0)?.alamat ?: "",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Text(
+                    text = "${product?.owner?.profiles?.get(0)?.namaKotaKabupaten ?: ""}, " +
+                            "${product?.owner?.profiles?.get(0)?.namaProvinsi ?: ""}, " +
+                            "${product?.owner?.profiles?.get(0)?.namaProvinsi ?: ""}, " +
+                            (product?.owner?.profiles?.get(0)?.kodePos ?: ""),
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+            }
         }
     }
 }

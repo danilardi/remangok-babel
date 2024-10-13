@@ -51,7 +51,8 @@ interface ApiService {
     @GET("products")
     suspend fun getAllProducts(
         @Query ("limit") limit: Int,
-        @Query ("offset") offset: Int
+        @Query ("offset") offset: Int,
+        @Query ("is_owner") isOwner: Boolean
     ): GetAllProductResponse
 
     @GET("products/{id}")

@@ -19,32 +19,29 @@ data class DataOrder(
 
 data class OrderedItem(
 
-    @field:SerializedName("id_produk")
-    val idProduk: Int,
+    @field:SerializedName("createdAt")
+    val createdAt: String,
 
-    @field:SerializedName("updated_at")
-    val updatedAt: String,
-
-    @field:SerializedName("id_penjual")
-    val idPenjual: String,
-
-    @field:SerializedName("jumlah_pesanan")
+    @field:SerializedName("jumlahPesanan")
     val jumlahPesanan: Int,
 
-    @field:SerializedName("created_at")
-    val createdAt: String,
+    @field:SerializedName("produk")
+    val produk: DataProduk,
+
+    @field:SerializedName("dataPembeli")
+    val dataPembeli: DataPembeli,
 
     @field:SerializedName("id")
     val id: String,
 
-    @field:SerializedName("id_profile")
-    val idProfile: String,
-
-    @field:SerializedName("id_pembeli")
-    val idPembeli: String,
-
     @field:SerializedName("status")
-    val status: String?
+    val status: String?,
+
+    @field:SerializedName("updatedAt")
+    val updatedAt: String,
+
+    @field:SerializedName("dataPenjual")
+    val dataPenjual: DataPenjualOrder
 )
 
 
@@ -66,6 +63,9 @@ data class DataDetailOrder(
 
 data class DataPenjualOrder(
 
+    @field:SerializedName("role")
+    val role: String,
+
     @field:SerializedName("nomorTelepon")
     val nomorTelepon: String,
 
@@ -78,29 +78,29 @@ data class DataPenjualOrder(
 
 data class DetailOrderedItem(
 
+    @field:SerializedName("createdAt")
+    val createdAt: String,
+
+    @field:SerializedName("jumlahPesanan")
+    val jumlahPesanan: Int,
+
+    @field:SerializedName("produk")
+    val produk: DataProduk,
+
+    @field:SerializedName("dataPembeli")
+    val dataPembeli: DataPembeli,
+
     @field:SerializedName("id")
     val id: String,
 
-    @field:SerializedName("data_pembeli")
-    val dataPembeli: DataPembeli,
+    @field:SerializedName("status")
+    val status: Any,
 
-    @field:SerializedName("updated_at")
+    @field:SerializedName("updatedAt")
     val updatedAt: String,
 
-    @field:SerializedName("data_produk")
-    val dataProduk: DataProduk,
-
-    @field:SerializedName("jumlah_pesanan")
-    val jumlahPesanan: Int,
-
-    @field:SerializedName("created_at")
-    val createdAt: String,
-
-    @field:SerializedName("data_penjual")
-    val dataPenjual: DataPenjualOrder,
-
-    @field:SerializedName("status")
-    val status: String?,
+    @field:SerializedName("dataPenjual")
+    val dataPenjual: DataPenjualOrder
 )
 
 data class DataPembeli(
@@ -124,7 +124,7 @@ data class DataPembeli(
     val nomorTelepon: String,
 
     @field:SerializedName("namaKotaKabupaten")
-    val namaKabupatenKota: String,
+    val namaKotaKabupaten: String,
 
     @field:SerializedName("namaKecamatan")
     val namaKecamatan: String,
@@ -146,6 +146,9 @@ data class DataProduk(
 
     @field:SerializedName("berat")
     val berat: Int,
+
+    @field:SerializedName("id")
+    val id: Int,
 
     @field:SerializedName("gambar")
     val gambar: List<String>

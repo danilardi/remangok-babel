@@ -22,6 +22,7 @@ import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -57,7 +58,7 @@ fun InputLayout(
     title: String = "",
     hint: String = "",
     prefix: String = "",
-    textStyle: TextStyle = MyStyle.typography.xssNormal,
+    textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     textColor: Color = MyStyle.colors.textBlack,
     isPassword: Boolean = false,
     isNumber: Boolean = false,

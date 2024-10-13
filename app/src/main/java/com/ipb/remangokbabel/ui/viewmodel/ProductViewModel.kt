@@ -21,11 +21,11 @@ class ProductViewModel(private val repository: Repository) : BaseViewModel() {
     val getProductResponse = MutableSharedFlow<GetDetailProductResponse>()
     val deleteProductResponse = MutableSharedFlow<StatusMessageResponse>()
 
-    fun getAllProducts(limit: Int, offset: Int) {
+    fun getAllProducts(limit: Int, offset: Int, isOwner: Boolean = true) {
         viewModelScope.launch {
             showLoading.emit(true)
             try {
-                getAllProductsResponse.emit(repository.getAllProducts(limit, offset))
+                getAllProductsResponse.emit(repository.getAllProducts(limit, offset, isOwner))
             } catch (e: Exception) {
                 errorResponse.emit(handleException(e))
             }

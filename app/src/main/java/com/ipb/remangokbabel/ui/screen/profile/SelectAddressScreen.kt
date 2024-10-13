@@ -72,13 +72,13 @@ fun SelectAddressScreen(
     var listKecamatan by remember { mutableStateOf(emptyList<GetKecamatanResponseItem>()) }
     var listKelurahan by remember { mutableStateOf(emptyList<GetKelurahanResponseItem>()) }
 
-    var selectedProvinsi by remember { mutableStateOf("") }
+    var selectedProvinsi by remember { mutableStateOf("KEPULAUAN BANGKA BELITUNG") }
     var selectedKabuptatenKota by remember { mutableStateOf("") }
     var selectedKecamatan by remember { mutableStateOf("") }
     var selectedKelurahan by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        viewModel.getProvinsi()
+        viewModel.getKabupatenKota("19")
 
         coroutineScope.launch {
             viewModel.getProvinsiResponse.collect {
@@ -180,12 +180,12 @@ fun SelectAddressScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .clickable {
-                            selectedProvinsi = ""
-                            selectedKabuptatenKota = ""
-                            selectedKecamatan = ""
-                            selectedKelurahan = ""
-                        }
+//                        .clickable {
+//                            selectedProvinsi = ""
+//                            selectedKabuptatenKota = ""
+//                            selectedKecamatan = ""
+//                            selectedKelurahan = ""
+//                        }
                         .padding(horizontal = 16.sdp, vertical = 8.sdp)
                 ) {
                     Text(
@@ -279,7 +279,7 @@ fun SelectAddressScreen(
                 )
             }
 
-            if (selectedProvinsi.isEmpty()) {
+            /*if (selectedProvinsi.isEmpty()) {
                 LazyColumn {
                     items(listProvinsi, key = { it.id }) { provinsi ->
                         Row(
@@ -304,7 +304,7 @@ fun SelectAddressScreen(
                         HorizontalDivider()
                     }
                 }
-            } else if (selectedKabuptatenKota.isEmpty()) {
+            } else*/ if (selectedKabuptatenKota.isEmpty()) {
                 LazyColumn {
                     items(listKabupatenKota, key = { it.id }) { kabupatenKota ->
 

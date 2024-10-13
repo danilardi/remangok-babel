@@ -115,6 +115,7 @@ class MyColors {
     val bgHijauTealMuda = Color(0xFFE0F2F1)
     val bgKuningPucat = Color(0xFFFFF9C4)
     val bgWhite = Color(0xFFFFFFFF)
+    val bgSplash = Color(0xfff0e9cf)
 
     /* Error */
     val errorMain = Color(0xFFCB3A31)

@@ -20,38 +20,32 @@ data class DataProfile(
 
 data class ProfilesItem(
 
-    @field:SerializedName("nama_kelurahan")
-    val namaKelurahan: String,
-
-    @field:SerializedName("nama_kecamatan")
-    val namaKecamatan: String,
-
-    @field:SerializedName("nama_depan")
+    @field:SerializedName("namaDepan")
     val namaDepan: String,
 
-    @field:SerializedName("updated_at")
-    val updatedAt: String,
+    @field:SerializedName("namaKelurahan")
+    val namaKelurahan: String,
 
-    @field:SerializedName("nama_provinsi")
+    @field:SerializedName("namaProvinsi")
     val namaProvinsi: String,
 
-    @field:SerializedName("nama_kota_kabupaten")
-    val namaKabupatenKota: String,
+    @field:SerializedName("namaBelakang")
+    val namaBelakang: String,
 
-    @field:SerializedName("nomor_telepon")
-    val nomorTelepon: String,
-
-    @field:SerializedName("kode_pos")
+    @field:SerializedName("kodePos")
     val kodePos: String,
 
-    @field:SerializedName("created_at")
-    val createdAt: String,
+    @field:SerializedName("nomorTelepon")
+    val nomorTelepon: String,
 
     @field:SerializedName("id")
     val id: String,
 
-    @field:SerializedName("nama_belakang")
-    val namaBelakang: String,
+    @field:SerializedName("namaKotaKabupaten")
+    val namaKotaKabupaten: String,
+
+    @field:SerializedName("namaKecamatan")
+    val namaKecamatan: String,
 
     @field:SerializedName("alamat")
     val alamat: String
