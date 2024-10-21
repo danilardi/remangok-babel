@@ -1,7 +1,6 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
 import android.net.Uri
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -42,10 +41,8 @@ import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateTo
-import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -66,26 +63,26 @@ fun ListProfileScreen(
     LaunchedEffect(Unit) {
         viewModel.getProfile()
 
-        coroutineScope.launch {
-            viewModel.getProfileResponse.collect {
-                address = it.data.profiles
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
+//        coroutineScope.launch {
+//            viewModel.getProfileResponse.collect {
+//                address = it.data.profiles
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            viewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
     }
 
     if (showLoading) {
@@ -126,7 +123,7 @@ fun ListProfileScreen(
             }
             LazyColumn {
                 items(address, key = { it.id }) { item ->
-                    ProfileAddressCard(item = item, onClickDetail = {
+                    ProfileAddressCard(profilesItem = item, onClickDetail = {
                         val data = Uri.encode(Gson().toJson(item))
                         navigateTo(navController, Screen.EditProfile.createRoute(data))
                     },

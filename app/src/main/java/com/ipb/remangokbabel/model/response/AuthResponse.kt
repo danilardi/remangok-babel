@@ -11,9 +11,9 @@ data class LoginResponse(
 )
 
 data class DataLoginResponse(
-    @field:SerializedName("access_token")
+    @field:SerializedName("accessToken")
     val accessToken: String,
-    @field:SerializedName("refresh_token")
+    @field:SerializedName("refreshToken")
     val refreshToken: String,
     @field:SerializedName("role")
     val roleId: String,
@@ -34,7 +34,7 @@ data class AddedUser(
     @field:SerializedName("role")
     val role: String,
 
-    @field:SerializedName("nomor_telepon")
+    @field:SerializedName("nomorTelepon")
     val nomorTelepon: String,
 
     @field:SerializedName("id")
@@ -67,6 +67,6 @@ data class RefreshTokenResponse(
 
 data class TokenData(
 
-    @field:SerializedName("access_token")
+    @field:SerializedName("accessToken")
     val accessToken: String
 )

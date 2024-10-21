@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -23,15 +21,15 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ui.theme.MyStyle
-import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.delay
 
+@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun SplashScreen(
     modifier: Modifier = Modifier,
-    onSplashFinished: () -> Unit
+    onSplashFinished: () -> Unit = {}
 ) {
     val alpha = remember { Animatable(0f) }
 
@@ -65,19 +63,5 @@ fun SplashScreen(
             modifier = Modifier
                 .padding(top = 24.sdp),
         )
-    }
-}
-
-@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
-@Composable
-private fun SplashScreenPreview() {
-    RemangokBabelTheme {
-        Surface(
-            modifier = Modifier
-                .fillMaxSize(),
-            color = MaterialTheme.colorScheme.background
-        ) {
-            SplashScreen() {}
-        }
     }
 }

@@ -7,9 +7,9 @@ import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
+import com.ipb.remangokbabel.model.request.VerifyProductRequest
 import com.ipb.remangokbabel.model.response.DetailOrderResponse
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
-import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetOrderResponse
 import com.ipb.remangokbabel.model.response.GetProfileResponse
 import com.ipb.remangokbabel.model.response.LoginResponse
@@ -22,6 +22,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.Multipart
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Part
@@ -52,13 +53,22 @@ interface ApiService {
     suspend fun getAllProducts(
         @Query ("limit") limit: Int,
         @Query ("offset") offset: Int,
-        @Query ("is_owner") isOwner: Boolean
+        @Query ("kelurahan") kelurahan: String? = null,
     ): GetAllProductResponse
 
-    @GET("products/{id}")
-    suspend fun getProduct(
-        @Path("id") id: Int
-    ): GetDetailProductResponse
+    @GET("products/self")
+    suspend fun getSelfProducts(
+        @Query ("limit") limit: Int,
+        @Query ("offset") offset: Int,
+        @Query ("status") status: String, // rejected, accepted, requested
+    ): GetAllProductResponse
+
+    @GET("products/admin")
+    suspend fun getAllProductsByAdmin(
+        @Query ("limit") limit: Int,
+        @Query ("offset") offset: Int,
+        @Query ("status") status: String, // rejected, accepted, requested
+    ): GetAllProductResponse
 
     @Multipart
     @POST("products/upload")
@@ -85,6 +95,11 @@ interface ApiService {
     @DELETE("products/{id}")
     suspend fun deleteProduct(
         @Path("id") id: Int
+    ): StatusMessageResponse
+
+    @PATCH("verify/products")
+    suspend fun verifyProduct(
+        @Body data: VerifyProductRequest
     ): StatusMessageResponse
 
     @GET("orders")

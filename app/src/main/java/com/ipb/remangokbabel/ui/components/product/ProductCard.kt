@@ -13,7 +13,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -28,8 +27,9 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import coil.compose.AsyncImage
 import com.ipb.remangokbabel.BuildConfig
-import com.ipb.remangokbabel.model.response.ProdukItem
+import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.ui.theme.MyStyle
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
 
@@ -37,7 +37,7 @@ import ir.kaaveh.sdpcompose.sdp
 @Composable
 fun ProductCard(
     modifier: Modifier = Modifier,
-    product: ProdukItem? = null,
+    product: ProductItem? = null,
     onViewDetailsClick: () -> Unit = {}
 ) {
     Card(
@@ -67,9 +67,7 @@ fun ProductCard(
                     .height(120.sdp)
                     .clip(RoundedCornerShape(8.sdp))
             )
-            HorizontalDivider()
-            Spacer(modifier = Modifier.height(8.sdp))
-
+            Spacer(modifier = Modifier.height(4.sdp))
             Text(
                 text = product?.nama ?: "",
                 maxLines = 2,
@@ -88,11 +86,12 @@ fun ProductCard(
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier.weight(1f)
                 )
-                val fase = if (product?.faseHidup == "dewasa") "Kepiting" else "Kepiting"
                 Text(
-                    text = fase,
+                    text = product?.tipe?.capitalizeEachWord() ?: "",
                     style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                    overflow = TextOverflow.Ellipsis,
+                    maxLines = 1
                 )
             }
 
@@ -111,7 +110,7 @@ fun ProductCard(
                         .size(16.sdp)
                 )
                 Text(
-                    text = product?.owner?.fullname ?: "nama gua",
+                    text = product?.dataPemilik?.fullname ?: "",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                     maxLines = 1,
@@ -123,20 +122,17 @@ fun ProductCard(
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .padding(top = 4.sdp)
             ) {
                 Text(
-                    text = "Grade: ",
+                    text = "Berat: ",
                     style = MaterialTheme.typography.bodySmall,
                     color = MyStyle.colors.textGrey
                 )
-                val grade =
-                    if ((product?.berat ?: 0) >= 500) "A"
-                    else if ((product?.berat ?: 0) >= 200) "B"
-                    else "C"
                 Text(
-                    text = grade,
+                    text = "${product?.berat ?: 0} g",
                     style = MaterialTheme.typography.bodySmall,
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier.weight(1f)
@@ -146,14 +142,14 @@ fun ProductCard(
 
             // Stock Indicator
             Text(
-                text = "Stock: ${product?.jumlahStok ?: 0} kg",
+                text = "Stock: ${product?.jumlahStok ?: 0} ${product?.unit ?: ""}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 modifier = Modifier
                         .padding(top = 4.sdp)
             )
             Text(
-                text = product?.owner?.profiles?.get(0)?.namaKotaKabupaten ?: "Kabupaten blabla",
+                text = product?.dataPemilik?.profile?.kotaKabupaten ?: "",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 maxLines = 1,

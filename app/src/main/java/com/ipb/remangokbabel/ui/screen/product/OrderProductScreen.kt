@@ -1,6 +1,5 @@
 package com.ipb.remangokbabel.ui.screen.product
 
-import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,13 +20,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -52,11 +51,10 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.AddOrderRequest
-import com.ipb.remangokbabel.model.response.DetailProduk
+import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
-import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.components.profile.ProfileAddressCard
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
@@ -64,11 +62,9 @@ import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateTo
-import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -91,88 +87,88 @@ fun OrderProductScreen(
     val paperPrefs = remember { PaperPrefs(context) }
     var showLoading by remember { mutableStateOf(false) }
 
-    var product by remember { mutableStateOf(null as DetailProduk?) }
+    var product by remember { mutableStateOf(null as ProductItem?) }
     var address by remember { mutableStateOf(emptyList<ProfilesItem>()) }
     var quantityProduct by remember { mutableIntStateOf(0) }
 
     var selectedAddress by remember { mutableStateOf(null as ProfilesItem?) }
 
 
-    LaunchedEffect(Unit) {
-        profileViewModel.getProfile()
-        productViewModel.getProduct(productId)
+//    LaunchedEffect(Unit) {
+//        profileViewModel.getProfile()
+//        productViewModel.getProduct(productId)
 
-        coroutineScope.launch {
-            productViewModel.getProductResponse.collect {
-                product = it.detailProductData.detailProduk
-            }
-        }
+//        coroutineScope.launch {
+//            productViewModel.getProductResponse.collect {
+//                product = it.detailProductData.detailProduk
+//            }
+//        }
 
-        coroutineScope.launch {
-            profileViewModel.getProfileResponse.collect {
-                address = it.data.profiles
-            }
-        }
+//        coroutineScope.launch {
+//            profileViewModel.getProfileResponse.collect {
+//                address = it.data.profiles
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            orderViewModel.createOrderResponse.collect {
+//                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+//                navigateToAndMakeTop(navController, Screen.Home.route)
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            profileViewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            productViewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            orderViewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            profileViewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            productViewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            orderViewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
+//    }
 
-        coroutineScope.launch {
-            orderViewModel.createOrderResponse.collect {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                navigateToAndMakeTop(navController, Screen.Home.route)
-            }
-        }
-
-        coroutineScope.launch {
-            profileViewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-
-        coroutineScope.launch {
-            productViewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-
-        coroutineScope.launch {
-            orderViewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-
-        coroutineScope.launch {
-            profileViewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
-
-        coroutineScope.launch {
-            productViewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
-
-        coroutineScope.launch {
-            orderViewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
-    }
-
-    if (showLoading) {
-        LoadingDialog()
-    }
+//    if (showLoading) {
+//        LoadingDialog()
+//    }
 
     Scaffold(
         topBar = {
@@ -226,7 +222,7 @@ fun OrderProductScreen(
                             }
                     ) {
                         ProfileAddressCard(
-                            item = item,
+                            profilesItem = item,
                             modifier = Modifier.weight(1f)
                         ){ selectedAddress = item }
                         Box(
@@ -322,13 +318,13 @@ fun OrderProductScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-                    val fase =
-                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Kepiting"
-                    Text(
-                        text = fase,
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MyStyle.colors.textGrey
-                    )
+//                    val fase =
+//                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Kepiting"
+//                    Text(
+//                        text = fase,
+//                        style = MaterialTheme.typography.bodyMedium,
+//                        color = MyStyle.colors.textGrey
+//                    )
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = product?.hargaSatuan?.toRupiah() ?: 0.toRupiah(),

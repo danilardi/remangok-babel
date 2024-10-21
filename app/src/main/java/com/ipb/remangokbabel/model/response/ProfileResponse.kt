@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 
 data class GetProfileResponse(
-
     @field:SerializedName("data")
     val data: DataProfile,
 
@@ -13,27 +12,46 @@ data class GetProfileResponse(
 )
 
 data class DataProfile(
-
-    @field:SerializedName("profiles")
-    val profiles: List<ProfilesItem>
+    @field:SerializedName("profile")
+    val profiles: ProfilesItem
 )
 
 data class ProfilesItem(
+    @field:SerializedName("nik")
+    val nik: String,
 
-    @field:SerializedName("namaDepan")
-    val namaDepan: String,
+    @field:SerializedName("createdAt")
+    val createdAt: String,
 
-    @field:SerializedName("namaKelurahan")
-    val namaKelurahan: String,
-
-    @field:SerializedName("namaProvinsi")
-    val namaProvinsi: String,
-
-    @field:SerializedName("namaBelakang")
-    val namaBelakang: String,
+    @field:SerializedName("kecamatan")
+    val kecamatan: String,
 
     @field:SerializedName("kodePos")
     val kodePos: String,
+
+    @field:SerializedName("id")
+    val id: String,
+
+    @field:SerializedName("kotaKabupaten")
+    val kotaKabupaten: String,
+
+    @field:SerializedName("dataDiri")
+    val dataDiri: DataDiri,
+
+    @field:SerializedName("kelurahan")
+    val kelurahan: String,
+
+    @field:SerializedName("alamat")
+    val alamat: String,
+
+    @field:SerializedName("updatedAt")
+    val updatedAt: String
+)
+
+data class DataDiri(
+
+    @field:SerializedName("role")
+    val role: String,
 
     @field:SerializedName("nomorTelepon")
     val nomorTelepon: String,
@@ -41,12 +59,9 @@ data class ProfilesItem(
     @field:SerializedName("id")
     val id: String,
 
-    @field:SerializedName("namaKotaKabupaten")
-    val namaKotaKabupaten: String,
+    @field:SerializedName("fullname")
+    val fullname: String,
 
-    @field:SerializedName("namaKecamatan")
-    val namaKecamatan: String,
-
-    @field:SerializedName("alamat")
-    val alamat: String
+    @field:SerializedName("email")
+    val email: String
 )

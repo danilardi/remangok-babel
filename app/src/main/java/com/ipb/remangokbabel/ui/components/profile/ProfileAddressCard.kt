@@ -14,7 +14,7 @@ import ir.kaaveh.sdpcompose.sdp
 
 @Composable
 fun ProfileAddressCard(
-    item: ProfilesItem,
+    profilesItem: ProfilesItem,
     modifier: Modifier = Modifier,
     onClickDetail: () -> Unit ={},
 ) {
@@ -27,22 +27,22 @@ fun ProfileAddressCard(
     ) {
         Row {
             Text(
-                text = "${item.namaDepan} ${item.namaBelakang}",
+                text = profilesItem.dataDiri.fullname,
                 style = MaterialTheme.typography.bodyMedium
             )
             Text(
-                text = "  |  ${item.nomorTelepon}",
+                text = "  |  ${profilesItem.dataDiri.nomorTelepon}",
                 style = MaterialTheme.typography.bodyMedium,
                 color = MyStyle.colors.textGrey
             )
         }
         Text(
-            text = item.alamat,
+            text = profilesItem.alamat,
             style = MaterialTheme.typography.bodySmall,
             color = MyStyle.colors.textGrey
         )
         Text(
-            text = "${item.namaKelurahan}, ${item.namaKecamatan}, ${item.namaKotaKabupaten}, ${item.namaProvinsi}, ${item.kodePos}",
+            text = "${profilesItem.kelurahan}, ${profilesItem.kecamatan}, ${profilesItem.kotaKabupaten}, Kepulauan Bangka Belitung, ${profilesItem.kodePos}",
             style = MaterialTheme.typography.bodySmall,
             color = MyStyle.colors.textGrey
         )

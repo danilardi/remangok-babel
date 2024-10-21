@@ -1,5 +1,6 @@
 package com.ipb.remangokbabel.ui.components.common
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +40,7 @@ fun BottomBar(
 ) {
     NavigationBar(
         modifier = modifier
+            .background(MyStyle.colors.transparent)
             .clip(RoundedCornerShape(topStart = 16.sdp, topEnd = 16.sdp)),
         containerColor = MyStyle.colors.bgSecondary,
         contentColor = MyStyle.colors.bgPrimary,
@@ -80,17 +82,6 @@ fun BottomBar(
                     color = if (currentRoute == item.screen.route) MyStyle.colors.primaryMain else MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 }
-
-//                this@NavigationBar.NavigationBarItem(
-//                    icon = { Icon(item.icon, contentDescription = item.title) },
-//                    label = { Text(item.title) },
-//                    selected = currentRoute == item.screen.route,
-//                    colors = NavigationBarItemDefaults.colors(
-//                        indicatorColor = MyStyle.colors.transparent,
-//                    ),
-//                    onClick = {
-//                    }
-//                )
             }
         }
     }

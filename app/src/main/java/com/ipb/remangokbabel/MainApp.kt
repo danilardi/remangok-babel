@@ -1,12 +1,15 @@
 package com.ipb.remangokbabel
 
+import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.activity.SystemBarStyle
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.StickyNote2
 import androidx.compose.material.icons.filled.AccountCircle
+import androidx.compose.material.icons.filled.AllInbox
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -18,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -28,38 +30,27 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.ipb.remangokbabel.data.local.PaperPrefs
-import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.model.response.DetailOrderedItem
-import com.ipb.remangokbabel.model.response.ProfilesItem
+import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.ui.components.common.BottomBar
 import com.ipb.remangokbabel.ui.navigation.NavigationItem
 import com.ipb.remangokbabel.ui.navigation.Screen
-import com.ipb.remangokbabel.ui.screen.auth.AuthScreen
 import com.ipb.remangokbabel.ui.screen.auth.LoginScreen
 import com.ipb.remangokbabel.ui.screen.auth.RegisterScreen
 import com.ipb.remangokbabel.ui.screen.basic.SplashScreen
 import com.ipb.remangokbabel.ui.screen.home.HomeScreen
-import com.ipb.remangokbabel.ui.screen.order.OrderDetailScreen
-import com.ipb.remangokbabel.ui.screen.order.OrderScreen
 import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
 import com.ipb.remangokbabel.ui.screen.product.DetailProductScreen
 import com.ipb.remangokbabel.ui.screen.product.ManagementProductScreen
-import com.ipb.remangokbabel.ui.screen.product.OrderProductScreen
-import com.ipb.remangokbabel.ui.screen.profile.AddProfileScreen
-import com.ipb.remangokbabel.ui.screen.profile.ListProfileScreen
-import com.ipb.remangokbabel.ui.screen.profile.SelectAddressScreen
 import com.ipb.remangokbabel.ui.screen.profile.SettingScreen
 import com.ipb.remangokbabel.ui.theme.MyStyle
-import com.ipb.remangokbabel.ui.viewmodel.BaseViewModel
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import ir.kaaveh.sdpcompose.sdp
+import kotlinx.coroutines.delay
 
 @Composable
 fun MainApp(
     navController: NavHostController = rememberNavController(),
-    viewModel: BaseViewModel = viewModel(
-        factory = ViewModelFactory(Injection.provideRepository())
-    ),
-    enableEdgeToEdge: (statusBar:SystemBarStyle, navbar:SystemBarStyle) -> Unit
+    enableEdgeToEdge: (statusBar: SystemBarStyle, navbar: SystemBarStyle) -> Unit
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
@@ -68,16 +59,29 @@ fun MainApp(
     val context = LocalContext.current
     val paperPref = PaperPrefs(context)
 
-    val navigationItems = listOf(
+    val doubleBackToExitPressedOnce = remember { mutableStateOf(false) }
+
+    val navigationItems = if (paperPref.getRole() == "admin") listOf(
+        NavigationItem(
+            title = "Manajemen",
+            icon = Icons.Default.AllInbox,
+            screen = Screen.ManagementProduct
+        ),
+        NavigationItem(
+            title = "Profil",
+            icon = Icons.Default.AccountCircle,
+            screen = Screen.Setting
+        ),
+    ) else listOf(
         NavigationItem(
             title = "Home",
             icon = Icons.Default.Home,
             screen = Screen.Home
         ),
         NavigationItem(
-            title = "Pesanan",
-            icon = Icons.AutoMirrored.Filled.StickyNote2,
-            screen = Screen.Order
+            title = "Manajemen",
+            icon = Icons.Default.AllInbox,
+            screen = Screen.ManagementProduct
         ),
         NavigationItem(
             title = "Profil",
@@ -95,11 +99,45 @@ fun MainApp(
 
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
-            Screen.Splash.route -> setTopNavBarColor(MyStyle.colors.bgSplash, MyStyle.colors.bgSplash)
-            Screen.Home.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
-            Screen.Order.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
-            Screen.Setting.route -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgSecondary)
+            Screen.Splash.route -> setTopNavBarColor(
+                MyStyle.colors.bgSplash,
+                MyStyle.colors.bgSplash
+            )
+
+            Screen.Home.route -> setTopNavBarColor(
+                MyStyle.colors.bgWhite,
+                MyStyle.colors.bgSecondary
+            )
+
+            Screen.ManagementProduct.route -> setTopNavBarColor(
+                MyStyle.colors.bgWhite,
+                MyStyle.colors.bgSecondary
+            )
+
+            Screen.Setting.route -> setTopNavBarColor(
+                MyStyle.colors.bgWhite,
+                MyStyle.colors.bgSecondary
+            )
+
             else -> setTopNavBarColor(MyStyle.colors.bgWhite, MyStyle.colors.bgWhite)
+        }
+    }
+
+    LaunchedEffect(doubleBackToExitPressedOnce.value) {
+        if (doubleBackToExitPressedOnce.value) {
+            delay(2000)
+            doubleBackToExitPressedOnce.value = false
+        }
+    }
+
+    BackHandler {
+        if ((currentRoute == Screen.Login.route || currentRoute == Screen.Home.route) && !doubleBackToExitPressedOnce.value) {
+            Toast.makeText(context, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT).show()
+            doubleBackToExitPressedOnce.value = true
+        } else if (doubleBackToExitPressedOnce.value) {
+            (context as ComponentActivity).finish()
+        } else {
+            navController.popBackStack()
         }
     }
 
@@ -107,7 +145,7 @@ fun MainApp(
         bottomBar = {
             if (
                 currentRoute == Screen.Home.route ||
-                currentRoute == Screen.Order.route ||
+                currentRoute == Screen.ManagementProduct.route ||
                 currentRoute == Screen.Setting.route
             ) {
                 BottomBar(
@@ -123,20 +161,21 @@ fun MainApp(
         NavHost(
             navController = navController,
             startDestination = startDestination,
-            modifier = Modifier.padding(innerPadding)
+            modifier = Modifier.padding(
+                top = innerPadding.calculateTopPadding(),
+                bottom = if (innerPadding.calculateBottomPadding() != 0.sdp) innerPadding.calculateBottomPadding() - 16.sdp else 0.sdp
+            )
         ) {
             composable(Screen.Splash.route) {
                 SplashScreen() {
-                    val destination = if (paperPref.getAccessToken()
-                            .isEmpty()
-                    ) Screen.Login.route else Screen.Home.route
+                    val destination = if (paperPref.getAccessToken().isEmpty())
+                        Screen.Login.route
+                    else if (paperPref.getRole() == "admin")
+                        Screen.ManagementProduct.route
+                    else
+                        Screen.Home.route
                     navigateToAndMakeTop(navController, destination)
                 }
-            }
-            composable(Screen.Auth.route) {
-                AuthScreen(
-                    navController = navController,
-                )
             }
             composable(Screen.Login.route) {
                 LoginScreen(
@@ -153,55 +192,18 @@ fun MainApp(
                     navController = navController
                 )
             }
-            composable(Screen.Order.route) {
-                OrderScreen(
-                    navController = navController
-                )
-            }
             composable(
-                route = Screen.DetailOrder.route,
-                arguments = listOf(navArgument("orderData") { type = NavType.StringType })
+                route = Screen.DetailProduct.route,
+                arguments = listOf(navArgument("productData") { type = NavType.StringType })
             ) {
-                val jsonOrderData = it.arguments?.getString("orderData") ?: ""
-                val orderData = Gson().fromJson(jsonOrderData, DetailOrderedItem::class.java)
-                OrderDetailScreen(
+                val jsonProductData = it.arguments?.getString("productData") ?: ""
+                val productData = Gson().fromJson(jsonProductData, ProductItem::class.java)
+                DetailProductScreen(
                     navController = navController,
-                    orderData = orderData
+                    product = productData
                 )
             }
-            composable(Screen.Setting.route) {
-                SettingScreen(
-                    navController = navController,
-                )
-            }
-            composable(Screen.ListProfile.route) {
-                ListProfileScreen(
-                    navController = navController
-                )
-            }
-            composable(Screen.AddProfile.route) {
-                AddProfileScreen(
-                    navController = navController
-                )
-            }
-            composable(
-                route = Screen.EditProfile.route,
-                arguments = listOf(navArgument("profileData") { type = NavType.StringType })
-            ) {
-                val jsonProfileData = it.arguments?.getString("profileData") ?: ""
-                val profileData = Gson().fromJson(jsonProfileData, ProfilesItem::class.java)
-                AddProfileScreen(
-                    data = profileData,
-                    navController = navController,
-                )
-            }
-            composable(Screen.SelectAddress.route) {
-                SelectAddressScreen(
-                    navController = navController
-                )
-            }
-
-            composable(Screen.ManagementStock.route) {
+            composable(Screen.ManagementProduct.route) {
                 ManagementProductScreen(
                     navController = navController,
                 )
@@ -213,32 +215,18 @@ fun MainApp(
             }
             composable(
                 route = Screen.EditProduct.route,
-                arguments = listOf(navArgument("productId") { type = NavType.IntType })
+                arguments = listOf(navArgument("productData") { type = NavType.StringType })
             ) {
-                val productId = it.arguments?.getInt("productId") ?: -1
+                val jsonProductData = it.arguments?.getString("productData") ?: ""
+                val productData = Gson().fromJson(jsonProductData, ProductItem::class.java)
                 AddProductScreen(
                     navController = navController,
-                    productId = productId
+                    product = productData
                 )
             }
-            composable(
-                route = Screen.DetailProduct.route,
-                arguments = listOf(navArgument("productId") { type = NavType.IntType })
-            ) {
-                val productId = it.arguments?.getInt("productId") ?: -1
-                DetailProductScreen(
+            composable(Screen.Setting.route) {
+                SettingScreen(
                     navController = navController,
-                    productId = productId
-                )
-            }
-            composable(
-                route = Screen.AddOrder.route,
-                arguments = listOf(navArgument("productId") { type = NavType.IntType })
-            ) {
-                val productId = it.arguments?.getInt("productId") ?: -1
-                OrderProductScreen(
-                    navController = navController,
-                    productId = productId
                 )
             }
         }

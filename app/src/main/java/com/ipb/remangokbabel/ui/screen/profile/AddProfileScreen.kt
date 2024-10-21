@@ -1,6 +1,5 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -44,15 +43,11 @@ import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
-import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.capitalizeEachWord
-import com.ipb.remangokbabel.utils.navigateTo
-import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Composable
 fun AddProfileScreen(
@@ -94,54 +89,54 @@ fun AddProfileScreen(
 //            namaProvinsi = "Provinsi"
 //            kodePos = "21313"
         }
-        if (data != null) {
-            isEdit = true
-            namaDepan = data.namaDepan
-            namaBelakang = data.namaBelakang
-            nomorTelepon = data.nomorTelepon
-            alamat = data.alamat
-            namaKelurahan = data.namaKelurahan
-            namaKecamatan = data.namaKecamatan
-            namaKotaKabupaten = data.namaKotaKabupaten
-            namaProvinsi = data.namaProvinsi
-            kodePos = data.kodePos
-        }
+//        if (data != null) {
+//            isEdit = true
+//            namaDepan = data.namaDepan
+//            namaBelakang = data.namaBelakang
+//            nomorTelepon = data.nomorTelepon
+//            alamat = data.alamat
+//            namaKelurahan = data.namaKelurahan
+//            namaKecamatan = data.namaKecamatan
+//            namaKotaKabupaten = data.namaKotaKabupaten
+//            namaProvinsi = data.namaProvinsi
+//            kodePos = data.kodePos
+//        }
 
-        coroutineScope.launch {
-            viewModel.addProfileResponse.collect {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                navigateToBack(navController)
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.updateProfileResponse.collect {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                navigateToBack(navController)
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.deleteProfileResponse.collect {
-                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
-                navigateToBack(navController)
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
+//        coroutineScope.launch {
+//            viewModel.addProfileResponse.collect {
+//                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+//                navigateToBack(navController)
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            viewModel.updateProfileResponse.collect {
+//                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+//                navigateToBack(navController)
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            viewModel.deleteProfileResponse.collect {
+//                Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+//                navigateToBack(navController)
+//            }
+//        }
+//
+//        coroutineScope.launch {
+//            viewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
     }
     LaunchedEffect(returnedData) {
         if (returnedData[3].isNotEmpty()) {
@@ -286,7 +281,6 @@ fun AddProfileScreen(
                 Modifier
                     .background(MyStyle.colors.bgWhite)
                     .clickable {
-                        navigateTo(navController, Screen.SelectAddress.route)
                     }
                     .padding(horizontal = 16.sdp, vertical = 8.sdp),
                 verticalAlignment = Alignment.CenterVertically,

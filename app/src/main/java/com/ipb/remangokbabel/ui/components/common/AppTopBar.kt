@@ -18,6 +18,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.RectangleShape
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -28,10 +30,16 @@ fun AppTopBar(
     title: String,
     modifier: Modifier = Modifier,
     icon: Boolean = false,
+    dropShadow: Boolean = true,
     onClickIcon: () -> Unit = {},
 ) {
     Box(
         modifier = modifier
+            .shadow(
+                elevation = if (dropShadow) 4.sdp else 0.sdp, // Adjust the elevation as needed
+                shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                clip = false // Don't clip the content to the shape
+            )
             .background(MyStyle.colors.bgWhite)
             .padding(vertical = 8.sdp)
             .padding(start = 16.sdp , end = 8.sdp)
@@ -40,11 +48,11 @@ fun AppTopBar(
     ) {
         Text(
             text = title,
-            style = MyStyle.typography.baseBold,
+            style = MyStyle.typography.lgBold,
             fontSize = 20.ssp,
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            color = MyStyle.colors.textPrimary,
             modifier = Modifier
-                .align(Alignment.CenterStart)
+                .align(Alignment.Center),
         )
         if (icon) {
             Icon(

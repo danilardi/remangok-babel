@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,13 +37,12 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
-import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -60,35 +60,53 @@ fun SettingScreen(
     var showLoading by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            viewModel.logoutResponse.collect {
-                Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
+//        coroutineScope.launch {
+//            viewModel.logoutResponse.collect {
+//                Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
+//                paperPrefs.deleteAllData()
+//                navigateToAndMakeTop(navController, Screen.Login.route)
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//                if (errorResponse.message == "token anda tidak valid") {
+//                    paperPrefs.deleteAllData()
+//                    navigateToAndMakeTop(navController, Screen.Login.route)
+//                }
+//            }
+//        }
+    }
+
+    viewModel.logoutState.collectAsState().value?.let {
+        Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
+        paperPrefs.deleteAllData()
+        navigateToAndMakeTop(navController, Screen.Login.route)
+    }
+
+    viewModel.showLoading.collectAsState().value.let {
+        if (it) LoadingDialog()
+    }
+
+    viewModel.errorResponse.collectAsState().value.let {
+        if (it.message?.isNotEmpty() == true) {
+            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            if (it.message == "token anda tidak valid") {
                 paperPrefs.deleteAllData()
                 navigateToAndMakeTop(navController, Screen.Login.route)
             }
         }
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
+        viewModel.clearError()
     }
 
     Scaffold(
         topBar = {
             AppTopBar(title = "Profile")
-        },
-        bottomBar = {
-
         },
         modifier = modifier
     ) { innerPadding ->
@@ -99,9 +117,8 @@ fun SettingScreen(
                 .fillMaxSize()
         ) {
             MenuItem(
-                title = "Daftar Alamat",
+                title = "Profil",
                 onClick = {
-                    navigateTo(navController, Screen.ListProfile.route)
                 },
                 modifier = Modifier
                     .padding(top = 2.sdp)
@@ -109,7 +126,8 @@ fun SettingScreen(
             MenuItem(
                 title = "Bantuan",
                 onClick = {
-                    val url = "https://drive.google.com/drive/folders/1-yfATreiuyU7REd_dQRorx0heRbzO1-q"
+                    val url =
+                        "https://drive.google.com/drive/folders/1-yfATreiuyU7REd_dQRorx0heRbzO1-q"
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                     context.startActivity(intent)
                 },
@@ -139,9 +157,9 @@ fun MenuItem(
             .background(MyStyle.colors.bgWhite)
             .fillMaxWidth()
             .clickable {
-                    onClick()
+                onClick()
             },
-        ) {
+    ) {
         Text(
             text = title,
             style = MaterialTheme.typography.bodyLarge,

@@ -31,13 +31,11 @@ import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.response.DetailOrderedItem
-import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ConfirmDialog
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.components.product.ProductOrderCard
-import com.ipb.remangokbabel.ui.components.profile.ProfileAddressCard
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.screen.profile.MenuItem
 import com.ipb.remangokbabel.ui.theme.MyStyle
@@ -234,20 +232,20 @@ fun OrderDetailScreen(
                     .padding(horizontal = 16.sdp)
                     .padding(top = 16.sdp)
             )
-            ProfileAddressCard(
-                item = ProfilesItem(
-                    id = "",
-                    namaKelurahan = orderData?.dataPembeli?.namaKelurahan ?: "Testing",
-                    namaKecamatan = orderData?.dataPembeli?.namaKecamatan ?: "Testing",
-                    namaKotaKabupaten = orderData?.dataPembeli?.namaKotaKabupaten ?: "Testing",
-                    namaProvinsi = orderData?.dataPembeli?.namaProvinsi ?: "Testing",
-                    kodePos = orderData?.dataPembeli?.kodePos ?: "Testing",
-                    namaDepan = orderData?.dataPembeli?.namaDepan ?: "testing",
-                    namaBelakang = orderData?.dataPembeli?.namaBelakang ?: "testing",
-                    nomorTelepon = orderData?.dataPembeli?.nomorTelepon ?: "testing",
-                    alamat = orderData?.dataPembeli?.alamat ?: "testing",
-                                    )
-            )
+//            ProfileAddressCard(
+//                profilesItem = ProfilesItem(
+//                    id = "",
+//                    namaKelurahan = orderData?.dataPembeli?.namaKelurahan ?: "Testing",
+//                    namaKecamatan = orderData?.dataPembeli?.namaKecamatan ?: "Testing",
+//                    namaKotaKabupaten = orderData?.dataPembeli?.namaKotaKabupaten ?: "Testing",
+//                    namaProvinsi = orderData?.dataPembeli?.namaProvinsi ?: "Testing",
+//                    kodePos = orderData?.dataPembeli?.kodePos ?: "Testing",
+//                    namaDepan = orderData?.dataPembeli?.namaDepan ?: "testing",
+//                    namaBelakang = orderData?.dataPembeli?.namaBelakang ?: "testing",
+//                    nomorTelepon = orderData?.dataPembeli?.nomorTelepon ?: "testing",
+//                    alamat = orderData?.dataPembeli?.alamat ?: "testing",
+//                                    )
+//            )
             ProductOrderCard(order = orderData, showButton = false, fromDetail = true, navController = navController)
             Text(
                 text = "Butuh Bantuan?",

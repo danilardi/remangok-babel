@@ -1,6 +1,5 @@
 package com.ipb.remangokbabel.ui.screen.product
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,12 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -46,15 +43,13 @@ import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
-import com.ipb.remangokbabel.model.response.DetailProduk
+import com.ipb.remangokbabel.model.request.VerifyProductRequest
+import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
-import com.ipb.remangokbabel.ui.components.common.LoadingDialog
-import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
-import com.ipb.remangokbabel.utils.navigateTo
-import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.toRupiah2
 import ir.kaaveh.sdpcompose.sdp
@@ -69,65 +64,68 @@ fun DetailProductScreen(
     viewModel: ProductViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     ),
-    productId: Int = -1,
+    product: ProductItem? = null,
 ) {
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
-    var showLoading by remember { mutableStateOf(false) }
+//    val profileData by remember { mutableStateOf(paperPrefs.getProfile()) }
 
-    var product by remember { mutableStateOf(null as DetailProduk?) }
-
-    LaunchedEffect(Unit) {
-        viewModel.getProduct(productId)
-
-        coroutineScope.launch {
-            viewModel.getProductResponse.collect {
-                product = it.detailProductData.detailProduk
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-                if (errorResponse.message == "token anda tidak valid") {
-                    paperPrefs.deleteAllData()
-                    navigateToAndMakeTop(navController, Screen.Login.route)
-                }
-            }
-        }
-    }
-
-    if (showLoading) {
-        LoadingDialog()
-    }
+    val showDialogVerifyProductItem by remember { mutableStateOf(false) }
+    val verifyProductItems = listOf("requested", "accepted", "rejected")
+    val selectedVerifyStatus by remember { mutableStateOf(product?.status ?: verifyProductItems[0]) }
+    val alasanPenolakan by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
-            BackTopBar(title = "Detail Produk", onClickBackButton = {
-                navigateToBack(navController)
-            }
+            BackTopBar(
+                title = "Detail Produk",
+                onClickBackButton = {
+                    navigateToBack(navController)
+                }
             )
         },
         bottomBar = {
-            ButtonCustom(
-                text = "Pesan Produk",
-                modifier = Modifier
-                    .shadow(
-                        elevation = 10.sdp, // Adjust the elevation as needed
-                        shape = RectangleShape, // Ensure shadow is drawn for the entire Box
-                        clip = false // Don't clip the content to the shape
+            if (paperPrefs.getRole() == "user") {
+                ButtonCustom(
+                    text = "Pesan Produk",
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 10.sdp, // Adjust the elevation as needed
+                            shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                            clip = false // Don't clip the content to the shape
+                        )
+                        .background(color = MyStyle.colors.bgWhite)
+                        .padding(16.sdp)
+                ) {
+//                    val message =
+//                        "Halo, saya ${profileData.dataDiri.fullname} ingin memesan ${product?.nama}"
+//                    openWhatsApp(
+//                        context = context,
+//                        phoneNumber = product?.dataPemilik?.nomorTelepon ?: "",
+////                        message = message
+//                    )
+                }
+            } else if (paperPrefs.getRole() == "admin") {
+                ButtonCustom(
+                    text = "Verifikasi",
+                    enabled = false,
+                    modifier = Modifier
+                        .shadow(
+                            elevation = 10.sdp, // Adjust the elevation as needed
+                            shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                            clip = false // Don't clip the content to the shape
+                        )
+                        .background(color = MyStyle.colors.bgWhite)
+                        .padding(16.sdp)
+                ) {
+                    val data = VerifyProductRequest(
+                        idProduk = "${product?.id ?: -1}",
+                        status = selectedVerifyStatus,
+                        alasanPenolakan = alasanPenolakan
                     )
-                    .background(color = MyStyle.colors.bgWhite)
-                    .padding(16.sdp)
-            ) {
-                navigateTo(navController, Screen.AddOrder.createRoute(productId))
+                    viewModel.verifyProduct(data)
+                }
             }
         },
         modifier = modifier
@@ -146,7 +144,7 @@ fun DetailProductScreen(
             ) { page ->
                 Box(modifier = Modifier.fillMaxWidth()) {
                     AsyncImage(
-                        model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product!!.gambar[page]}" else "",
+                        model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar[page]}" else "",
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
@@ -154,7 +152,7 @@ fun DetailProductScreen(
                             .blur(30.sdp)
                     )
                     AsyncImage(
-                        model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product!!.gambar[page]}" else "",
+                        model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar[page]}" else "",
                         contentDescription = null,
                         modifier = Modifier
                             .fillMaxSize()
@@ -182,7 +180,7 @@ fun DetailProductScreen(
                         }
                     ) {
                         AsyncImage(
-                            model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product!!.gambar[iteration]}" else "",
+                            model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar[iteration]}" else "",
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
@@ -190,7 +188,7 @@ fun DetailProductScreen(
                                 .blur(30.sdp)
                         )
                         AsyncImage(
-                            model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product!!.gambar[iteration]}" else "",
+                            model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar[iteration]}" else "",
                             contentDescription = null,
                             modifier = Modifier
                                 .fillMaxSize()
@@ -213,9 +211,8 @@ fun DetailProductScreen(
                     color = MyStyle.colors.textPrimary,
                     modifier = Modifier.weight(1f)
                 )
-                val fase = if (product?.faseHidup == "dewasa") "Kepiting" else "Kepiting"
                 Text(
-                    text = fase,
+                    text = product?.tipe?.capitalizeEachWord() ?: "",
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -240,28 +237,11 @@ fun DetailProductScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
                 ) {
-                    val fase =
-                        if ((product?.faseHidup ?: "") == "dewasa") "Kepiting" else "Kepiting"
-                    Text(text = "Fase      : ", style = MaterialTheme.typography.titleSmall)
-                    Text(text = fase, style = MaterialTheme.typography.bodySmall)
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                ) {
                     Text(text = "Stock    : ", style = MaterialTheme.typography.titleSmall)
-                    Text(text = "${product?.jumlahStok ?: 0} kg", style = MaterialTheme.typography.bodySmall)
-                }
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier
-                ) {
-                    val grade =
-                        if ((product?.berat ?: 0) >= 500) "A"
-                        else if ((product?.berat ?: 0) >= 200) "B"
-                        else "C"
-                    Text(text = "Grade    : ", style = MaterialTheme.typography.titleSmall)
-                    Text(text = grade, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        text = "${product?.jumlahStok ?: 0} ${product?.unit ?: ""}",
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
@@ -298,22 +278,22 @@ fun DetailProductScreen(
                     .padding(bottom = 32.sdp)
             ) {
                 Text(
-                    text = product?.owner?.fullname ?: "",
+                    text = product?.dataPemilik?.fullname ?: "",
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Text(
-                    text = product?.owner?.profiles?.get(0)?.nomorTelepon ?: "",
+                    text = product?.dataPemilik?.nomorTelepon ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    text = product?.owner?.profiles?.get(0)?.alamat ?: "",
+                    text = product?.dataPemilik?.profile?.alamat ?: "",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Text(
-                    text = "${product?.owner?.profiles?.get(0)?.namaKotaKabupaten ?: ""}, " +
-                            "${product?.owner?.profiles?.get(0)?.namaProvinsi ?: ""}, " +
-                            "${product?.owner?.profiles?.get(0)?.namaProvinsi ?: ""}, " +
-                            (product?.owner?.profiles?.get(0)?.kodePos ?: ""),
+                    text = "${product?.dataPemilik?.profile?.kotaKabupaten ?: ""}, " +
+                            "${product?.dataPemilik?.profile?.kecamatan ?: ""}, " +
+                            "${product?.dataPemilik?.profile?.kelurahan ?: ""}, " +
+                            (product?.dataPemilik?.profile?.kodePos ?: ""),
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }

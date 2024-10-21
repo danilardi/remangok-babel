@@ -53,7 +53,7 @@ fun InputLayout(
     value: String,
     modifier: Modifier = Modifier,
     borderWidth: Dp = 1.sdp,
-    borderColor: Color = MyStyle.colors.textHijau,
+    borderColor: Color = MyStyle.colors.bgPrimary,
     border: Boolean = true,
     title: String = "",
     hint: String = "",
@@ -69,7 +69,7 @@ fun InputLayout(
     isRow: Boolean = false,
     isLongInput: Boolean = false,
     maxLength: Int = -1,
-    onValueChange: (String) -> Unit
+    onValueChange: (String) -> Unit = {}
 ) {
     var isFocused by remember { mutableStateOf(false) }
     var isPasswordVisible by remember { mutableStateOf(!isPassword) }
@@ -131,7 +131,7 @@ fun InputLayout(
                     modifier = Modifier
                         .padding(
                             start = if (border) 12.sdp else 0.sdp,
-                            end = if (isPassword || !border) 0.sdp else 12.sdp
+                            end = if (isPassword || !border || isDropdown) 0.sdp else 12.sdp
                         ),
                     contentAlignment = if (isRow) Alignment.CenterEnd else Alignment.CenterStart
                 ) {
@@ -168,7 +168,7 @@ fun InputLayout(
                             Icon(
                                 imageVector = if (isExpanse) Icons.Filled.ArrowDropDown else Icons.Filled.ArrowDropUp,
                                 contentDescription = if (isExpanse) "Hide password" else "Show password",
-                                tint = MyStyle.colors.bgPrimary
+                                tint = borderColor
                             )
                         }
                     }

@@ -1,6 +1,5 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -50,7 +49,6 @@ import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
-import kotlinx.coroutines.launch
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -78,38 +76,38 @@ fun SelectAddressScreen(
     var selectedKelurahan by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        viewModel.getKabupatenKota("19")
+//        viewModel.getKabupatenKota("19")
 
-        coroutineScope.launch {
-            viewModel.getProvinsiResponse.collect {
-                listProvinsi = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.getKabupatenKotaResponse.collect {
-                listKabupatenKota = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.getKecamatanResponse.collect {
-                listKecamatan = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.getKelurahanResponse.collect {
-                listKelurahan = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.showLoading.collect {
-                showLoading = it
-            }
-        }
-        coroutineScope.launch {
-            viewModel.errorResponse.collect { errorResponse ->
-                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-            }
-        }
+//        coroutineScope.launch {
+//            viewModel.getProvinsiResponse.collect {
+//                listProvinsi = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.getKabupatenKotaResponse.collect {
+//                listKabupatenKota = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.getKecamatanResponse.collect {
+//                listKecamatan = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.getKelurahanResponse.collect {
+//                listKelurahan = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.showLoading.collect {
+//                showLoading = it
+//            }
+//        }
+//        coroutineScope.launch {
+//            viewModel.errorResponse.collect { errorResponse ->
+//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+//            }
+//        }
     }
 
     if (showLoading) {

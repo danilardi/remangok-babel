@@ -11,9 +11,9 @@ import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
 import com.ipb.remangokbabel.model.request.UploadProductRequest
+import com.ipb.remangokbabel.model.request.VerifyProductRequest
 import com.ipb.remangokbabel.model.response.DetailOrderResponse
 import com.ipb.remangokbabel.model.response.GetAllProductResponse
-import com.ipb.remangokbabel.model.response.GetDetailProductResponse
 import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
@@ -47,12 +47,16 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
         return apiService.logout()
     }
 
-    suspend fun getAllProducts(limit: Int, offset: Int, isOwner: Boolean = false): GetAllProductResponse {
-        return apiService.getAllProducts(limit, offset, isOwner)
+    suspend fun getAllProducts(limit: Int, offset: Int, kecamatan: String?): GetAllProductResponse {
+        return apiService.getAllProducts(limit, offset, kecamatan)
     }
 
-    suspend fun getProduct(id: Int): GetDetailProductResponse {
-        return apiService.getProduct(id)
+    suspend fun getSelfProducts(limit: Int, offset: Int, status: String): GetAllProductResponse {
+        return apiService.getSelfProducts(limit, offset, status)
+    }
+
+    suspend fun getAllProductsByAdmin(limit: Int, offset: Int, status: String): GetAllProductResponse {
+        return apiService.getAllProductsByAdmin(limit, offset, status)
     }
 
     suspend fun uploadImage(image: File): UploadImageResponse {
@@ -79,6 +83,10 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
 
     suspend fun deleteProduct(id: Int): StatusMessageResponse {
         return apiService.deleteProduct(id)
+    }
+
+    suspend fun verifyProduct(data: VerifyProductRequest): StatusMessageResponse {
+        return apiService.verifyProduct(data)
     }
 
     suspend fun getProfile(): GetProfileResponse {

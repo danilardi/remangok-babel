@@ -31,8 +31,6 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.LoginRequest
-import com.ipb.remangokbabel.model.response.ErrorResponse
-import com.ipb.remangokbabel.ui.common.UiState
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
@@ -55,52 +53,38 @@ fun LoginScreen(
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
 
-    var showLoading by remember { mutableStateOf(false) }
-
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         if (BuildConfig.DEBUG) {
-            val role = 2
-            if (role == 1) {
-                email = "sumbul2"
-                password = "password"
-            } else {
-                email = "medomeckz"
-                password = "password"
-            }
+            password = "password"
         }
+        email = paperPrefs.getEmailSaved()
     }
 
-    val loginState by viewModel.loginState.collectAsState(initial = UiState.Idle)
-    val errorResponse by viewModel.errorResponse2.collectAsState(initial = ErrorResponse())
-
-    LaunchedEffect(loginState) {
-        if (loginState is UiState.Success) {
-            val state = loginState as UiState.Success
-            paperPrefs.setAccessToken(state.data.dataLoginResponse.accessToken)
-            paperPrefs.setRefreshToken(state.data.dataLoginResponse.refreshToken)
-            paperPrefs.setRole(state.data.dataLoginResponse.roleId)
+    viewModel.loginState.collectAsState().value?.let {
+        LaunchedEffect(Unit) {
+            val data = it.dataLoginResponse
+            paperPrefs.setAccessToken(data.accessToken)
+            paperPrefs.setRefreshToken(data.refreshToken)
+            paperPrefs.setRole(data.roleId)
+            paperPrefs.setEmailSaved(email)
             Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-            navigateTo(navController, Screen.Home.route)
+            val destination = if (data.roleId == "admin") Screen.ManagementProduct.route else Screen.Home.route
+            navigateTo(navController, destination)
         }
-        viewModel.loginState.value = UiState.Idle
     }
 
-    LaunchedEffect(errorResponse) {
-        if (errorResponse.message?.isNotEmpty() == true) {
-            Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
+    viewModel.errorResponse.collectAsState().value.let {
+        if (it.message?.isNotEmpty() == true) {
+            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
         }
-        viewModel.errorResponse2.value = ErrorResponse()
+        viewModel.clearError()
     }
 
-    viewModel.showLoading2.collectAsState().value.let {
-        showLoading = it
-    }
-
-    if (showLoading) {
-        LoadingDialog()
+    viewModel.showLoading.collectAsState().value.let {
+        if (it) LoadingDialog()
     }
 
     Column(
@@ -118,8 +102,6 @@ fun LoginScreen(
                 .padding(top = 24.sdp)
                 .align(Alignment.CenterHorizontally)
                 .clickable {
-                    println("$loginState")
-                    println("${viewModel.showLoading2.value}")
                 },
         )
         Text(
@@ -134,7 +116,7 @@ fun LoginScreen(
             color = MyStyle.colors.textGrey,
         )
         InputLayout(
-            title = "Email/Nama Pengguna/No. HP",
+            title = "Email",
             value = email,
             hint = "Silahkan masukkan email anda",
             modifier = Modifier

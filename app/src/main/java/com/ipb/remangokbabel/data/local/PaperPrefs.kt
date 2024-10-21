@@ -3,6 +3,8 @@ package com.ipb.remangokbabel.data.local
 import android.app.Application
 import android.content.Context
 import androidx.lifecycle.LifecycleObserver
+import com.google.gson.Gson
+import com.ipb.remangokbabel.model.response.ProfilesItem
 import io.paperdb.Paper
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,9 +33,7 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
     fun deleteAllData() {
         val allKeys = Paper.book().allKeys
         allKeys.forEach {
-            if (it != "isWalkthrough" && it != "lang" && it != "langActive"
-                && it != "isFirstTime" && it != "playerId" && it != "userIdKyc"
-                && it != "streamBuy" && it != "streamSell") {
+            if (it != "EMAIL_SAVED") {
                 Paper.book().delete(it)
             }
         }
@@ -135,6 +135,24 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
 
     fun getRole(): String {
         return getStringFromPaperPrefAsync("ROLE")
+    }
+
+    suspend fun setEmailSaved(email: String) {
+        saveStringToPaperPref("EMAIL_SAVED", email)
+    }
+
+    fun getEmailSaved(): String {
+        return getStringFromPaperPrefAsync("EMAIL_SAVED")
+    }
+
+    suspend fun setProfile(dataProfile: ProfilesItem) {
+        val data = Gson().toJson(dataProfile)
+        saveStringToPaperPref("PROFILE", data)
+    }
+
+    fun getProfile(): ProfilesItem {
+        val data = getStringFromPaperPrefAsync("PROFILE")
+        return Gson().fromJson(data, ProfilesItem::class.java)
     }
 
 }

@@ -53,7 +53,6 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
-import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.openWhatsApp
 import com.ipb.remangokbabel.utils.toRupiah
@@ -158,11 +157,10 @@ fun ProductOrderCard(
     Card(
         onClick = {
             if (fromDetail) {
-                if (order != null)
-                    navigateTo(navController, Screen.DetailProduct.createRoute(order.produk.id))
+//                if (order != null)
+//                    navigateTo(navController, Screen.DetailProduct.createRoute(order.produk.id))
             } else {
                 val data = Uri.encode(Gson().toJson(order))
-                navigateTo(navController, Screen.DetailOrder.createRoute(data))
             }
         },
         modifier = modifier
