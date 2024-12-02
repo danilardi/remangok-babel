@@ -5,4 +5,5 @@ sealed class ButtonType {
     object Disabled : ButtonType()
     object Outline : ButtonType()
     object Danger : ButtonType()
+    object Warning : ButtonType()
 }

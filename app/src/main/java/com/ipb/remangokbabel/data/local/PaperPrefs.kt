@@ -150,9 +150,12 @@ class PaperPrefs : CoroutineScope, LifecycleObserver {
         saveStringToPaperPref("PROFILE", data)
     }
 
-    fun getProfile(): ProfilesItem {
+    fun getProfile(): ProfilesItem? {
         val data = getStringFromPaperPrefAsync("PROFILE")
-        return Gson().fromJson(data, ProfilesItem::class.java)
+        if (data.isEmpty()) {
+            return null
+        }
+        return Gson().fromJson(data, ProfilesItem::class.java) as ProfilesItem
     }
 
 }

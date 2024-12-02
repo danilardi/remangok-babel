@@ -1,5 +1,6 @@
 package com.ipb.remangokbabel.ui.screen.product
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,16 +17,20 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.blur
@@ -35,6 +40,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -43,14 +49,21 @@ import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.request.VerifyProductRequest
 import com.ipb.remangokbabel.model.response.ProductItem
+import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
+import com.ipb.remangokbabel.ui.components.common.InputLayout
+import com.ipb.remangokbabel.ui.components.common.LoadingDialog
+import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.utils.capitalizeEachWord
+import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
+import com.ipb.remangokbabel.utils.openWhatsApp
 import com.ipb.remangokbabel.utils.toRupiah2
 import ir.kaaveh.sdpcompose.sdp
 import kotlinx.coroutines.launch
@@ -69,12 +82,92 @@ fun DetailProductScreen(
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
-//    val profileData by remember { mutableStateOf(paperPrefs.getProfile()) }
+    var profileData by remember { mutableStateOf(null as ProfilesItem?) }
 
-    val showDialogVerifyProductItem by remember { mutableStateOf(false) }
-    val verifyProductItems = listOf("requested", "accepted", "rejected")
-    val selectedVerifyStatus by remember { mutableStateOf(product?.status ?: verifyProductItems[0]) }
-    val alasanPenolakan by remember { mutableStateOf("") }
+    var alasanPenolakan by remember { mutableStateOf("") }
+    var showDialogReject by remember { mutableStateOf(false) }
+
+    LaunchedEffect(Unit) {
+        if (paperPrefs.getProfile() != null)
+            profileData = paperPrefs.getProfile()
+    }
+
+    viewModel.verifyProductState.collectAsState().value?.let {
+        Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+        viewModel.clearVerifyProductState()
+        navigateToBack(navController)
+    }
+
+    viewModel.showLoading.collectAsState().value.let {
+        if (it) LoadingDialog()
+    }
+
+    viewModel.errorResponse.collectAsState().value.let {
+        if (it.message?.isNotEmpty() == true) {
+            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            if (it.message == "token anda tidak valid") {
+                paperPrefs.deleteAllData()
+                navigateToAndMakeTop(navController, Screen.Login.route)
+            }
+        }
+        viewModel.clearError()
+    }
+
+    if (showDialogReject) {
+        Dialog(onDismissRequest = { showDialogReject = false }) {
+            Column(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .background(MyStyle.colors.bgSecondary, shape = RoundedCornerShape(8.sdp))
+                    .padding(16.sdp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Alasan Penolakan",
+                    style = MaterialTheme.typography.titleLarge,
+                )
+                InputLayout(
+                    value = alasanPenolakan,
+                    hint = "Masukkan alasan penolakan produk",
+                    border = true,
+                    isLongInput = true,
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(top = 8.sdp)
+                ) {
+                    alasanPenolakan = it
+                }
+                Row(
+                    modifier = Modifier.padding(top = 8.sdp),
+                ) {
+                    ButtonCustom(
+                        text = "Batal",
+                        type = ButtonType.Outline,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(end = 4.sdp)
+                    ){
+                        showDialogReject = false
+                    }
+                    ButtonCustom(
+                        text = "Ya",
+                        enabled = alasanPenolakan.isNotEmpty(),
+                        type = ButtonType.Primary,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 4.sdp)
+                    ) {
+                        val data = VerifyProductRequest(
+                                idProduk = "${product?.id}",
+                                status = "rejected",
+                                alasanPenolakan = alasanPenolakan
+                            )
+                        viewModel.verifyProduct(data)
+                        showDialogReject = false
+                    }
+                }
+            }
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -87,44 +180,61 @@ fun DetailProductScreen(
         },
         bottomBar = {
             if (paperPrefs.getRole() == "user") {
-                ButtonCustom(
-                    text = "Pesan Produk",
-                    modifier = Modifier
-                        .shadow(
-                            elevation = 10.sdp, // Adjust the elevation as needed
-                            shape = RectangleShape, // Ensure shadow is drawn for the entire Box
-                            clip = false // Don't clip the content to the shape
+                if (profileData?.dataDiri?.id != product?.dataPemilik?.id) {
+                    ButtonCustom(
+                        text = "Pesan Produk",
+                        modifier = Modifier
+                            .shadow(
+                                elevation = 10.sdp, // Adjust the elevation as needed
+                                shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                                clip = false // Don't clip the content to the shape
+                            )
+                            .background(color = MyStyle.colors.bgWhite)
+                            .padding(16.sdp)
+                    ) {
+                        val message =
+                            "Halo, saya ${profileData?.dataDiri?.fullname} ingin memesan ${product?.nama}"
+                        openWhatsApp(
+                            context = context,
+                            phoneNumber = product?.dataPemilik?.nomorTelepon ?: "",
+                            message = message
                         )
-                        .background(color = MyStyle.colors.bgWhite)
-                        .padding(16.sdp)
-                ) {
-//                    val message =
-//                        "Halo, saya ${profileData.dataDiri.fullname} ingin memesan ${product?.nama}"
-//                    openWhatsApp(
-//                        context = context,
-//                        phoneNumber = product?.dataPemilik?.nomorTelepon ?: "",
-////                        message = message
-//                    )
+                    }
                 }
             } else if (paperPrefs.getRole() == "admin") {
-                ButtonCustom(
-                    text = "Verifikasi",
-                    enabled = false,
-                    modifier = Modifier
-                        .shadow(
-                            elevation = 10.sdp, // Adjust the elevation as needed
-                            shape = RectangleShape, // Ensure shadow is drawn for the entire Box
-                            clip = false // Don't clip the content to the shape
-                        )
-                        .background(color = MyStyle.colors.bgWhite)
-                        .padding(16.sdp)
-                ) {
-                    val data = VerifyProductRequest(
-                        idProduk = "${product?.id ?: -1}",
-                        status = selectedVerifyStatus,
-                        alasanPenolakan = alasanPenolakan
-                    )
-                    viewModel.verifyProduct(data)
+                if (product?.status == "requested") {
+                    Row(
+                        Modifier
+                            .shadow(
+                                elevation = 10.sdp, // Adjust the elevation as needed
+                                shape = RectangleShape, // Ensure shadow is drawn for the entire Box
+                                clip = false // Don't clip the content to the shape
+                            )
+                            .background(color = MyStyle.colors.bgWhite)
+                            .padding(16.sdp)
+                    ) {
+                        ButtonCustom(
+                            text = "Terima",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.sdp)
+                        ) {
+                            val data = VerifyProductRequest(
+                                idProduk = "${product.id}",
+                                status = "accepted",
+                            )
+                            viewModel.verifyProduct(data)
+                        }
+                        ButtonCustom(
+                            text = "Tolak",
+                            type = ButtonType.Danger,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.sdp)
+                        ) {
+                            showDialogReject = true
+                        }
+                    }
                 }
             }
         },
@@ -133,6 +243,7 @@ fun DetailProductScreen(
         Column(
             Modifier
                 .padding(innerPadding)
+                .background(MyStyle.colors.bgWhite)
                 .verticalScroll(rememberScrollState())
         ) {
             val pagerState = rememberPagerState(pageCount = { product?.gambar?.size ?: 0 })
@@ -275,7 +386,7 @@ fun DetailProductScreen(
             Column(
                 modifier = Modifier
                     .padding(horizontal = 24.sdp)
-                    .padding(bottom = 32.sdp)
+                    .padding(bottom = if (paperPrefs.getRole() == "admin") 0.sdp else 32.sdp)
             ) {
                 Text(
                     text = product?.dataPemilik?.fullname ?: "",

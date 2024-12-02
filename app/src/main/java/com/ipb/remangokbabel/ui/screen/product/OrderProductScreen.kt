@@ -20,7 +20,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -56,12 +55,10 @@ import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.profile.ProfileAddressCard
-import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
-import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
@@ -268,7 +265,6 @@ fun OrderProductScreen(
                             .size(36.sdp)
                             .background(MyStyle.colors.primaryMain)
                             .clickable {
-                                navigateTo(navController, Screen.AddProfile.route)
                             },
                         contentAlignment = Alignment.Center
                     ) {

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -45,47 +47,57 @@ fun SelectableDialog(
     selectedItem: String = "",
     selectableItems: List<String> = listOf(),
 ) {
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = true,
+    )
     val scope = rememberCoroutineScope()
     var selectedItem by remember { mutableStateOf(selectedItem) }
 
     if (showDialog) {
         ModalBottomSheet(
             onDismissRequest = onDismissRequest,
-            sheetState = sheetState
+            sheetState = sheetState,
+            modifier = modifier
         ) {
             Column(
-                modifier = modifier
+                modifier = Modifier
             ) {
-                selectableItems.forEach { item ->
-                    Row(
-                        modifier = Modifier
-                            .clickable {
-                                selectedItem = item
+                LazyColumn(
+                    modifier = Modifier,
+                    userScrollEnabled = true
+                ) {
+                    items(selectableItems) { item ->
+                        Row(
+                            modifier = Modifier
+                                .clickable {
+                                    selectedItem = item
+                                }
+                                .padding(8.sdp)
+                                .fillMaxWidth()
+                                .height(24.sdp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(text = item, modifier = Modifier.weight(1f))
+                            if (item == selectedItem) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = MyStyle.colors.primaryMain,
+                                    modifier = Modifier.size(24.sdp)
+                                )
                             }
-                            .padding(8.sdp)
-                            .fillMaxWidth()
-                            .height(24.sdp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = item, modifier = Modifier.weight(1f))
-                        if (item == selectedItem) {
-                            Icon(
-                                imageVector = Icons.Default.Check,
-                                contentDescription = null,
-                                tint = MyStyle.colors.primaryMain,
-                                modifier = Modifier.size(24.sdp)
+                        }
+                        if (item != selectableItems.last()) {
+                            HorizontalDivider(
+                                color = MyStyle.colors.bgSecondary,
                             )
                         }
                     }
-                    if (item != selectableItems.last()) {
-                        HorizontalDivider(
-                            color = MyStyle.colors.bgSecondary,
-                        )
-                    }
                 }
                 Row(
-                    modifier = Modifier.padding(8.sdp),
+                    modifier = Modifier
+                        .padding(horizontal = 8.sdp)
+                        .padding(top = 8.sdp, bottom = 16.sdp),
                 ) {
                     ButtonCustom(
                         text = "Pilih",

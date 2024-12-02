@@ -93,7 +93,7 @@ fun RegisterScreen(
             alamat = "Jl. Jend. Sudirman No. 1"
             kodePos = "33111"
         }
-        profileViewModel.getKecamatan("1904")
+        profileViewModel.getKecamatan()
     }
 
     LaunchedEffect(registerState) {

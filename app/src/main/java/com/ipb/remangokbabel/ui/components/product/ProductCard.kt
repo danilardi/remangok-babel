@@ -149,7 +149,7 @@ fun ProductCard(
                         .padding(top = 4.sdp)
             )
             Text(
-                text = product?.dataPemilik?.profile?.kotaKabupaten ?: "",
+                text = "Kecamatan ${product?.dataPemilik?.profile?.kecamatan ?: ""}",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
                 maxLines = 1,

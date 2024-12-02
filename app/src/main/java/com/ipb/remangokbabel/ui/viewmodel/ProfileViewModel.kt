@@ -2,7 +2,7 @@ package com.ipb.remangokbabel.ui.viewmodel
 
 import androidx.lifecycle.viewModelScope
 import com.ipb.remangokbabel.data.repository.Repository
-import com.ipb.remangokbabel.model.request.AddProfileRequest
+import com.ipb.remangokbabel.model.request.ProfileRequest
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
 import com.ipb.remangokbabel.model.response.GetProfileResponse
@@ -25,6 +25,8 @@ class ProfileViewModel(private val repository: Repository) : BaseViewModel() {
         MutableStateFlow(listOf())
     private val _getKelurahanState: MutableStateFlow<List<GetKelurahanResponseItem>> =
         MutableStateFlow(listOf())
+    private val _updateProfileState: MutableStateFlow<StatusMessageResponse?> =
+        MutableStateFlow(null as StatusMessageResponse?)
     private val _logoutState: MutableStateFlow<StatusMessageResponse?> =
         MutableStateFlow(null as StatusMessageResponse?)
 
@@ -34,6 +36,8 @@ class ProfileViewModel(private val repository: Repository) : BaseViewModel() {
         get() = _getKecamatanState
     val getKelurahanState: StateFlow<List<GetKelurahanResponseItem>>
         get() = _getKelurahanState
+    val updateProfileState: StateFlow<StatusMessageResponse?>
+        get() = _updateProfileState
     val logoutState: StateFlow<StatusMessageResponse?>
         get() = _logoutState
 
@@ -49,52 +53,41 @@ class ProfileViewModel(private val repository: Repository) : BaseViewModel() {
         }
     }
 
-    fun addProfile(data: AddProfileRequest) {
-//        viewModelScope.launch {
-//            showLoading.emit(true)
-//            try {
-//                addProfileResponse.emit(repository.addProfile(data))
-//            } catch (e: Exception) {
-//                errorResponse.emit(handleException(e))
-//            }
-//            showLoading.emit(false)
-//        }
+    fun clearProfileState() {
+        _getProfileState.value = null
     }
 
-    fun updateProfile(id: String, data: AddProfileRequest) {
-//        viewModelScope.launch {
-//            showLoading.emit(true)
-//            try {
-//                updateProfileResponse.emit(repository.updateProfile(id, data))
-//            } catch (e: Exception) {
-//                errorResponse.emit(handleException(e))
-//            }
-//            showLoading.emit(false)
-//        }
-    }
-
-    fun deleteProfile(id: String) {
-//        viewModelScope.launch {
-//            showLoading.emit(true)
-//            try {
-//                deleteProfileResponse.emit(repository.deleteProfile(id))
-//            } catch (e: Exception) {
-//                errorResponse.emit(handleException(e))
-//            }
-//            showLoading.emit(false)
-//        }
-    }
-
-    fun getKecamatan(id: String) {
+    fun updateProfile(data: ProfileRequest) {
         viewModelScope.launch {
             setLoading(true)
             try {
-                _getKecamatanState.value = repository.getKecamatan(id)
+                _updateProfileState.value = repository.updateProfile(data)
             } catch (e: Exception) {
                 setError(handleException(e))
             }
             setLoading(false)
         }
+    }
+
+    fun clearUpdateProfileState() {
+        _updateProfileState.value = null
+    }
+
+    fun getKecamatan(id: String = "1904") {
+        viewModelScope.launch {
+            setLoading(true)
+            try {
+                _getKecamatanState.value = repository.getKecamatan(id)
+//                println("cekkk1 ${_getKecamatanState.value}")
+            } catch (e: Exception) {
+                setError(handleException(e))
+            }
+            setLoading(false)
+        }
+    }
+
+    fun clearKecamatanState() {
+        _getKecamatanState.value = listOf()
     }
 
     fun getKelurahan(id: String) {
@@ -119,5 +112,9 @@ class ProfileViewModel(private val repository: Repository) : BaseViewModel() {
             }
             setLoading(false)
         }
+    }
+
+    fun clearLogoutState() {
+        _logoutState.value = null
     }
 }

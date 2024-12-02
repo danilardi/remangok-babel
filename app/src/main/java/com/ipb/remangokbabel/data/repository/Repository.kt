@@ -7,6 +7,7 @@ import com.ipb.remangokbabel.data.remote.ApiService
 import com.ipb.remangokbabel.model.request.AddOrderRequest
 import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.request.ProfileRequest
 import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
@@ -97,8 +98,8 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
         return apiService.addProfile(data)
     }
 
-    suspend fun updateProfile(id: String, data: AddProfileRequest): StatusMessageResponse {
-        return apiService.updateProfile(id, data)
+    suspend fun updateProfile(data: ProfileRequest): StatusMessageResponse {
+        return apiService.updateProfile(data)
     }
 
     suspend fun deleteProfile(id: String): StatusMessageResponse {

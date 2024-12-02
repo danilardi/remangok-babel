@@ -32,7 +32,7 @@ data class VerifyProductRequest(
     val idProduk: String,
 
     @field:SerializedName("alasanPenolakan")
-    val alasanPenolakan: String,
+    val alasanPenolakan: String? = null,
 
     @field:SerializedName("status")
     val status: String

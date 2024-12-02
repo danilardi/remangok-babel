@@ -3,6 +3,7 @@ package com.ipb.remangokbabel.data.remote
 import com.ipb.remangokbabel.model.request.AddOrderRequest
 import com.ipb.remangokbabel.model.request.AddProfileRequest
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.model.request.ProfileRequest
 import com.ipb.remangokbabel.model.request.RefreshTokenRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.request.UpdateTransactionRequest
@@ -53,7 +54,7 @@ interface ApiService {
     suspend fun getAllProducts(
         @Query ("limit") limit: Int,
         @Query ("offset") offset: Int,
-        @Query ("kelurahan") kelurahan: String? = null,
+        @Query ("kecamatan") kecamatan: String? = null,
     ): GetAllProductResponse
 
     @GET("products/self")
@@ -134,10 +135,9 @@ interface ApiService {
         @Body data: AddProfileRequest
     ): StatusMessageResponse
 
-    @PUT("profiles/{id}")
+    @PUT("profiles")
     suspend fun updateProfile(
-        @Path("id") id: String,
-        @Body data: AddProfileRequest
+        @Body data: ProfileRequest
     ): StatusMessageResponse
 
     @DELETE("profiles/{id}")

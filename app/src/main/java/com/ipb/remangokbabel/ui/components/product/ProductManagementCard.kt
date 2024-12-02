@@ -99,8 +99,13 @@ fun ProductManagementCard(
                                 }
                             )
                     ) {
+                        val status = when (product?.status) {
+                            "accepted" -> "Diterima"
+                            "rejected" -> "Ditolak"
+                            else -> "Menunggu Verifikasi"
+                        }
                         Text(
-                            text = product?.status ?: "Rejected",
+                            text = status,
                             style = MaterialTheme.typography.bodySmall,
                             color = MyStyle.colors.textWhite,
                             modifier = Modifier
@@ -149,8 +154,13 @@ fun ProductManagementCard(
                                 }
                             )
                     ) {
+                        val status = when (product?.status) {
+                            "accepted" -> "Diterima"
+                            "rejected" -> "Ditolak"
+                            else -> "Menunggu Verifikasi"
+                        }
                         Text(
-                            text = product?.status ?: "Rejected",
+                            text = status,
                             style = MaterialTheme.typography.bodySmall,
                             color = MyStyle.colors.textWhite,
                             modifier = Modifier
@@ -213,14 +223,26 @@ fun ProductManagementCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (paperPrefs.getRole() == "admin") {
-                    ButtonCustom(
-                        text = "Verifikasi Product",
-                        modifier = Modifier
-                            .weight(1f)
-                            .padding(horizontal = 16.sdp, vertical = 8.sdp)
-                    ) {
-
+                    if (product?.status == "requested") {
+                        ButtonCustom(
+                            text = "Verifikasi Product",
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp)
+                        ) {
+                            onClickCardItem()
+                        }
+                    } else if (product?.status == "rejected") {
+                        Column(
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(horizontal = 16.sdp, vertical = 8.sdp)
+                        ) {
+                            Text(text = "Alasan Penolakan :", style = MaterialTheme.typography.titleSmall)
+                            Text(text = product.alasanPenolakan ?: "", style = MaterialTheme.typography.bodySmall, overflow = TextOverflow.Ellipsis, maxLines = 2)
+                        }
                     }
+
                 } else {
                     if (product?.status == "requested") {
                         ButtonCustom(
@@ -268,13 +290,13 @@ fun ProductManagementCard(
                             Text(text = product?.alasanPenolakan ?: "", style = MaterialTheme.typography.bodySmall, overflow = TextOverflow.Ellipsis, maxLines = 2)
                         }
                         ButtonCustom(
-                            text = "Hapus",
-                            type = ButtonType.Danger,
+                            text = "Perbaiki",
+                            type = ButtonType.Warning,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(horizontal = 16.sdp, vertical = 8.sdp)
                         ) {
-                            onDeleteClick()
+                            onEditClick()
                         }
                     }
                 }

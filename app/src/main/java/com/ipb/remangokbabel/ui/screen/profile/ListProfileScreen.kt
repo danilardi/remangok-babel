@@ -108,7 +108,7 @@ fun ListProfileScreen(
                     .background(color = MyStyle.colors.bgWhite)
                     .padding(16.sdp)
             ) {
-                navigateTo(navController, Screen.AddProfile.route)
+//                navigateTo(navController, Screen.AddProfile.route)
             }
         },
         modifier = modifier

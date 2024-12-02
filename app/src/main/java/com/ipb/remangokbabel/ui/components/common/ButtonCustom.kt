@@ -63,6 +63,11 @@ fun ButtonCustom(
             borderColor = MyStyle.colors.errorBorder
             textColor = MyStyle.colors.textWhite
         }
+        ButtonType.Warning -> {
+            containerColor = MyStyle.colors.warningMain
+            borderColor = MyStyle.colors.warningBorder
+            textColor = MyStyle.colors.textWhite
+        }
     }
     Button(
         onClick = onClick,

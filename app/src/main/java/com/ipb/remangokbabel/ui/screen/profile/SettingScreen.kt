@@ -10,29 +10,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
+import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.google.gson.Gson
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
@@ -53,39 +53,15 @@ fun SettingScreen(
         factory = ViewModelFactory(Injection.provideRepository())
     )
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
     val paperPrefs = PaperPrefs(context)
 
-    var showLoading by remember { mutableStateOf(false) }
-
-    LaunchedEffect(Unit) {
-//        coroutineScope.launch {
-//            viewModel.logoutResponse.collect {
-//                Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
-//                paperPrefs.deleteAllData()
-//                navigateToAndMakeTop(navController, Screen.Login.route)
-//            }
-//        }
-//        coroutineScope.launch {
-//            viewModel.showLoading.collect {
-//                showLoading = it
-//            }
-//        }
-//        coroutineScope.launch {
-//            viewModel.errorResponse.collect { errorResponse ->
-//                Toast.makeText(context, errorResponse.message, Toast.LENGTH_SHORT).show()
-//                if (errorResponse.message == "token anda tidak valid") {
-//                    paperPrefs.deleteAllData()
-//                    navigateToAndMakeTop(navController, Screen.Login.route)
-//                }
-//            }
-//        }
-    }
+    val profileData = paperPrefs.getProfile()
 
     viewModel.logoutState.collectAsState().value?.let {
         Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
         paperPrefs.deleteAllData()
+        viewModel.clearLogoutState()
         navigateToAndMakeTop(navController, Screen.Login.route)
     }
 
@@ -113,18 +89,51 @@ fun SettingScreen(
         Column(
             modifier = Modifier
                 .background(MyStyle.colors.bgWhite)
-                .padding(top = innerPadding.calculateTopPadding())
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding()
+                )
                 .fillMaxSize()
+                .verticalScroll(rememberScrollState())
         ) {
-            MenuItem(
-                title = "Profil",
-                onClick = {
-                },
+            Column(
                 modifier = Modifier
-                    .padding(top = 2.sdp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.sdp)
+                    .padding(top = 8.sdp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = "",
+                    modifier = Modifier
+                        .size(100.sdp)
+                        .align(Alignment.CenterHorizontally),
+                    tint = MyStyle.colors.primaryMain
+                )
+                ProfileItem(label = "NIK", value = profileData?.nik ?: "")
+                ProfileItem(label = "Nama", value = profileData?.dataDiri?.fullname ?: "")
+                ProfileItem(label = "Email", value = profileData?.dataDiri?.email ?: "")
+                ProfileItem(
+                    label = "Nomor Telepon",
+                    value = profileData?.dataDiri?.nomorTelepon ?: ""
+                )
+                ProfileItem(label = "Provinsi", value = "Kepulauan Bangka Belitung")
+                ProfileItem(label = "Kabupaten/Kota", value = profileData?.kotaKabupaten ?: "")
+                ProfileItem(label = "Kecamatan", value = profileData?.kecamatan ?: "")
+                ProfileItem(label = "Kelurahan", value = profileData?.kelurahan ?: "")
+                ProfileItem(label = "Alamat", value = profileData?.alamat ?: "")
+                ProfileItem(label = "Kode Pos", value = profileData?.kodePos ?: "")
+            }
+            HorizontalDivider()
+            MenuItem(
+                title = "Perbarui Profil",
+                onClick = {
+                    val data = Uri.encode(Gson().toJson(profileData))
+                    navigateToAndMakeTop(navController, Screen.EditProfile.createRoute(data))
+                }
             )
             MenuItem(
-                title = "Bantuan",
+                title = "Panduan Aplikasi",
                 onClick = {
                     val url =
                         "https://drive.google.com/drive/folders/1-yfATreiuyU7REd_dQRorx0heRbzO1-q"
@@ -175,4 +184,20 @@ fun MenuItem(
         )
     }
     HorizontalDivider()
+}
+
+@Composable
+fun ProfileItem(label: String, value: String, modifier: Modifier = Modifier) {
+    Column(modifier = modifier.padding(bottom = 8.sdp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.titleSmall,
+            color = MyStyle.colors.textPrimary,
+            fontWeight = FontWeight.Bold
+        )
+        Text(
+            text = value,
+            style = MaterialTheme.typography.bodyLarge
+        )
+    }
 }

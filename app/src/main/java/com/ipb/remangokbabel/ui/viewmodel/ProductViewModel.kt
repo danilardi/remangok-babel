@@ -57,7 +57,7 @@ class ProductViewModel(private val repository: Repository) : BaseViewModel() {
         get() = _uploadProductState
     val deleteProductState: StateFlow<StatusMessageResponse?>
         get() = _deleteProductState
-    val verifyProductRequest: StateFlow<StatusMessageResponse?>
+    val verifyProductState: StateFlow<StatusMessageResponse?>
         get() = _verifyProductState
 
 
@@ -65,7 +65,13 @@ class ProductViewModel(private val repository: Repository) : BaseViewModel() {
         viewModelScope.launch {
             setLoading(true)
             try {
-                _productStateAll.value = repository.getAllProducts(limit, offset, kecamatan)
+                if (kecamatan?.isEmpty() == true) {
+                    println("masuk sini")
+                    _productStateAll.value = repository.getAllProducts(limit, offset, null)
+                } else {
+                    println("masuk sini2 $kecamatan")
+                    _productStateAll.value = repository.getAllProducts(limit, offset, kecamatan)
+                }
             } catch (e: Exception) {
                 setError(handleException(e))
             }
@@ -219,5 +225,9 @@ class ProductViewModel(private val repository: Repository) : BaseViewModel() {
             }
             setLoading(false)
         }
+    }
+
+    fun clearVerifyProductState() {
+        _verifyProductState.value = null
     }
 }

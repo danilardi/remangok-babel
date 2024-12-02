@@ -126,21 +126,6 @@ fun ProfileImage(modifier: Modifier = Modifier) {
     )
 }
 
-@Composable
-fun ProfileItem(label: String, value: String) {
-    Column(modifier = Modifier.padding(bottom = 8.sdp)) {
-        Text(
-            text = "$label",
-            style = MaterialTheme.typography.titleSmall,
-            fontWeight = FontWeight.Bold
-        )
-        Text(
-            text = value,
-            style = MaterialTheme.typography.bodyLarge
-        )
-    }
-}
-
 data class Profile(
     val name: String,
     val province: String,

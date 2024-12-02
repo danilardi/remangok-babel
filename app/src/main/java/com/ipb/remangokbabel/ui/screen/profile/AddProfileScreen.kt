@@ -63,7 +63,9 @@ fun AddProfileScreen(
     val paperPrefs = PaperPrefs(context)
     var showLoading by remember { mutableStateOf(false) }
 
-    val returnedData = navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("data_key") ?: listOf("", "", "", "")
+    val returnedData =
+        navController.currentBackStackEntry?.savedStateHandle?.get<List<String>>("data_key")
+            ?: listOf("", "", "", "")
 
     var isEdit by remember { mutableStateOf(false) }
 
@@ -151,60 +153,61 @@ fun AddProfileScreen(
         LoadingDialog()
     }
 
-    Scaffold(topBar = {
-        BackTopBar(title = if (isEdit) "Edit Alamat" else "Tambah Alamat") {
-            navigateToBack(navController)
-        }
-    }, bottomBar = {
-        Row {
-            if(isEdit) {
+    Scaffold(
+        topBar = {
+            BackTopBar(title = if (isEdit) "Edit Alamat" else "Tambah Alamat") {
+                navigateToBack(navController)
+            }
+        },
+        bottomBar = {
+            Row {
+                if (isEdit) {
+                    ButtonCustom(
+                        text = "Hapus",
+                        type = ButtonType.Danger,
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(16.sdp),
+                        onClick = {
+                        },
+                    )
+                }
                 ButtonCustom(
-                    text = "Hapus",
-                    type = ButtonType.Danger,
+                    text = "Simpan",
                     modifier = Modifier
                         .weight(1f)
                         .padding(16.sdp),
+                    enabled = namaDepan.isNotEmpty() &&
+                            namaBelakang.isNotEmpty() &&
+                            nomorTelepon.isNotEmpty() &&
+                            alamat.isNotEmpty() &&
+                            namaKelurahan.isNotEmpty() &&
+                            namaKecamatan.isNotEmpty() &&
+                            namaKotaKabupaten.isNotEmpty() &&
+                            namaProvinsi.isNotEmpty() &&
+                            kodePos.isNotEmpty(),
                     onClick = {
-                        viewModel.deleteProfile(data!!.id)
+                        val request = AddProfileRequest(
+                            namaDepan = namaDepan,
+                            namaBelakang = namaBelakang,
+                            nomorTelepon = nomorTelepon,
+                            alamat = alamat,
+                            namaKelurahan = namaKelurahan,
+                            namaKecamatan = namaKecamatan,
+                            namaKotaKabupaten = namaKotaKabupaten,
+                            namaProvinsi = namaProvinsi,
+                            kodePos = kodePos
+                        )
+                        println(request)
+                        if (isEdit) {
+//                        viewModel.updateProfile(data!!.id, request)
+                        } else {
+//                        viewModel.addProfile(request)
+                        }
                     },
                 )
             }
-            ButtonCustom(
-                text = "Simpan",
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(16.sdp),
-                enabled = namaDepan.isNotEmpty() &&
-                        namaBelakang.isNotEmpty() &&
-                        nomorTelepon.isNotEmpty() &&
-                        alamat.isNotEmpty() &&
-                        namaKelurahan.isNotEmpty() &&
-                        namaKecamatan.isNotEmpty() &&
-                       namaKotaKabupaten.isNotEmpty() &&
-                        namaProvinsi.isNotEmpty() &&
-                        kodePos.isNotEmpty(),
-                onClick = {
-                    val request = AddProfileRequest(
-                        namaDepan = namaDepan,
-                        namaBelakang = namaBelakang,
-                        nomorTelepon = nomorTelepon,
-                        alamat = alamat,
-                        namaKelurahan = namaKelurahan,
-                        namaKecamatan = namaKecamatan,
-                        namaKotaKabupaten =namaKotaKabupaten,
-                        namaProvinsi = namaProvinsi,
-                        kodePos = kodePos
-                    )
-                    println(request)
-                    if (isEdit) {
-                        viewModel.updateProfile(data!!.id, request)
-                    } else {
-                        viewModel.addProfile(request)
-                    }
-                },
-            )
-        }
-    }) { innerPadding ->
+        }) { innerPadding ->
         Column(
             modifier = modifier
                 .verticalScroll(rememberScrollState())

@@ -4,12 +4,15 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -37,6 +40,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
+import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateTo
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -46,7 +50,10 @@ import ir.kaaveh.sdpcompose.ssp
 fun LoginScreen(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    viewModel: AuthViewModel = viewModel(
+    authViewModel: AuthViewModel = viewModel(
+        factory = ViewModelFactory(Injection.provideRepository())
+    ),
+    profileViewModel: ProfileViewModel = viewModel(
         factory = ViewModelFactory(Injection.provideRepository())
     )
 ) {
@@ -63,102 +70,134 @@ fun LoginScreen(
         email = paperPrefs.getEmailSaved()
     }
 
-    viewModel.loginState.collectAsState().value?.let {
+    authViewModel.loginState.collectAsState().value?.let {
         LaunchedEffect(Unit) {
             val data = it.dataLoginResponse
             paperPrefs.setAccessToken(data.accessToken)
             paperPrefs.setRefreshToken(data.refreshToken)
             paperPrefs.setRole(data.roleId)
             paperPrefs.setEmailSaved(email)
+            profileViewModel.getProfile()
+        }
+    }
+
+    profileViewModel.getProfileState.collectAsState().value?.let {
+        LaunchedEffect(Unit) {
+            paperPrefs.setProfile(it.data.profiles)
             Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-            val destination = if (data.roleId == "admin") Screen.ManagementProduct.route else Screen.Home.route
+            val destination = if (paperPrefs.getRole() == "admin") Screen.ManagementProduct.route else Screen.Home.route
+            profileViewModel.clearProfileState()
             navigateTo(navController, destination)
         }
     }
 
-    viewModel.errorResponse.collectAsState().value.let {
+    authViewModel.errorResponse.collectAsState().value.let {
         if (it.message?.isNotEmpty() == true) {
             Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
         }
-        viewModel.clearError()
+        authViewModel.clearError()
     }
 
-    viewModel.showLoading.collectAsState().value.let {
+    authViewModel.showLoading.collectAsState().value.let {
         if (it) LoadingDialog()
     }
 
-    Column(
+    profileViewModel.showLoading.collectAsState().value.let {
+        if (it) LoadingDialog()
+    }
+
+    profileViewModel.errorResponse.collectAsState().value.let {
+        if (it.message?.isNotEmpty() == true) {
+            Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
+            if (it.message == "token anda tidak valid") {
+                paperPrefs.deleteAllData()
+            }
+        }
+        profileViewModel.clearError()
+    }
+
+    Box(
         modifier = modifier
             .fillMaxSize()
             .background(color = MyStyle.colors.bgWhite)
-            .padding(horizontal = 16.sdp)
+            .padding(horizontal = 16.sdp, vertical = 24.sdp)
+            .imePadding()
     ) {
-        Text(
-            text = "Remangok Babel",
-            style = MyStyle.typography.baseBold,
-            fontSize = 28.ssp,
-            color = MyStyle.colors.textPrimary,
+        Column(
             modifier = Modifier
-                .padding(top = 24.sdp)
-                .align(Alignment.CenterHorizontally)
-                .clickable {
-                },
-        )
-        Text(
-            text = "Hai, Selamat Datang di Remangok Babel 🦀",
-            style = MyStyle.typography.xsSemibold,
-            color = MyStyle.colors.textBlack,
-            modifier = Modifier.padding(top = 16.sdp)
-        )
-        Text(
-            text = "Silahkan Masuk",
-            style = MyStyle.typography.xsMedium,
-            color = MyStyle.colors.textGrey,
-        )
-        InputLayout(
-            title = "Email",
-            value = email,
-            hint = "Silahkan masukkan email anda",
-            modifier = Modifier
-                .padding(top = 16.sdp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            email = it
-        }
-        InputLayout(
-            title = "Kata Sandi",
-            value = password,
-            hint = "Silahkan masukkan kata sandi anda",
-            modifier = Modifier
-                .padding(top = 16.sdp),
-            isPassword = true
-        ) {
-            password = it
-        }
-        Spacer(modifier = Modifier.weight(1f))
-        ButtonCustom(
-            text = "Masuk",
-            enabled = email.isNotEmpty() && password.isNotEmpty(),
-            modifier = Modifier
-        ) {
-            viewModel.login(LoginRequest(email, password))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 16.sdp, bottom = 24.sdp),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            Text(text = "Belum punya akun?", style = MyStyle.typography.xsMedium)
             Text(
-                text = "Daftar disini",
-                style = MyStyle.typography.xsMedium,
-                color = MyStyle.colors.textHijau,
+                text = "Remangok Babel",
+                style = MyStyle.typography.baseBold,
+                fontSize = 28.ssp,
+                color = MyStyle.colors.textPrimary,
                 modifier = Modifier
-                    .padding(start = 4.sdp)
+                    .align(Alignment.CenterHorizontally)
                     .clickable {
-                        navigateTo(navController, Screen.Register.route)
-                    }
+                    },
             )
+            Text(
+                text = "Hai, Selamat Datang di Remangok Babel 🦀",
+                style = MyStyle.typography.xsSemibold,
+                color = MyStyle.colors.textBlack,
+                modifier = Modifier.padding(top = 16.sdp)
+            )
+            Text(
+                text = "Silahkan Masuk",
+                style = MyStyle.typography.xsMedium,
+                color = MyStyle.colors.textGrey,
+            )
+            InputLayout(
+                title = "Email",
+                value = email,
+                hint = "Silahkan masukkan email anda",
+                modifier = Modifier
+                    .padding(top = 16.sdp)
+            ) {
+                email = it
+            }
+            InputLayout(
+                title = "Kata Sandi",
+                value = password,
+                hint = "Silahkan masukkan kata sandi anda",
+                modifier = Modifier
+                    .padding(top = 16.sdp),
+                isPassword = true
+            ) {
+                password = it
+            }
+        }
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            ButtonCustom(
+                text = "Masuk",
+                enabled = email.isNotEmpty() && password.isNotEmpty(),
+                modifier = Modifier
+            ) {
+                authViewModel.login(LoginRequest(email, password))
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 16.sdp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                Text(text = "Belum punya akun?", style = MyStyle.typography.xsMedium)
+                Text(
+                    text = "Daftar disini",
+                    style = MyStyle.typography.xsMedium,
+                    color = MyStyle.colors.textHijau,
+                    modifier = Modifier
+                        .padding(start = 4.sdp)
+                        .clickable {
+                            navigateTo(navController, Screen.Register.route)
+                        }
+                )
+            }
         }
     }
 }

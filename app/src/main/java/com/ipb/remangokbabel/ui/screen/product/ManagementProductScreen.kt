@@ -79,6 +79,12 @@ fun ManagementProductScreen(
         "rejected",
     )
 
+    val statusProductTitle = listOf(
+        "Konfirmasi",
+        "Diterima",
+        "Ditolak",
+    )
+
     var productList by remember { mutableStateOf<List<ProductItem>>(emptyList()) }
 
     var productOnDelete by remember { mutableIntStateOf(0) }
@@ -171,7 +177,7 @@ fun ManagementProductScreen(
                         )
                         .background(MyStyle.colors.bgWhite)
                 ) {
-                    statusProduct.forEachIndexed { index, it ->
+                    statusProductTitle.forEachIndexed { index, it ->
                         Box(
                             modifier = Modifier
                                 .weight(1f)

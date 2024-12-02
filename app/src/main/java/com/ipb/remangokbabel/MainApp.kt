@@ -31,6 +31,7 @@ import androidx.navigation.navArgument
 import com.google.gson.Gson
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.model.response.ProductItem
+import com.ipb.remangokbabel.model.response.ProfilesItem
 import com.ipb.remangokbabel.ui.components.common.BottomBar
 import com.ipb.remangokbabel.ui.navigation.NavigationItem
 import com.ipb.remangokbabel.ui.navigation.Screen
@@ -41,6 +42,7 @@ import com.ipb.remangokbabel.ui.screen.home.HomeScreen
 import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
 import com.ipb.remangokbabel.ui.screen.product.DetailProductScreen
 import com.ipb.remangokbabel.ui.screen.product.ManagementProductScreen
+import com.ipb.remangokbabel.ui.screen.profile.EditProfileScreen
 import com.ipb.remangokbabel.ui.screen.profile.SettingScreen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
@@ -68,7 +70,7 @@ fun MainApp(
             screen = Screen.ManagementProduct
         ),
         NavigationItem(
-            title = "Profil",
+            title = "Profile",
             icon = Icons.Default.AccountCircle,
             screen = Screen.Setting
         ),
@@ -84,7 +86,7 @@ fun MainApp(
             screen = Screen.ManagementProduct
         ),
         NavigationItem(
-            title = "Profil",
+            title = "Profile",
             icon = Icons.Default.AccountCircle,
             screen = Screen.Setting
         ),
@@ -163,7 +165,7 @@ fun MainApp(
             startDestination = startDestination,
             modifier = Modifier.padding(
                 top = innerPadding.calculateTopPadding(),
-                bottom = if (innerPadding.calculateBottomPadding() != 0.sdp) innerPadding.calculateBottomPadding() - 16.sdp else 0.sdp
+                bottom = if (innerPadding.calculateBottomPadding() > 16.sdp) innerPadding.calculateBottomPadding() - 16.sdp else 0.sdp
             )
         ) {
             composable(Screen.Splash.route) {
@@ -227,6 +229,17 @@ fun MainApp(
             composable(Screen.Setting.route) {
                 SettingScreen(
                     navController = navController,
+                )
+            }
+            composable(
+                route = Screen.EditProfile.route,
+                arguments = listOf(navArgument("profileData") { type = NavType.StringType })
+            ) {
+                val jsonProfileData = it.arguments?.getString("profileData") ?: ""
+                val profileData = Gson().fromJson(jsonProfileData, ProfilesItem::class.java)
+                EditProfileScreen(
+                    navController = navController,
+                    profileData = profileData
                 )
             }
         }
