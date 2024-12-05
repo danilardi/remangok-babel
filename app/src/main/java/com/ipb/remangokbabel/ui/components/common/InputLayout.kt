@@ -43,6 +43,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.sp
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
 import ir.kaaveh.sdpcompose.sdp
@@ -80,7 +81,7 @@ fun InputLayout(
         if (title.isNotEmpty()) {
             Text(
                 text = title,
-                style = textStyle,
+                style = MyStyle.typography.baseNormal,
                 color = MyStyle.colors.textBlack
             )
         }
@@ -112,14 +113,14 @@ fun InputLayout(
                         Modifier.border(
                             width = borderWidth,
                             color = borderColor,
-                            shape = RoundedCornerShape(8.sdp)
+                            shape = RoundedCornerShape(6.sdp)
                         )
                     } else {
                         Modifier  // No border modifier
                     }
                 )
                 .fillMaxWidth()
-                .heightIn(min = 40.sdp, max = if (isLongInput) 120.sdp else 40.sdp),
+                .heightIn(min = 36.sdp, max = if (isLongInput) 120.sdp else 40.sdp),
             singleLine = !isLongInput,
             textStyle = textStyle.copy(
                 color = textColor,
@@ -142,6 +143,7 @@ fun InputLayout(
                                 color = MyStyle.colors.neutral60,
                                 textAlign = if (isRow) TextAlign.End else TextAlign.Start
                             ),
+                            fontSize = 12.sp
                         )
                     }
                     if (isPassword) {

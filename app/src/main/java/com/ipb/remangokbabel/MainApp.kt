@@ -37,6 +37,7 @@ import com.ipb.remangokbabel.ui.navigation.NavigationItem
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.screen.auth.LoginScreen
 import com.ipb.remangokbabel.ui.screen.auth.RegisterScreen
+import com.ipb.remangokbabel.ui.screen.basic.OnBoardingScreen
 import com.ipb.remangokbabel.ui.screen.basic.SplashScreen
 import com.ipb.remangokbabel.ui.screen.home.HomeScreen
 import com.ipb.remangokbabel.ui.screen.product.AddProductScreen
@@ -171,7 +172,7 @@ fun MainApp(
             composable(Screen.Splash.route) {
                 SplashScreen() {
                     val destination = if (paperPref.getAccessToken().isEmpty())
-                        Screen.Login.route
+                        Screen.Onboarding.route
                     else if (paperPref.getRole() == "admin")
                         Screen.ManagementProduct.route
                     else
@@ -240,6 +241,13 @@ fun MainApp(
                 EditProfileScreen(
                     navController = navController,
                     profileData = profileData
+                )
+            }
+            composable(
+                route = Screen.Onboarding.route,
+            ) {
+                OnBoardingScreen(
+                    navController = navController,
                 )
             }
         }

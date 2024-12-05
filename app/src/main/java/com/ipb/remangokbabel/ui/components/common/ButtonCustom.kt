@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.sp
 import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.theme.RemangokBabelTheme
@@ -31,7 +32,7 @@ fun ButtonCustom(
     text: String,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    shape: RoundedCornerShape = RoundedCornerShape(8.sdp),
+    shape: RoundedCornerShape = RoundedCornerShape(6.sdp),
     type: ButtonType = ButtonType.Primary,
     onClick: () -> Unit
 ) {
@@ -79,7 +80,7 @@ fun ButtonCustom(
             .fillMaxWidth()
             .heightIn(min = 36.sdp),
     ) {
-        Text(text, style = MaterialTheme.typography.bodyMedium, color = textColor, textAlign = TextAlign.Center, modifier = Modifier.padding(0.sdp))
+        Text(text, style = MyStyle.typography.baseBold, fontSize = 14.sp, color = textColor, textAlign = TextAlign.Center, modifier = Modifier.padding(0.sdp))
     }
 }
 

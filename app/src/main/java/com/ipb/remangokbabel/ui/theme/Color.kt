@@ -78,9 +78,9 @@ class MyColors {
     val neutral100 = Color(0xFF0A0A0A)
 
     /* Primary Colors (Maritime Theme) */
-    val primaryMain = Color(0xFF009688)     // Hijau Teal (Kesan Tropis dan Segar)
+    val primaryMain = Color( 0xFFCB252E)     // Hijau Teal (Kesan Tropis dan Segar)
     val primarySurface = Color(0xFFE0F2F1)  // Hijau Teal Muda (Latar Belakang Lembut)
-    val primaryBorder = Color(0xFF00796B)   // Hijau Teal Gelap (Aksen)
+    val primaryBorder = Color(0xFFCB252E)   // Hijau Teal Gelap (Aksen)
     val primaryHover = Color(0xFF00897B)    // Hijau Teal Lebih Gelap (Hover)
     val primaryPressed = Color(0xFF00695C)  // Hijau Teal Lebih Gelap (Saat Ditekan)
     val primaryFocus = Color(0x33009688)    // Fokus (Hijau Teal dengan Opacity)
@@ -110,7 +110,7 @@ class MyColors {
     val neutralFocus = Color(0x332B2D42)     // Fokus (Abu-Abu Gelap dengan Opacity)
 
     val bgBiruTua = Color(0xFF0D3B66)
-    val bgPrimary = Color(0xFF00796B)
+    val bgPrimary = Color(0xFF616161)
     val bgSecondary = Color(0xFFEAF0F6)
     val bgHijauTealMuda = Color(0xFFE0F2F1)
     val bgKuningPucat = Color(0xFFFFF9C4)

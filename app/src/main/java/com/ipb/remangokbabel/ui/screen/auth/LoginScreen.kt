@@ -13,6 +13,11 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -85,7 +93,8 @@ fun LoginScreen(
         LaunchedEffect(Unit) {
             paperPrefs.setProfile(it.data.profiles)
             Toast.makeText(context, "Login Berhasil", Toast.LENGTH_SHORT).show()
-            val destination = if (paperPrefs.getRole() == "admin") Screen.ManagementProduct.route else Screen.Home.route
+            val destination =
+                if (paperPrefs.getRole() == "admin") Screen.ManagementProduct.route else Screen.Home.route
             profileViewModel.clearProfileState()
             navigateTo(navController, destination)
         }
@@ -116,88 +125,95 @@ fun LoginScreen(
         profileViewModel.clearError()
     }
 
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(color = MyStyle.colors.bgWhite)
-            .padding(horizontal = 16.sdp, vertical = 24.sdp)
-            .imePadding()
+    Column(
+        modifier.padding(16.dp),
+        horizontalAlignment = Alignment.Start
     ) {
-        Column(
+        CustomNavbar(navController = navController, title = "Masuk")
+        Text(
+            text = "Selamat Datang\nAyo Eksplor Remangok Babel 🦀",
+            style = MyStyle.typography.baseBold,
+            fontSize = 18.sp,
+            color = MyStyle.colors.textBlack,
+            textAlign = TextAlign.Start,
             modifier = Modifier
-                .verticalScroll(rememberScrollState()),
+                .padding(top = 51.dp)
+                .fillMaxWidth()
+        )
+        InputLayout(
+            title = "Email",
+            value = email,
+            hint = "Masukkan Email",
+            modifier = Modifier.padding(top = 20.dp)
         ) {
-            Text(
-                text = "Remangok Babel",
-                style = MyStyle.typography.baseBold,
-                fontSize = 28.ssp,
-                color = MyStyle.colors.textPrimary,
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .clickable {
-                    },
-            )
-            Text(
-                text = "Hai, Selamat Datang di Remangok Babel 🦀",
-                style = MyStyle.typography.xsSemibold,
-                color = MyStyle.colors.textBlack,
-                modifier = Modifier.padding(top = 16.sdp)
-            )
-            Text(
-                text = "Silahkan Masuk",
-                style = MyStyle.typography.xsMedium,
-                color = MyStyle.colors.textGrey,
-            )
-            InputLayout(
-                title = "Email",
-                value = email,
-                hint = "Silahkan masukkan email anda",
-                modifier = Modifier
-                    .padding(top = 16.sdp)
-            ) {
-                email = it
-            }
-            InputLayout(
-                title = "Kata Sandi",
-                value = password,
-                hint = "Silahkan masukkan kata sandi anda",
-                modifier = Modifier
-                    .padding(top = 16.sdp),
-                isPassword = true
-            ) {
-                password = it
-            }
+            email = it
         }
-        Column(
-            modifier = Modifier
-                .fillMaxSize(),
-            verticalArrangement = Arrangement.Bottom
+        InputLayout(
+            title = "Kata Sandi",
+            value = password,
+            hint = "Silahkan masukkan kata sandi anda",
+            modifier = Modifier.padding(top = 16.dp),
+            isPassword = true
         ) {
-            ButtonCustom(
-                text = "Masuk",
-                enabled = email.isNotEmpty() && password.isNotEmpty(),
+            password = it
+        }
+        ButtonCustom(
+            text = "Masuk",
+            enabled = email.isNotEmpty() && password.isNotEmpty(),
+            modifier = Modifier.padding(top = 24.dp)
+        ) {
+            authViewModel.login(LoginRequest(email, password))
+        }
+        Row(
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Text(text = "Belum punya akun?", style = MyStyle.typography.baseNormal)
+            Text(text = "Daftar Disini",
+                style = MyStyle.typography.baseBold,
+                color = MyStyle.colors.primaryMain,
+                fontSize = 12.ssp,
                 modifier = Modifier
-            ) {
-                authViewModel.login(LoginRequest(email, password))
-            }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.sdp),
-                horizontalArrangement = Arrangement.Center,
-            ) {
-                Text(text = "Belum punya akun?", style = MyStyle.typography.xsMedium)
-                Text(
-                    text = "Daftar disini",
-                    style = MyStyle.typography.xsMedium,
-                    color = MyStyle.colors.textHijau,
-                    modifier = Modifier
-                        .padding(start = 4.sdp)
-                        .clickable {
-                            navigateTo(navController, Screen.Register.route)
-                        }
-                )
-            }
+                    .padding(start = 6.sdp)
+                    .clickable {
+                        navigateTo(navController, Screen.Register.route)
+                    })
         }
     }
 }
+
+@Composable
+fun CustomNavbar(
+    modifier: Modifier = Modifier,
+    navController: NavHostController,
+    title: String,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 0.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        if (navController.previousBackStackEntry != null) {
+            IconButton(
+                onClick = {
+                    navController.popBackStack()
+                },
+                modifier = Modifier.align(Alignment.CenterStart)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = "Kembali",
+                )
+            }
+        }
+        Text(
+            text = title,
+            fontSize = 18.sp,
+            style = MyStyle.typography.baseBold,
+        )
+    }
+}
+

@@ -45,7 +45,7 @@ class MyTypography {
         certificates = R.array.com_google_android_gms_fonts_certs
     )
 
-    private val fontName = GoogleFont("Inter")
+    private val fontName = GoogleFont("Nunito Sans")
 
     private val fontFamily = FontFamily(
         Font(googleFont = fontName, fontProvider = provider)
@@ -233,13 +233,13 @@ class MyTypography {
         )
     val baseNormal: TextStyle
         @Composable get() = baseFont.copy(
-            fontSize = 16.ssp,
+            fontSize = 12.ssp,
             fontWeight = FontWeight.Normal,
             lineHeight = 24.ssp
         )
     val baseMedium: TextStyle
         @Composable get() = baseFont.copy(
-            fontSize = 16.ssp,
+            fontSize = 18.ssp,
             fontWeight = FontWeight.Medium,
             lineHeight = 24.ssp
         )

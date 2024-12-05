@@ -1,5 +1,8 @@
 package com.ipb.remangokbabel.ui.components.product
 
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,14 +23,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.model.response.ProductItem
+import com.ipb.remangokbabel.ui.theme.MyColors
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.toRupiah
@@ -42,8 +50,8 @@ fun ProductCard(
 ) {
     Card(
         modifier = modifier
-            .width(160.sdp)
-            .padding(8.sdp),
+            .fillMaxWidth()
+            .padding(horizontal = 10.dp, vertical = 12.dp),
         shape = RoundedCornerShape(12.sdp),
         colors = CardDefaults.cardColors(
             containerColor = MyStyle.colors.bgWhite,
@@ -58,15 +66,30 @@ fun ProductCard(
                 .fillMaxWidth()
                 .padding(8.sdp)
         ) {
-            AsyncImage(
-                model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar.first()}" else "",
-                contentScale = ContentScale.Crop,
-                contentDescription = product?.nama ?: "Nama Produk",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(120.sdp)
-                    .clip(RoundedCornerShape(8.sdp))
+            Row (
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
             )
+            {
+                Text("Penjual : ${product?.dataPemilik?.fullname ?: ""}",
+                    fontSize = 12.sp,
+                    style = MyStyle.typography.baseMedium,
+                )
+                CustomTextContainer(text = "Diterima", color = MyStyle.colors.primaryMain, modifier = modifier )
+            }
+            Row {
+                AsyncImage(
+                    model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar.first()}" else "",
+                    contentScale = ContentScale.Crop,
+                    contentDescription = product?.nama ?: "Nama Produk",
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(93.dp)
+                        .clip(RoundedCornerShape(6.sdp))
+                )
+            }
+
             Spacer(modifier = Modifier.height(4.sdp))
             Text(
                 text = product?.nama ?: "",
@@ -161,4 +184,22 @@ fun ProductCard(
     }
 }
 
+
+@Composable
+fun CustomTextContainer(text: String, color: Color, modifier: Modifier = Modifier) {
+    Box(
+        modifier = modifier
+            .border(width = 1.dp, color = color, shape = RoundedCornerShape(6.dp))
+            .clip(RoundedCornerShape(6.dp))
+    ) {
+        Text(
+            text = text,
+            textAlign = TextAlign.Center,
+            fontSize = 10.sp,
+            style = MyStyle.typography.baseMedium,
+            color = color,
+            modifier = modifier.padding(horizontal = 6.dp, vertical = 4.dp)
+        )
+    }
+}
 

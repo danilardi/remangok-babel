@@ -28,6 +28,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -195,13 +197,14 @@ fun RegisterScreen(
                         .padding(top = 16.sdp, bottom = 24.sdp),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Sudah punya akun?", style = MyStyle.typography.xsMedium)
+                    Text(text = "Sudah punya akun?", style = MyStyle.typography.baseNormal)
                     Text(
                         text = "Masuk",
-                        style = MyStyle.typography.xsMedium,
-                        color = MyStyle.colors.textHijau,
+                        style = MyStyle.typography.baseBold,
+                        color = MyStyle.colors.primaryMain,
+                        fontSize = 12.sp,
                         modifier = Modifier
-                            .padding(start = 4.sdp)
+                            .padding(start = 6.sdp)
                             .clickable {
                                 navigateToBack(navController)
                             }
@@ -219,32 +222,19 @@ fun RegisterScreen(
                 .verticalScroll(rememberScrollState())
                 .imePadding()
         ) {
+           CustomNavbar(navController = navController, title = "Daftar")
             Text(
-                text = "Remangok Babel",
+                text = "Buat Akun Remangkok Babel  🦀",
                 style = MyStyle.typography.baseBold,
-                fontSize = 28.ssp,
-                color = MyStyle.colors.textPrimary,
-                modifier = Modifier
-                    .padding(top = 24.sdp)
-                    .align(Alignment.CenterHorizontally),
-            )
-            Text(
-                text = "Hai, Selamat Datang di Remangok Babel 🦀",
-                style = MyStyle.typography.xsSemibold,
                 color = MyStyle.colors.textBlack,
                 modifier = Modifier.padding(top = 16.sdp)
-            )
-            Text(
-                text = "Silahkan Daftar",
-                style = MyStyle.typography.xsMedium,
-                color = MyStyle.colors.textGrey,
             )
             InputLayout(
                 title = "Nama Lengkap",
                 value = fullname,
                 hint = "Silahkan masukkan nama anda",
                 modifier = Modifier
-                    .padding(top = 8.sdp)
+                    .padding(top = 16.dp)
             ) {
                 fullname = it
             }
