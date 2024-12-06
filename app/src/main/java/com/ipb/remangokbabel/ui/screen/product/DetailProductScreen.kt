@@ -58,6 +58,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.openWhatsApp
@@ -190,7 +191,7 @@ fun DetailProductScreen(
                             .padding(16.sdp)
                     ) {
                         val message =
-                            "Halo, saya ${profileData?.dataDiri?.fullname} ingin memesan ${product?.nama}"
+                            "Halo, saya ${profileData?.dataDiri?.fullname} ingin memesan ${product?.nama?.capitalizeEachWord()}"
                         openWhatsApp(
                             context = context,
                             phoneNumber = product?.dataPemilik?.nomorTelepon ?: "",
@@ -211,7 +212,17 @@ fun DetailProductScreen(
                             .padding(16.sdp)
                     ) {
                         ButtonCustom(
+                            text = "Tolak",
+                            type = ButtonType.Danger,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(8.sdp)
+                        ) {
+                            showDialogReject = true
+                        }
+                        ButtonCustom(
                             text = "Terima",
+                            type = ButtonType.Success,
                             modifier = Modifier
                                 .weight(1f)
                                 .padding(8.sdp)
@@ -221,15 +232,6 @@ fun DetailProductScreen(
                                 status = "accepted",
                             )
                             viewModel.verifyProduct(data)
-                        }
-                        ButtonCustom(
-                            text = "Tolak",
-                            type = ButtonType.Danger,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(8.sdp)
-                        ) {
-                            showDialogReject = true
                         }
                     }
                 }
@@ -308,7 +310,7 @@ fun DetailProductScreen(
                 modifier = Modifier.padding(16.sdp)
             ) {
                 Text(
-                    text = product?.nama ?: "Testing",
+                    text = product?.nama?.capitalizeEachWord() ?: "Testing",
                     fontSize = 14.ssp,
                     fontWeight = FontWeight(500),
                     color = MyStyle.colors.textBlack,

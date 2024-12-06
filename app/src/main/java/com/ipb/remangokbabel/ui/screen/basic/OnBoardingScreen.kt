@@ -70,7 +70,7 @@ fun OnBoardingScreen(
                 modifier = modifier.padding(bottom = 12.sdp)
             )
             Text(
-                "This document communicates the brand identity of brand name. Clearly articulating the mission, values and persona for the design of all subsequent brand artifacts.",
+                "Rasakan cita rasa laut Bangka Belitung !Temukan daftar lengkap penjual benih berkualitas, pakan unggul, dan olahan kepiting khas Bangka Belitung. Semua dalam satu aplikasi, mudah dan cepat.",
                 textAlign = TextAlign.Center,
                 fontSize = 12.ssp,
                 fontWeight = FontWeight.W400,

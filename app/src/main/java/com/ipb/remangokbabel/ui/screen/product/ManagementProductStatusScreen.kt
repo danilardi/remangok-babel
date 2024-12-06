@@ -3,6 +3,7 @@ package com.ipb.remangokbabel.ui.screen.product
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -51,8 +52,8 @@ fun ManagementProductStatusScreen(
         )
     } else {
         LazyColumn(
-            modifier = Modifier.background(MyStyle.colors.neutral20)
-                .padding(horizontal = 16.sdp, vertical = 12.sdp),
+            contentPadding = PaddingValues(vertical = 16.sdp, horizontal = 16.sdp),
+            modifier = Modifier.background(MyStyle.colors.neutral20),
             verticalArrangement = Arrangement.spacedBy(12.sdp),
         ) {
             itemsIndexed(productList, key = { _ , it -> it.id }) { index, product ->

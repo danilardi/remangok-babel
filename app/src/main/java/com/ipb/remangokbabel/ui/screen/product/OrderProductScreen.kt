@@ -59,6 +59,7 @@ import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
@@ -309,7 +310,7 @@ fun OrderProductScreen(
                         .height(120.sdp),
                 ) {
                     Text(
-                        text = product?.nama ?: "",
+                        text = product?.nama?.capitalizeEachWord() ?: "",
                         style = MaterialTheme.typography.titleMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,

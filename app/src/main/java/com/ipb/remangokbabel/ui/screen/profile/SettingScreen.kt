@@ -51,6 +51,7 @@ import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -70,7 +71,7 @@ fun SettingScreen(
         Toast.makeText(context, "Logout Berhasil", Toast.LENGTH_SHORT).show()
         paperPrefs.deleteAllData()
         viewModel.clearLogoutState()
-        navigateToAndMakeTop(navController, Screen.Login.route)
+        navigateToAndMakeTop(navController, Screen.Onboarding.route)
     }
 
     viewModel.showLoading.collectAsState().value.let {
@@ -82,7 +83,7 @@ fun SettingScreen(
             Toast.makeText(context, it.message, Toast.LENGTH_SHORT).show()
             if (it.message == "token anda tidak valid") {
                 paperPrefs.deleteAllData()
-                navigateToAndMakeTop(navController, Screen.Login.route)
+                navigateToAndMakeTop(navController, Screen.Onboarding.route)
             }
         }
         viewModel.clearError()
@@ -182,9 +183,9 @@ fun MenuItem(
     ) {
         Text(
             text = title,
-            style = MyStyle.typography.baseBold,
-            fontSize = 12.sp,
-            color = MyStyle.colors.textBlack,
+            fontSize = 12.ssp,
+            fontWeight = FontWeight(600),
+            color = MyStyle.colors.neutral900,
             modifier = Modifier
                 .padding(horizontal = 16.sdp, vertical = 16.sdp)
         )
@@ -204,17 +205,17 @@ fun ProfileItem(label: String, value: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(bottom = 8.sdp)) {
         Text(
             text = label,
-            style = MyStyle.typography.baseBold,
-            color = MyStyle.colors.neutral100,
-            fontSize = 12.sp,
-            modifier = modifier.padding(top = 16.dp)
+            fontSize = 12.ssp,
+            fontWeight = FontWeight(600),
+            color = MyStyle.colors.neutral900,
+            modifier = modifier.padding(top = 16.sdp)
         )
         Text(
             text = value,
-            style = MyStyle.typography.baseMedium,
-            fontSize = 12.sp,
+            fontSize = 12.ssp,
+            fontWeight = FontWeight(400),
             color = MyStyle.colors.neutral600,
-            modifier = modifier.padding(top = 6.dp)
+            modifier = modifier.padding(top = 6.sdp)
 
         )
     }

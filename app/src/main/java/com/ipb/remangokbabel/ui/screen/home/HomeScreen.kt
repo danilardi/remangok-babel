@@ -139,6 +139,7 @@ fun HomeScreen(
         onSelectedItemChange = {
             filter = it
             listProduct = emptyList()
+            offset = 0
             productViewModel.getAllProducts(limit, offset, filter.capitalizeEachWord())
         })
 
@@ -147,10 +148,10 @@ fun HomeScreen(
             AppTopBar(
                 title = "Remangok Babel",
                 onClickToProfile = {
-                    navigateToAndMakeTop(navController, Screen.Setting.route)
+                    navigateTo(navController, Screen.Setting.route)
                 },
                 onClickToManagementProduct = {
-                    navigateToAndMakeTop(navController, Screen.ManagementProduct.route)
+                    navigateTo(navController, Screen.ManagementProduct.route)
                 },
 
                 modifier = Modifier.background(MyStyle.colors.neutral20)
@@ -213,6 +214,7 @@ fun HomeScreen(
                         contentDescription = "clear",
                         modifier = Modifier.clickable {
                             filter = ""
+                            offset = 0
                             listProduct = emptyList()
                             productViewModel.getAllProducts(
                                 limit,
@@ -254,10 +256,10 @@ fun ProductGrid(
     } else
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(horizontal = 16.sdp, vertical = 16.sdp),
+            contentPadding = PaddingValues(start = 16.sdp, end = 16.sdp, bottom = 24.sdp),
             verticalArrangement = Arrangement.spacedBy(12.sdp),
             horizontalArrangement = Arrangement.spacedBy(10.sdp),
-            modifier = modifier
+            modifier = modifier.padding(top = 16.sdp)
         ) {
             itemsIndexed(listProduct, key = { _, item -> item.id }) { index, product ->
                 ProductCard(

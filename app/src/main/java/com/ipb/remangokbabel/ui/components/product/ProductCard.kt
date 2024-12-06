@@ -69,7 +69,7 @@ fun ProductCard(
                 AsyncImage(
                     model = if (product?.gambar?.isNotEmpty() == true) "${BuildConfig.BASE_URL}${product.gambar.first()}" else "",
                     contentScale = ContentScale.Crop,
-                    contentDescription = product?.nama ?: "Nama Produk",
+                    contentDescription = product?.nama?.capitalizeEachWord() ?: "Nama Produk",
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(93.sdp)

@@ -133,7 +133,7 @@ fun MainApp(
     }
 
     BackHandler {
-        if ((currentRoute == Screen.Onboarding.route || currentRoute == Screen.Home.route) && !doubleBackToExitPressedOnce.value) {
+        if ((currentRoute == Screen.Onboarding.route || currentRoute == Screen.Home.route || (paperPref.getRole() == "admin" && currentRoute == Screen.ManagementProduct.route)) && !doubleBackToExitPressedOnce.value) {
             Toast.makeText(context, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT).show()
             doubleBackToExitPressedOnce.value = true
         } else if (doubleBackToExitPressedOnce.value) {

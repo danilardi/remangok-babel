@@ -79,10 +79,10 @@ fun LoginScreen(
     LaunchedEffect(Unit) {
         email = paperPrefs.getEmailSaved()
         if (BuildConfig.DEBUG) {
-            email = "yulia.sari@jualanmail.com"
-            password = "yulia303"
-//            email = "albarrazikrillah1405@gmail.com"
-//            password = "P_assword001"
+//            email = "yulia.sari@jualanmail.com"
+//            password = "yulia303"
+            email = "albarrazikrillah1405@gmail.com"
+            password = "P_assword001"
         }
     }
 

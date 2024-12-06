@@ -144,7 +144,7 @@ fun ManagementProductScreen(
     }
 
     viewModel.showLoading.collectAsState().value.let {
-//        if (it) LoadingDialog()
+        if (it) LoadingDialog()
     }
 
     viewModel.errorResponse.collectAsState().value.let {
@@ -186,7 +186,6 @@ fun ManagementProductScreen(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 4.sdp)
                         .shadow(
                             elevation = 4.sdp,   // Atur ketinggian bayangan
                             shape = RectangleShape, // Bentuk bayangan persegi (atau bisa RoundedCornerShape)
@@ -212,11 +211,11 @@ fun ManagementProductScreen(
                                 modifier = Modifier.fillMaxWidth()
                                     .padding(bottom = 8.sdp)
                             ) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_bag),
-                                    contentDescription = "Bag icon",
-                                    tint = if (pagerState.currentPage == index) MyStyle.colors.textPrimary else MyStyle.colors.text400,
-                                )
+//                                Icon(
+//                                    painter = painterResource(id = R.drawable.ic_bag),
+//                                    contentDescription = "Bag icon",
+//                                    tint = if (pagerState.currentPage == index) MyStyle.colors.textPrimary else MyStyle.colors.text400,
+//                                )
                                 Text(
                                     text = it.capitalizeEachWord(),
                                     fontSize = 10.ssp,

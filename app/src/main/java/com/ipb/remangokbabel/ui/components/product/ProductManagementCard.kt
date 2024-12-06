@@ -46,6 +46,7 @@ import com.ipb.remangokbabel.model.component.ButtonType
 import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.theme.MyStyle
+import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.toRupiah
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -157,7 +158,7 @@ fun ProductManagementCard(
                         .height(90.sdp),
                 ) {
                     Text(
-                        text = product?.nama ?: "",
+                        text = product?.nama?.capitalizeEachWord() ?: "",
                         fontSize = 10.ssp,
                         fontWeight = FontWeight(500),
                         color = MyStyle.colors.textBlack,
@@ -282,20 +283,20 @@ fun ProductManagementCard(
                         }
                     } else if (product?.status == "accepted") {
                         ButtonCustom(
-                            text = "Edit",
-                            modifier = Modifier
-                                .weight(1f),
-                            type = ButtonType.Success
-                        ) {
-                            onEditClick()
-                        }
-                        ButtonCustom(
                             text = "Hapus",
                             type = ButtonType.Danger,
                             modifier = Modifier
                                 .weight(1f)
                         ) {
                             onDeleteClick()
+                        }
+                        ButtonCustom(
+                            text = "Edit",
+                            modifier = Modifier
+                                .weight(1f),
+                            type = ButtonType.Success
+                        ) {
+                            onEditClick()
                         }
                     } else {
                         Column(

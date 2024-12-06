@@ -35,9 +35,10 @@ fun navigateTo(navController: NavHostController, route: String) {
 fun navigateToAndMakeTop(navController: NavHostController, route: String) {
     navController.navigate(route) {
         // Pop up to the start destination of the graph
-        popUpTo(navController.graph.findStartDestination().id) {
+        popUpTo(0) {
             inclusive = true // Remove the start destination as well
         }
+
         // Avoid adding the destination to the back stack again if it's already on top
         launchSingleTop = true
     }

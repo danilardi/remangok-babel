@@ -17,10 +17,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import com.ipb.remangokbabel.R
+import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
@@ -37,13 +41,16 @@ fun AppTopBar(
     onClickToManagementProduct: () -> Unit = {},
     onClickBackButton: () -> Unit = {}
 ) {
+    val context = LocalContext.current
+    val paperPrefs = PaperPrefs(context)
+
     Box(
         modifier = modifier
             .fillMaxWidth()
             .background(MyStyle.colors.primaryMain)
             .padding(horizontal = 16.sdp)
     ) {
-        if (backButton)
+        if (backButton && paperPrefs.getRole() != "admin")
             IconButton(
                 onClick = { onClickBackButton() },
                 modifier = Modifier
@@ -63,7 +70,7 @@ fun AppTopBar(
             color = MyStyle.colors.textWhite,
             textAlign = TextAlign.Start,
             modifier = Modifier
-                .align(if(backButton) Alignment.Center else Alignment.CenterStart)
+                .align(if (backButton) Alignment.Center else Alignment.CenterStart)
                 .padding(vertical = 12.sdp),
         )
         Row(
@@ -77,7 +84,7 @@ fun AppTopBar(
                     modifier = Modifier.size(30.sdp)
                 ) {
                     Icon(
-                        imageVector = Icons.Default.ShoppingCart,
+                        painter = painterResource(id = R.drawable.ic_list),
                         contentDescription = "Profil",
                         tint = MyStyle.colors.bgWhite,
                         modifier = Modifier.size(20.sdp)
