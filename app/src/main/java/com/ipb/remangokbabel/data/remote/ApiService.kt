@@ -54,6 +54,7 @@ interface ApiService {
     suspend fun getAllProducts(
         @Query ("limit") limit: Int,
         @Query ("offset") offset: Int,
+        @Query("kotaKabupaten") kotaKabupate: String? = null,
         @Query ("kecamatan") kecamatan: String? = null,
     ): GetAllProductResponse
 

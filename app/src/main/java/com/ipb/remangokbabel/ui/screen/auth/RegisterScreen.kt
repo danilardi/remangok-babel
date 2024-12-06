@@ -39,6 +39,7 @@ import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.ProfileRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
+import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
 import com.ipb.remangokbabel.ui.components.common.BackTopBar
@@ -75,11 +76,15 @@ fun RegisterScreen(
     var password by remember { mutableStateOf("") }
     var confirmPassword by remember { mutableStateOf("") }
     var nik by remember { mutableStateOf("") }
+    var kotaKabupaten by remember { mutableStateOf("") }
     var kecamatan by remember { mutableStateOf("") }
     var kelurahan by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
     var kodePos by remember { mutableStateOf("") }
 
+    var listKotaKabupaten by remember {
+        mutableStateOf(emptyList<GetKabupatenKotaResponseItem>())
+    }
     var listKecamatan by remember { mutableStateOf(emptyList<GetKecamatanResponseItem>()) }
     var listKelurahan by remember { mutableStateOf(emptyList<GetKelurahanResponseItem>()) }
 
@@ -96,7 +101,7 @@ fun RegisterScreen(
             alamat = "Jl. Jend. Sudirman No. 1"
             kodePos = "33111"
         }
-        profileViewModel.getKecamatan()
+        profileViewModel.getKotaKabupaten()
     }
 
     LaunchedEffect(registerState) {
@@ -105,6 +110,10 @@ fun RegisterScreen(
             paperPrefs.setEmailSaved(email)
             navigateToBack(navController)
         }
+    }
+
+    profileViewModel.getKotaKabupatenState.collectAsState().value.let { 
+        listKotaKabupaten = it
     }
 
     profileViewModel.getKecamatanState.collectAsState().value.let {
@@ -157,6 +166,7 @@ fun RegisterScreen(
                             fullname.isNotEmpty() &&
                             nomorTelepon.isNotEmpty() &&
                             nik.isNotEmpty() &&
+                            kotaKabupaten.isNotEmpty() &&
                             kecamatan.isNotEmpty() &&
                             kelurahan.isNotEmpty() &&
                             alamat.isNotEmpty() &&
@@ -189,6 +199,7 @@ fun RegisterScreen(
                             profile = ProfileRequest(
                                 nik = nik,
                                 kecamatan = kecamatan,
+                                kotaKabupaten = kotaKabupaten,
                                 kelurahan = kelurahan,
                                 alamat = alamat,
                                 kodePos = kodePos
@@ -276,13 +287,20 @@ fun RegisterScreen(
             ) {
                 nik = it
             }
-            InputLayout(
-                title = "Kabupaten/Kota",
-                value = "Kabupaten Bangka Tengah",
-                isEnable = false,
+            ExposedDropdownMenuBox(
+                items = listKotaKabupaten.map { it.name.capitalizeEachWord() },
+                title = "Kota/Kabupaten",
+                hint = "Silahkan pilih Kota/Kabupaten",
+                selectedText = kotaKabupaten,
                 modifier = Modifier
                     .padding(top = 16.sdp)
-            )
+            ) { value ->
+                kotaKabupaten = value
+                val id = listKotaKabupaten.find { it.name.capitalizeEachWord() == value }?.id
+                if (id != null) {
+                    profileViewModel.getKecamatan(id)
+                }
+            }
             ExposedDropdownMenuBox(
                 items = listKecamatan.map { it.name.capitalizeEachWord() },
                 title = "Kecamatan",

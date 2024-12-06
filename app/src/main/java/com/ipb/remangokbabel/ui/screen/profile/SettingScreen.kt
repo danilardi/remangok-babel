@@ -48,6 +48,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
+import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
@@ -139,7 +140,7 @@ fun SettingScreen(
                 title = "Perbarui Profil",
                 onClick = {
                     val data = Uri.encode(Gson().toJson(profileData))
-                    navigateToAndMakeTop(navController, Screen.EditProfile.createRoute(data))
+                    navigateTo(navController, Screen.EditProfile.createRoute(data))
                 }
             )
             MenuItem(

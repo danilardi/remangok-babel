@@ -37,6 +37,7 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.ProfileRequest
+import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
 import com.ipb.remangokbabel.model.response.ProfilesItem
@@ -48,6 +49,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.capitalizeEachWord
+import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
 
@@ -65,22 +67,29 @@ fun EditProfileScreen(
     val paperPrefs = PaperPrefs(context)
 
     var nik by remember { mutableStateOf("") }
+    var kotaKabupaten by remember { mutableStateOf("") }
     var kecamatan by remember { mutableStateOf("") }
     var kelurahan by remember { mutableStateOf("") }
     var alamat by remember { mutableStateOf("") }
     var kodePos by remember { mutableStateOf("") }
 
+    var listKotaKabupaten by remember { mutableStateOf(emptyList<GetKabupatenKotaResponseItem>()) }
     var listKecamatan by remember { mutableStateOf(emptyList<GetKecamatanResponseItem>()) }
     var listKelurahan by remember { mutableStateOf(emptyList<GetKelurahanResponseItem>()) }
 
     LaunchedEffect(Unit) {
         nik = profileData?.nik ?: ""
+        kotaKabupaten = profileData?.kotaKabupaten ?: ""
         kecamatan = profileData?.kecamatan ?: ""
         kelurahan = profileData?.kelurahan ?: ""
         alamat = profileData?.alamat ?: ""
         kodePos = profileData?.kodePos ?: ""
 
-        viewModel.getKecamatan("1904")
+        viewModel.getKotaKabupaten()
+    }
+
+    viewModel.getKotaKabupatenState.collectAsState().value.let {
+        listKotaKabupaten = it
     }
 
     viewModel.getKecamatanState.collectAsState().value.let {
@@ -143,6 +152,7 @@ fun EditProfileScreen(
             ) {
                 val profileRequest = ProfileRequest(
                     nik = nik,
+                    kotaKabupaten = kotaKabupaten,
                     kecamatan = kecamatan,
                     kelurahan = kelurahan,
                     alamat = alamat,
@@ -176,13 +186,20 @@ fun EditProfileScreen(
             ) {
                 nik = it
             }
-            InputLayout(
-                title = "Kabupaten/Kota",
-                value = "Kabupaten Bangka Tengah",
-                isEnable = false,
+            ExposedDropdownMenuBox(
+                items = listKotaKabupaten.map { it.name.capitalizeEachWord() },
+                title = "Kota/Kabupaten",
+                hint = "Silahkan pilih Kota/Kabupaten",
+                selectedText = kotaKabupaten,
                 modifier = Modifier
                     .padding(top = 16.sdp)
-            )
+            ) { value ->
+                kotaKabupaten = value
+                val id = listKotaKabupaten.find { it.name.capitalizeEachWord() == value }?.id
+                if (id != null) {
+                    viewModel.getKecamatan(id)
+                }
+            }
             ExposedDropdownMenuBox(
                 items = listKecamatan.map { it.name.capitalizeEachWord() },
                 title = "Kecamatan",

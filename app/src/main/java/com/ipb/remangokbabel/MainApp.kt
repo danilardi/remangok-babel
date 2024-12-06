@@ -102,8 +102,8 @@ fun MainApp(
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
             Screen.Splash.route -> setTopNavBarColor(
-                MyStyle.colors.primaryMain,
-                MyStyle.colors.primaryMain
+                Color(0xFFFFEDDE),
+                Color(0xFFFFEDDE)
             )
 
             Screen.Home.route -> setTopNavBarColor(

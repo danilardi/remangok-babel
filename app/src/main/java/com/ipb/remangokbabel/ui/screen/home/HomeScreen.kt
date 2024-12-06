@@ -1,6 +1,7 @@
 package com.ipb.remangokbabel.ui.screen.home
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -9,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,15 +40,14 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
-import com.ipb.remangokbabel.BuildConfig
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
+import com.ipb.remangokbabel.model.response.GetKabupatenKotaResponseItem
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.ui.components.common.AppTopBar
@@ -82,20 +83,32 @@ fun HomeScreen(
     var listProduct by remember { mutableStateOf(emptyList<ProductItem>()) }
     val limit by remember { mutableIntStateOf(10) }
     var offset by remember { mutableIntStateOf(0) }
-    var filter by remember { mutableStateOf("") }
+    var filterByKotaKabupaten by remember { mutableStateOf("") }
+    var filterByKecamatan by remember { mutableStateOf("") }
     var onLoad by remember { mutableStateOf(false) }
-    var showFilterDialog by remember { mutableStateOf(false) }
-    var filterItem by remember { mutableStateOf(emptyList<GetKecamatanResponseItem>()) }
+    var showFilterByKotaKabupatenDialog by remember { mutableStateOf(false) }
+    var showFilterByKecamatanDialog by remember { mutableStateOf(false) }
+    var filterKotaKabupaten by remember {
+        mutableStateOf(emptyList<GetKabupatenKotaResponseItem>())
+    }
+    var filterKecamatan by remember { mutableStateOf(emptyList<GetKecamatanResponseItem>()) }
 
     LaunchedEffect(Unit) {
-        productViewModel.getAllProducts(limit, offset, filter.capitalizeEachWord())
-        profileViewModel.getKecamatan()
+        productViewModel.getAllProducts(limit, offset, filterByKotaKabupaten.capitalizeEachWord(), filterByKecamatan.capitalizeEachWord())
+        profileViewModel.getKotaKabupaten()
         onLoad = true
+    }
+
+    profileViewModel.getKotaKabupatenState.collectAsState().value.let {
+        if (it.isNotEmpty()) {
+            filterKotaKabupaten = it
+        }
+        profileViewModel.cleanKotaKabupatenState()
     }
 
     profileViewModel.getKecamatanState.collectAsState().value.let {
         if (it.isNotEmpty()) {
-            filterItem = it
+            filterKecamatan = it
         }
         profileViewModel.clearKecamatanState()
     }
@@ -132,15 +145,29 @@ fun HomeScreen(
         productViewModel.clearError()
     }
 
-    SelectableDialog(showDialog = showFilterDialog,
-        selectableItems = filterItem.map { it.name.capitalizeEachWord() },
-        selectedItem = filter,
-        onDismissRequest = { showFilterDialog = false },
+    SelectableDialog(showDialog = showFilterByKotaKabupatenDialog,
+        selectableItems = filterKotaKabupaten.map { it.name.capitalizeEachWord() },
+        selectedItem = filterByKotaKabupaten,
+        onDismissRequest = { showFilterByKotaKabupatenDialog = false },
         onSelectedItemChange = {
-            filter = it
+            filterByKotaKabupaten = it
             listProduct = emptyList()
             offset = 0
-            productViewModel.getAllProducts(limit, offset, filter.capitalizeEachWord())
+
+            val idKotaKabupaten = filterKotaKabupaten.find {e -> e.name.capitalizeEachWord() == filterByKotaKabupaten.capitalizeEachWord()  }?.id
+            profileViewModel.getKecamatan("$idKotaKabupaten")
+            productViewModel.getAllProducts(limit, offset,filterByKotaKabupaten.capitalizeEachWord(), filterByKecamatan.capitalizeEachWord())
+        })
+
+    SelectableDialog(showDialog = showFilterByKecamatanDialog,
+        selectableItems = filterKecamatan.map { it.name.capitalizeEachWord() },
+        selectedItem = filterByKecamatan,
+        onDismissRequest = { showFilterByKecamatanDialog = false },
+        onSelectedItemChange = {
+            filterByKecamatan = it
+            listProduct = emptyList()
+            offset = 0
+            productViewModel.getAllProducts(limit, offset,filterByKotaKabupaten.capitalizeEachWord(), filterByKecamatan.capitalizeEachWord())
         })
 
     Scaffold(
@@ -169,7 +196,8 @@ fun HomeScreen(
                 modifier = Modifier
                     .padding(horizontal = 16.sdp)
                     .padding(top = 10.sdp),
-                verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
             ) {
                 Text(
                     text = "Produk Terbaru",
@@ -178,48 +206,88 @@ fun HomeScreen(
                     modifier = Modifier
                         .weight(1f)
                 )
-                Row(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.sdp))
-                        .clickable {
-                            showFilterDialog = true
-                        }
-                        .background(MyStyle.colors.bgWhite)
-                        .border(
-                            width = 1.sdp,
-                            color = MyStyle.colors.bgBlack,
-                            shape = RoundedCornerShape(4.sdp)
-                        )
-                        .padding(horizontal = 8.sdp, vertical = 4.sdp),
-                    verticalAlignment = Alignment.CenterVertically
+
+                Column(
+                   horizontalAlignment = Alignment.End
                 ) {
-                    Text(
-                        text = filter.ifEmpty { "Kecamatan" },
-                        color = if (filter.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
-                        fontSize = 10.ssp,
-                        fontWeight = FontWeight.W400,
-                    )
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Filter",
-                        tint = if (filter.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                    Row(
                         modifier = Modifier
-                            .padding(start = 4.sdp)
-                            .size(12.sdp)
-                    )
+                            .clip(RoundedCornerShape(4.sdp))
+                            .clickable {
+                                showFilterByKotaKabupatenDialog = true
+                            }
+                            .background(MyStyle.colors.bgWhite)
+                            .border(
+                                width = 1.sdp,
+                                color = MyStyle.colors.bgBlack,
+                                shape = RoundedCornerShape(4.sdp)
+                            )
+                            .padding(horizontal = 8.sdp, vertical = 4.sdp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = filterByKotaKabupaten.ifEmpty { "Kota/Kabupaten" },
+                            color = if (filterByKotaKabupaten.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                            fontSize = 10.ssp,
+                            fontWeight = FontWeight.W400,
+                        )
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Filter",
+                            tint = if (filterByKotaKabupaten.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                            modifier = Modifier
+                                .padding(start = 4.sdp)
+                                .size(12.sdp)
+                        )
+                    }
+                    Spacer(modifier = modifier.size(width = 0.sdp, height = 4.sdp))
+                    if (filterByKotaKabupaten != "") {
+                        Row(
+                            modifier = Modifier
+                                .clip(RoundedCornerShape(4.sdp))
+                                .clickable {
+                                    showFilterByKecamatanDialog = true
+                                }
+                                .background(MyStyle.colors.bgWhite)
+                                .border(
+                                    width = 1.sdp,
+                                    color = MyStyle.colors.bgBlack,
+                                    shape = RoundedCornerShape(4.sdp)
+                                )
+                                .padding(horizontal = 8.sdp, vertical = 4.sdp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = filterByKecamatan.ifEmpty { "Kecamatan" },
+                                color = if (filterByKecamatan.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                                fontSize = 10.ssp,
+                                fontWeight = FontWeight.W400,
+                            )
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = "Filter",
+                                tint = if (filterByKecamatan.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                                modifier = Modifier
+                                    .padding(start = 4.sdp)
+                                    .size(12.sdp)
+                            )
+                        }
+                    }
                 }
-                if (filter != "") {
+                if (filterByKecamatan != "") {
                     Icon(
                         imageVector = Icons.Default.Close,
                         contentDescription = "clear",
                         modifier = Modifier.clickable {
-                            filter = ""
+                            filterByKotaKabupaten = ""
+                            filterByKecamatan = ""
                             offset = 0
                             listProduct = emptyList()
                             productViewModel.getAllProducts(
                                 limit,
                                 offset,
-                                filter.capitalizeEachWord()
+                                filterByKotaKabupaten.capitalizeEachWord(),
+                                filterByKecamatan.capitalizeEachWord()
                             )
                         })
                 }
@@ -234,7 +302,7 @@ fun HomeScreen(
                     if (!onLoad && listProduct.size == offset + limit) {
                         onLoad = true
                         offset += limit
-                        productViewModel.getAllProducts(limit, offset, filter.capitalizeEachWord())
+                        productViewModel.getAllProducts(limit, offset, filterByKotaKabupaten.capitalizeEachWord(), filterByKecamatan.capitalizeEachWord())
                     }
                 },
             )

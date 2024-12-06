@@ -61,17 +61,11 @@ class ProductViewModel(private val repository: Repository) : BaseViewModel() {
         get() = _verifyProductState
 
 
-    fun getAllProducts(limit: Int = 10, offset: Int = 0, kecamatan: String? = null) {
+    fun getAllProducts(limit: Int = 10, offset: Int = 0, kotaKabupaten: String? = null, kecamatan: String? = null) {
         viewModelScope.launch {
             setLoading(true)
             try {
-                if (kecamatan?.isEmpty() == true) {
-                    println("masuk sini")
-                    _productStateAll.value = repository.getAllProducts(limit, offset, null)
-                } else {
-                    println("masuk sini2 $kecamatan")
-                    _productStateAll.value = repository.getAllProducts(limit, offset, kecamatan)
-                }
+                _productStateAll.value = repository.getAllProducts(limit, offset, kotaKabupaten, kecamatan)
             } catch (e: Exception) {
                 setError(handleException(e))
             }

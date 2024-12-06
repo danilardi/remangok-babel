@@ -48,8 +48,8 @@ class Repository(private val apiService: ApiService, private val apiAddressServi
         return apiService.logout()
     }
 
-    suspend fun getAllProducts(limit: Int, offset: Int, kecamatan: String?): GetAllProductResponse {
-        return apiService.getAllProducts(limit, offset, kecamatan)
+    suspend fun getAllProducts(limit: Int, offset: Int, kotaKabupaten: String? = null, kecamatan: String? = null): GetAllProductResponse {
+        return apiService.getAllProducts(limit, offset, if(kotaKabupaten == "") null else kotaKabupaten, if (kecamatan == "") null else kecamatan)
     }
 
     suspend fun getSelfProducts(limit: Int, offset: Int, status: String): GetAllProductResponse {
