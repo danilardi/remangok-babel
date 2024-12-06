@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,14 +16,15 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.ipb.remangokbabel.R
-import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.delay
@@ -47,22 +47,37 @@ fun SplashScreen(
         onSplashFinished()
     }
     Box(
-        contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .background(MyStyle.colors.primaryMain)
+            .background(Color(0xFFFFEDDE))
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
             Image(
                 painter = painterResource(id = R.drawable.remangok_logo),
                 contentDescription = "remangok logo",
                 contentScale = ContentScale.Fit,
-                modifier = Modifier.size(150.dp)
+                modifier = Modifier
+                    .size(150.dp)
+                    .align(Alignment.Center)
             )
-        }
+            Column(
+                modifier = Modifier.align(Alignment.BottomCenter)
+                    .padding(vertical = 24.sdp),
+            ) {
+                Text(
+                    text = "Dikembangkan Oleh :",
+                    fontSize = 12.ssp,
+                    fontWeight = FontWeight(600),
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.logo_supportby),
+                    contentDescription = "remangok logo",
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                )
+            }
     }
 }
