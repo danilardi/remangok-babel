@@ -2,7 +2,9 @@ package com.ipb.remangokbabel.ui.screen.profile
 
 import android.content.Intent
 import android.net.Uri
+import android.provider.CalendarContract.Colors
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -15,7 +17,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -26,22 +27,29 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.google.gson.Gson
+import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
@@ -82,7 +90,9 @@ fun SettingScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = "Profile")
+            BackTopBar(title = "Profile", onClickBackButton = {
+                navigateToBack(navController)
+            })
         },
         modifier = modifier
     ) { innerPadding ->
@@ -102,13 +112,12 @@ fun SettingScreen(
                     .padding(horizontal = 16.sdp)
                     .padding(top = 8.sdp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.AccountCircle,
-                    contentDescription = "",
+                Image(
+                    painter = painterResource(id = R.drawable.ic_profile),
+                    contentDescription = "icon profile",
                     modifier = Modifier
-                        .size(100.sdp)
+                        .size(63.sdp)
                         .align(Alignment.CenterHorizontally),
-                    tint = MyStyle.colors.primaryMain
                 )
                 ProfileItem(label = "NIK", value = profileData?.nik ?: "")
                 ProfileItem(label = "Nama", value = profileData?.dataDiri?.fullname ?: "")
@@ -145,6 +154,7 @@ fun SettingScreen(
             )
             MenuItem(
                 title = "Keluar",
+                isLast = true,
                 onClick = {
                     viewModel.logout()
                 },
@@ -157,9 +167,10 @@ fun SettingScreen(
 
 @Composable
 fun MenuItem(
-    title: String,
-    onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    title: String,
+    isLast: Boolean = false,
+    onClick: () -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -171,7 +182,9 @@ fun MenuItem(
     ) {
         Text(
             text = title,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MyStyle.typography.baseBold,
+            fontSize = 12.sp,
+            color = MyStyle.colors.textBlack,
             modifier = Modifier
                 .padding(horizontal = 16.sdp, vertical = 16.sdp)
         )
@@ -183,7 +196,7 @@ fun MenuItem(
                 .padding(end = 16.sdp)
         )
     }
-    HorizontalDivider()
+    if(!isLast) HorizontalDivider()
 }
 
 @Composable
@@ -191,13 +204,18 @@ fun ProfileItem(label: String, value: String, modifier: Modifier = Modifier) {
     Column(modifier = modifier.padding(bottom = 8.sdp)) {
         Text(
             text = label,
-            style = MaterialTheme.typography.titleSmall,
-            color = MyStyle.colors.textPrimary,
-            fontWeight = FontWeight.Bold
+            style = MyStyle.typography.baseBold,
+            color = MyStyle.colors.neutral100,
+            fontSize = 12.sp,
+            modifier = modifier.padding(top = 16.dp)
         )
         Text(
             text = value,
-            style = MaterialTheme.typography.bodyLarge
+            style = MyStyle.typography.baseMedium,
+            fontSize = 12.sp,
+            color = MyStyle.colors.neutral600,
+            modifier = modifier.padding(top = 6.dp)
+
         )
     }
 }

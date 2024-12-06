@@ -2,6 +2,7 @@ package com.ipb.remangokbabel.ui.screen.product
 
 import android.net.Uri
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -29,17 +30,30 @@ fun ManagementProductStatusScreen(
     navController: NavHostController = rememberNavController(),
     productList: List<ProductItem> = emptyList(),
     offset: Int = 0,
+    status: String = "",
     onLastItemVisible: () -> Unit = {},
     onDeleteClick: (Int) -> Unit = {},
 ) {
     if (productList.isEmpty()) {
+        val statusProduct = listOf(
+            "requested",
+            "accepted",
+            "rejected",
+        )
         EmptyScreen(
             type = ScreenType.Empty,
-            title = "Belum memiliki produk\nSilahkan tambahkan produk anda",
+            title = when (status) {
+                statusProduct[0] -> "Belum memiliki produk\nSilahkan tambahkan produk anda"
+                statusProduct[1] -> "Produk kamu belum ada yang diterima."
+                else -> "Produk kamu tidak ada yang ditolak"
+            },
+            desc = if (status == statusProduct[1]) "Sabar yaa, Admin lagi cek. " else "",
         )
     } else {
         LazyColumn(
-            modifier = Modifier.background(MyStyle.colors.layoutBorder)
+            modifier = Modifier.background(MyStyle.colors.neutral20)
+                .padding(horizontal = 16.sdp, vertical = 12.sdp),
+            verticalArrangement = Arrangement.spacedBy(12.sdp),
         ) {
             itemsIndexed(productList, key = { _ , it -> it.id }) { index, product ->
                 ProductManagementCard(

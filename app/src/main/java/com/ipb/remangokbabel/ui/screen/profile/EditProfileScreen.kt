@@ -1,6 +1,7 @@
 package com.ipb.remangokbabel.ui.screen.profile
 
 import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -24,11 +25,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
@@ -114,13 +118,13 @@ fun EditProfileScreen(
 
     Scaffold(
         topBar = {
-            BackTopBar(title = "Edit Profile") {
+            BackTopBar(title = "Profil") {
                 navigateToBack(navController)
             }
         },
         bottomBar = {
             ButtonCustom(
-                text = "Perbarui Profil",
+                text = "Simpan",
                 enabled = nik.isNotEmpty() &&
                         kecamatan.isNotEmpty() &&
                         kelurahan.isNotEmpty() &&
@@ -154,13 +158,13 @@ fun EditProfileScreen(
             .padding(horizontal = 16.sdp)
             .fillMaxSize()
         ) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
+            Image(
+                painter = painterResource(id = R.drawable.ic_profile),
                 contentDescription = "",
                 modifier = Modifier
-                    .size(100.sdp)
-                    .align(Alignment.CenterHorizontally),
-                tint = MyStyle.colors.primaryMain
+                    .size(63.sdp)
+                    .align(Alignment.CenterHorizontally)
+                    .padding(top = 16.sdp),
             )
             InputLayout(
                 title = "NIK",

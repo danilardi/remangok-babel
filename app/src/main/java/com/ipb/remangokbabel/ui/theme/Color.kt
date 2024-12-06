@@ -75,7 +75,11 @@ class MyColors {
     val neutral70 = Color(0xFF757575)
     val neutral80 = Color(0xFF616161)
     val neutral90 = Color(0xFF424242)
-    val neutral100 = Color(0xFF0A0A0A)
+    val neutral100 = Color(0xFF000000)
+    val neutral400 = Color(0xFFC2C2C2)
+    val neutral600 = Color(0XFF757575)
+    val neutral800 = Color(0xFF404040)
+    val neutral900 = Color(0xFF0A0A0A)
 
     /* Primary Colors (Maritime Theme) */
     val primaryMain = Color( 0xFFCB252E)     // Hijau Teal (Kesan Tropis dan Segar)
@@ -111,11 +115,12 @@ class MyColors {
 
     val bgBiruTua = Color(0xFF0D3B66)
     val bgPrimary = Color(0xFF616161)
-    val bgSecondary = Color(0xFFEAF0F6)
+    val bgSecondary = Color(0xFFF5F5F5)
     val bgHijauTealMuda = Color(0xFFE0F2F1)
     val bgKuningPucat = Color(0xFFFFF9C4)
     val bgWhite = Color(0xFFFFFFFF)
     val bgSplash = Color(0xfff0e9cf)
+    val bgBlack = Color(0xFF000000)
 
     /* Error */
     val errorMain = Color(0xFFCB3A31)
@@ -147,6 +152,8 @@ class MyColors {
     val textMerah = Color(0xFFE63946)
     val textHijau = Color(0xFF00796B)
     val textGrey = neutral80
+    val text400 = neutral400
+    val text600 = neutral600
     val textInactive = neutral50
     val textInfo = secondaryMain
 

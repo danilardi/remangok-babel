@@ -34,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -60,6 +61,7 @@ import com.ipb.remangokbabel.utils.navigateToBack
 import com.ipb.remangokbabel.utils.reduceFileImage
 import com.ipb.remangokbabel.utils.uriToFile
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 
 @Composable
 fun AddProductScreen(
@@ -211,7 +213,8 @@ fun AddProductScreen(
             ) {
                 Text(
                     text = "Foto Produk",
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight(700),
+                    fontSize = 12.ssp,
                     modifier = Modifier.padding(8.sdp)
                 )
 
@@ -238,7 +241,8 @@ fun AddProductScreen(
             ) {
                 Text(
                     text = "Nama Produk",
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight(700),
+                    fontSize = 12.ssp,
                     modifier = Modifier.padding(8.sdp)
                 )
                 InputLayout(
@@ -261,7 +265,8 @@ fun AddProductScreen(
             ) {
                 Text(
                     text = "Deskripsi Produk",
-                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight(700),
+                    fontSize = 12.ssp,
                     modifier = Modifier.padding(8.sdp)
                 )
                 InputLayout(
@@ -288,7 +293,8 @@ fun AddProductScreen(
                 ) {
                     Text(
                         text = "Tipe",
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight(700),
+                        fontSize = 12.ssp,
                         modifier = Modifier.padding(start = 8.sdp)
                     )
                     Text(
@@ -324,7 +330,8 @@ fun AddProductScreen(
                 ) {
                     Text(
                         text = "Berat",
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight(700),
+                        fontSize = 12.ssp,
                         modifier = Modifier.padding(start = 8.sdp)
                     )
                     InputLayout(
@@ -354,7 +361,8 @@ fun AddProductScreen(
                 ) {
                     Text(
                         text = "Harga",
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight(700),
+                        fontSize = 12.ssp,
                         modifier = Modifier.padding(start = 8.sdp)
                     )
                     InputLayout(
@@ -382,7 +390,8 @@ fun AddProductScreen(
                 ) {
                     Text(
                         text = "Stok",
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight(700),
+                        fontSize = 12.ssp,
                         modifier = Modifier.padding(start = 8.sdp)
                     )
                     InputLayout(
@@ -412,7 +421,8 @@ fun AddProductScreen(
                 ) {
                     Text(
                         text = "Unit",
-                        style = MaterialTheme.typography.bodyMedium,
+                        fontWeight = FontWeight(700),
+                        fontSize = 12.ssp,
                         modifier = Modifier.padding(start = 8.sdp)
                     )
                     Text(

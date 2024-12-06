@@ -1,70 +1,101 @@
 package com.ipb.remangokbabel.ui.components.common
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material.icons.filled.ArrowBackIosNew
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SearchBarDefaults
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 
-@OptIn(ExperimentalMaterial3Api::class)
+@Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun AppTopBar(
-    title: String,
     modifier: Modifier = Modifier,
-    icon: Boolean = false,
-    dropShadow: Boolean = true,
-    onClickIcon: () -> Unit = {},
+    title: String = "Manajemen Produk",
+    backButton: Boolean = false,
+    isProfile: Boolean = true,
+    isManagementProduct: Boolean = true,
+    onClickToProfile: () -> Unit = {},
+    onClickToManagementProduct: () -> Unit = {},
+    onClickBackButton: () -> Unit = {}
 ) {
     Box(
         modifier = modifier
-            .shadow(
-                elevation = if (dropShadow) 4.sdp else 0.sdp, // Adjust the elevation as needed
-                shape = RectangleShape, // Ensure shadow is drawn for the entire Box
-                clip = false // Don't clip the content to the shape
-            )
-            .background(MyStyle.colors.bgWhite)
-            .padding(vertical = 8.sdp)
-            .padding(start = 16.sdp , end = 8.sdp)
-            .height(SearchBarDefaults.InputFieldHeight)
             .fillMaxWidth()
+            .background(MyStyle.colors.primaryMain)
+            .padding(horizontal = 16.sdp)
     ) {
+        if (backButton)
+            IconButton(
+                onClick = { onClickBackButton() },
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .size(16.sdp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBackIosNew,
+                    contentDescription = null,
+                    tint = MyStyle.colors.textWhite
+                )
+            }
         Text(
             text = title,
-            style = MyStyle.typography.lgBold,
-            fontSize = 20.ssp,
-            color = MyStyle.colors.textPrimary,
+            fontWeight = FontWeight.W700,
+            fontSize = 14.ssp,
+            color = MyStyle.colors.textWhite,
+            textAlign = TextAlign.Start,
             modifier = Modifier
-                .align(Alignment.Center),
+                .align(if(backButton) Alignment.Center else Alignment.CenterStart)
+                .padding(vertical = 12.sdp),
         )
-        if (icon) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = null,
-                tint = MaterialTheme.colorScheme.onSurfaceVariant,
-                modifier = Modifier
-                    .size(32.sdp)
-                    .align(Alignment.CenterEnd)
-                    .clip(CircleShape)
-                    .background(MyStyle.colors.bgWhite)
-            )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+        ) {
+            if (isManagementProduct)
+                IconButton(
+                    onClick = onClickToManagementProduct,
+                    modifier = Modifier.size(30.sdp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "Profil",
+                        tint = MyStyle.colors.bgWhite,
+                        modifier = Modifier.size(20.sdp)
+                    )
+                }
+            if (isProfile)
+                IconButton(
+                    onClick = onClickToProfile,
+                    modifier = Modifier
+                        .size(30.sdp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.AccountCircle,
+                        contentDescription = "Profil",
+                        tint = MyStyle.colors.bgWhite,
+                        modifier = Modifier.size(20.sdp)
+                    )
+                }
         }
     }
 }

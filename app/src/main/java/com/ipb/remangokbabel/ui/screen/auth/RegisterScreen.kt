@@ -21,11 +21,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,6 +41,7 @@ import com.ipb.remangokbabel.model.request.ProfileRequest
 import com.ipb.remangokbabel.model.request.RegisterRequest
 import com.ipb.remangokbabel.model.response.GetKecamatanResponseItem
 import com.ipb.remangokbabel.model.response.GetKelurahanResponseItem
+import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.ExposedDropdownMenuBox
 import com.ipb.remangokbabel.ui.components.common.InputLayout
@@ -137,6 +138,11 @@ fun RegisterScreen(
     }
 
     Scaffold(
+        topBar = {
+            BackTopBar(title = "Daftar", onClickBackButton = {
+                navigateToBack(navController)
+            })
+        },
         bottomBar = {
             Column(
                 modifier = Modifier
@@ -197,12 +203,16 @@ fun RegisterScreen(
                         .padding(top = 16.sdp, bottom = 24.sdp),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Sudah punya akun?", style = MyStyle.typography.baseNormal)
+                    Text(
+                        text = "Sudah punya akun?",
+                        fontWeight = FontWeight.W400,
+                        color = MyStyle.colors.textBlack,
+                    )
                     Text(
                         text = "Masuk",
-                        style = MyStyle.typography.baseBold,
                         color = MyStyle.colors.primaryMain,
-                        fontSize = 12.sp,
+                        fontSize = 12.ssp,
+                        fontWeight = FontWeight.W600,
                         modifier = Modifier
                             .padding(start = 6.sdp)
                             .clickable {
@@ -222,7 +232,6 @@ fun RegisterScreen(
                 .verticalScroll(rememberScrollState())
                 .imePadding()
         ) {
-           CustomNavbar(navController = navController, title = "Daftar")
             Text(
                 text = "Buat Akun Remangkok Babel  🦀",
                 style = MyStyle.typography.baseBold,
@@ -234,7 +243,7 @@ fun RegisterScreen(
                 value = fullname,
                 hint = "Silahkan masukkan nama anda",
                 modifier = Modifier
-                    .padding(top = 16.dp)
+                    .padding(top = 16.sdp)
             ) {
                 fullname = it
             }

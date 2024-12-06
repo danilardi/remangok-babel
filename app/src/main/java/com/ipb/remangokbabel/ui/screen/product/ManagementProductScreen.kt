@@ -4,6 +4,7 @@ import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -36,11 +37,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
@@ -53,7 +57,9 @@ import com.ipb.remangokbabel.ui.viewmodel.ProductViewModel
 import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -138,7 +144,7 @@ fun ManagementProductScreen(
     }
 
     viewModel.showLoading.collectAsState().value.let {
-        if (it) LoadingDialog()
+//        if (it) LoadingDialog()
     }
 
     viewModel.errorResponse.collectAsState().value.let {
@@ -154,7 +160,17 @@ fun ManagementProductScreen(
 
     Scaffold(
         topBar = {
-            AppTopBar(title = "Manajemen Produk", dropShadow = false)
+            AppTopBar(
+                title = "Manajemen Produk",
+                onClickToProfile = {
+                    navigateToAndMakeTop(navController, Screen.Setting.route)
+                },
+                isManagementProduct = false,
+                backButton = true,
+                onClickBackButton = {
+                    navigateToBack(navController)
+                }
+            )
         },
     ) { innerPadding ->
         Box(
@@ -165,6 +181,7 @@ fun ManagementProductScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
+                    .background(MyStyle.colors.neutral20)
             ) {
                 Row(
                     modifier = Modifier
@@ -176,6 +193,7 @@ fun ManagementProductScreen(
                             clip = false           // Agar konten tidak terpotong mengikuti shape
                         )
                         .background(MyStyle.colors.bgWhite)
+                        .padding(horizontal = 16.sdp)
                 ) {
                     statusProductTitle.forEachIndexed { index, it ->
                         Box(
@@ -185,21 +203,34 @@ fun ManagementProductScreen(
                                     coroutineScope.launch {
                                         pagerState.animateScrollToPage(index)
                                     }
-                                },
+                                }
+                                .padding(top = 16.sdp),
                         ) {
-                            Text(
-                                text = it.capitalizeEachWord(),
-                                style = MaterialTheme.typography.titleSmall,
-                                color = if (pagerState.currentPage == index) MyStyle.colors.textPrimary else MyStyle.colors.textGrey,
-                                modifier = Modifier
-                                    .padding(vertical = 16.sdp)
-                                    .align(Alignment.Center)
-                            )
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier.fillMaxWidth()
+                                    .padding(bottom = 8.sdp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(id = R.drawable.ic_bag),
+                                    contentDescription = "Bag icon",
+                                    tint = if (pagerState.currentPage == index) MyStyle.colors.textPrimary else MyStyle.colors.text400,
+                                )
+                                Text(
+                                    text = it.capitalizeEachWord(),
+                                    fontSize = 10.ssp,
+                                    fontWeight = FontWeight(500),
+                                    color = if (pagerState.currentPage == index) MyStyle.colors.textBlack else MyStyle.colors.text400,
+                                    modifier = Modifier
+                                        .padding(start = 8.sdp)
+                                )
+                            }
                             Spacer(
                                 modifier = Modifier
                                     .fillMaxWidth()
-                                    .height(3.sdp)
-                                    .background(if (pagerState.currentPage == index) MyStyle.colors.textPrimary else MyStyle.colors.bgWhite)
+                                    .height(1.sdp)
+                                    .background(if (pagerState.currentPage == index) MyStyle.colors.textBlack else MyStyle.colors.bgWhite)
                                     .align(Alignment.BottomCenter)
                             )
                         }
@@ -212,13 +243,14 @@ fun ManagementProductScreen(
                         0 -> {
                             ManagementProductStatusScreen(
                                 navController = navController,
+                                status = statusProduct[0],
                                 productList = productList.filter { it.status == statusProduct[0] },
                                 onDeleteClick = { id ->
                                     productOnDelete = id
                                     viewModel.deleteProduct(id)
                                 },
                                 onLastItemVisible = {
-                                    if (!onLoad && productList.filter { it.status == statusProduct[0] }.size % 10 == 0) {
+                                    if (!onLoad && productList.filter { it.status == statusProduct[0] }.size== offset[statusProduct[0]]?.plus(10)) {
                                         onLoad = true
                                         offset[statusProduct[0]] =
                                             offset[statusProduct[0]]?.plus(10) ?: 0
@@ -243,13 +275,15 @@ fun ManagementProductScreen(
                         1 -> {
                             ManagementProductStatusScreen(
                                 navController = navController,
+                                status = statusProduct[1],
                                 productList = productList.filter { it.status == statusProduct[1] },
                                 onDeleteClick = { id ->
                                     productOnDelete = id
                                     viewModel.deleteProduct(id)
                                 },
                                 onLastItemVisible = {
-                                    if (!onLoad && productList.filter { it.status == statusProduct[1] }.size % 10 == 0) {
+                                    println(onLoad)
+                                    if (!onLoad && productList.filter { it.status == statusProduct[1] }.size == offset[statusProduct[1]]?.plus(10)) {
                                         onLoad = true
                                         offset[statusProduct[1]] =
                                             offset[statusProduct[1]]?.plus(10) ?: 0
@@ -274,13 +308,14 @@ fun ManagementProductScreen(
                         2 -> {
                             ManagementProductStatusScreen(
                                 navController = navController,
+                                status = statusProduct[2],
                                 productList = productList.filter { it.status == statusProduct[2] },
                                 onDeleteClick = { id ->
                                     productOnDelete = id
                                     viewModel.deleteProduct(id)
                                 },
                                 onLastItemVisible = {
-                                    if (!onLoad && productList.filter { it.status == statusProduct[2] }.size % 10 == 0) {
+                                    if (!onLoad && productList.filter { it.status == statusProduct[2] }.size == offset[statusProduct[2]]?.plus(10)) {
                                         onLoad = true
                                         offset[statusProduct[2]] =
                                             offset[statusProduct[2]]?.plus(10) ?: 0
@@ -311,8 +346,8 @@ fun ManagementProductScreen(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(16.sdp),
-                containerColor = MyStyle.colors.bgSecondary,
-                contentColor = MyStyle.colors.textBlack
+                containerColor = MyStyle.colors.primaryMain,
+                contentColor = MyStyle.colors.textWhite
             ) {
                 Icon(Icons.Filled.Add, "Floating action button.")
             }

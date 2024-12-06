@@ -59,6 +59,11 @@ fun ButtonCustom(
             borderColor = MyStyle.colors.primaryMain
             textColor = MyStyle.colors.primaryMain
         }
+        ButtonType.Success -> {
+            containerColor = MyStyle.colors.successMain
+            borderColor = MyStyle.colors.successMain
+            textColor = MyStyle.colors.textWhite
+        }
         ButtonType.Danger -> {
             containerColor = MyStyle.colors.errorMain
             borderColor = MyStyle.colors.errorBorder

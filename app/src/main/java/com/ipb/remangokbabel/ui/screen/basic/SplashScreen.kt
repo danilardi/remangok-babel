@@ -5,10 +5,12 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,13 +19,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 import kotlinx.coroutines.delay
+
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
@@ -41,27 +46,23 @@ fun SplashScreen(
         delay(1000)
         onSplashFinished()
     }
-    Column(
+    Box(
+        contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxSize()
-            .background(MyStyle.colors.bgSplash),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+            .background(MyStyle.colors.primaryMain)
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.logo_remangok2),
-            contentScale = ContentScale.Crop,
-            contentDescription = "Splash Screen",
-            modifier = Modifier
-                .fillMaxWidth()
-        )
-        Text(
-            text = "Remangok Babel",
-            style = MyStyle.typography.baseBold,
-            fontSize = 36.ssp,
-            color = MyStyle.colors.textGrey,
-            modifier = Modifier
-                .padding(top = 24.sdp),
-        )
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.remangok_logo),
+                contentDescription = "remangok logo",
+                contentScale = ContentScale.Fit,
+                modifier = Modifier.size(150.dp)
+            )
+        }
     }
 }

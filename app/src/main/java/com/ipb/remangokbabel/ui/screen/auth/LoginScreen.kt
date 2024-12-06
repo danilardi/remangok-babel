@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBackIosNew
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -42,6 +43,8 @@ import com.ipb.remangokbabel.ViewModelFactory
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.di.Injection
 import com.ipb.remangokbabel.model.request.LoginRequest
+import com.ipb.remangokbabel.ui.components.common.AppTopBar
+import com.ipb.remangokbabel.ui.components.common.BackTopBar
 import com.ipb.remangokbabel.ui.components.common.ButtonCustom
 import com.ipb.remangokbabel.ui.components.common.InputLayout
 import com.ipb.remangokbabel.ui.components.common.LoadingDialog
@@ -50,6 +53,8 @@ import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.AuthViewModel
 import com.ipb.remangokbabel.ui.viewmodel.ProfileViewModel
 import com.ipb.remangokbabel.utils.navigateTo
+import com.ipb.remangokbabel.utils.navigateToAndMakeTop
+import com.ipb.remangokbabel.utils.navigateToBack
 import ir.kaaveh.sdpcompose.sdp
 import ir.kaaveh.sdpcompose.ssp
 
@@ -72,10 +77,13 @@ fun LoginScreen(
     var password by remember { mutableStateOf("") }
 
     LaunchedEffect(Unit) {
-        if (BuildConfig.DEBUG) {
-            password = "password"
-        }
         email = paperPrefs.getEmailSaved()
+        if (BuildConfig.DEBUG) {
+            email = "yulia.sari@jualanmail.com"
+            password = "yulia303"
+//            email = "albarrazikrillah1405@gmail.com"
+//            password = "P_assword001"
+        }
     }
 
     authViewModel.loginState.collectAsState().value?.let {
@@ -96,7 +104,7 @@ fun LoginScreen(
             val destination =
                 if (paperPrefs.getRole() == "admin") Screen.ManagementProduct.route else Screen.Home.route
             profileViewModel.clearProfileState()
-            navigateTo(navController, destination)
+            navigateToAndMakeTop(navController, destination)
         }
     }
 
@@ -124,96 +132,72 @@ fun LoginScreen(
         }
         profileViewModel.clearError()
     }
-
-    Column(
-        modifier.padding(16.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        CustomNavbar(navController = navController, title = "Masuk")
-        Text(
-            text = "Selamat Datang\nAyo Eksplor Remangok Babel 🦀",
-            style = MyStyle.typography.baseBold,
-            fontSize = 18.sp,
-            color = MyStyle.colors.textBlack,
-            textAlign = TextAlign.Start,
-            modifier = Modifier
-                .padding(top = 51.dp)
-                .fillMaxWidth()
-        )
-        InputLayout(
-            title = "Email",
-            value = email,
-            hint = "Masukkan Email",
-            modifier = Modifier.padding(top = 20.dp)
-        ) {
-            email = it
-        }
-        InputLayout(
-            title = "Kata Sandi",
-            value = password,
-            hint = "Silahkan masukkan kata sandi anda",
-            modifier = Modifier.padding(top = 16.dp),
-            isPassword = true
-        ) {
-            password = it
-        }
-        ButtonCustom(
-            text = "Masuk",
-            enabled = email.isNotEmpty() && password.isNotEmpty(),
-            modifier = Modifier.padding(top = 24.dp)
-        ) {
-            authViewModel.login(LoginRequest(email, password))
-        }
-        Row(
-            modifier = Modifier
-                .padding(top = 16.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(text = "Belum punya akun?", style = MyStyle.typography.baseNormal)
-            Text(text = "Daftar Disini",
-                style = MyStyle.typography.baseBold,
-                color = MyStyle.colors.primaryMain,
-                fontSize = 12.ssp,
-                modifier = Modifier
-                    .padding(start = 6.sdp)
-                    .clickable {
-                        navigateTo(navController, Screen.Register.route)
-                    })
-        }
-    }
-}
-
-@Composable
-fun CustomNavbar(
-    modifier: Modifier = Modifier,
-    navController: NavHostController,
-    title: String,
-) {
-    Box(
+    Scaffold(
+        topBar = {
+            BackTopBar(title = "Masuk", onClickBackButton = {
+                navigateToBack(navController)
+            })
+        },
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 0.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        if (navController.previousBackStackEntry != null) {
-            IconButton(
-                onClick = {
-                    navController.popBackStack()
-                },
-                modifier = Modifier.align(Alignment.CenterStart)
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .padding(horizontal = 16.sdp),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Text(
+                text = "Selamat Datang\nAyo Eksplor Remangok Babel 🦀",
+                style = MyStyle.typography.baseBold,
+                fontSize = 18.ssp,
+                color = MyStyle.colors.textBlack,
+                textAlign = TextAlign.Start,
+                modifier = Modifier
+                    .padding(top = 50.sdp)
+                    .fillMaxWidth()
+            )
+            InputLayout(
+                title = "Email",
+                value = email,
+                hint = "Masukkan Email",
+                modifier = Modifier.padding(top = 20.sdp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBackIosNew,
-                    contentDescription = "Kembali",
-                )
+                email = it
+            }
+            InputLayout(
+                title = "Kata Sandi",
+                value = password,
+                hint = "Silahkan masukkan kata sandi anda",
+                modifier = Modifier.padding(top = 16.sdp),
+                isPassword = true
+            ) {
+                password = it
+            }
+            ButtonCustom(
+                text = "Masuk",
+                enabled = email.isNotEmpty() && password.isNotEmpty(),
+                modifier = Modifier.padding(top = 24.sdp)
+            ) {
+                authViewModel.login(LoginRequest(email, password))
+            }
+            Row(
+                modifier = Modifier
+                    .padding(top = 16.sdp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "Belum punya akun?", style = MyStyle.typography.baseNormal)
+                Text(text = "Daftar Disini",
+                    style = MyStyle.typography.baseBold,
+                    color = MyStyle.colors.primaryMain,
+                    fontSize = 12.ssp,
+                    modifier = Modifier
+                        .padding(start = 6.sdp)
+                        .clickable {
+                            navigateTo(navController, Screen.Register.route)
+                        })
             }
         }
-        Text(
-            text = title,
-            fontSize = 18.sp,
-            style = MyStyle.typography.baseBold,
-        )
     }
-}
 
+}

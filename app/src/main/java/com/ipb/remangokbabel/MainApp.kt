@@ -32,7 +32,6 @@ import com.google.gson.Gson
 import com.ipb.remangokbabel.data.local.PaperPrefs
 import com.ipb.remangokbabel.model.response.ProductItem
 import com.ipb.remangokbabel.model.response.ProfilesItem
-import com.ipb.remangokbabel.ui.components.common.BottomBar
 import com.ipb.remangokbabel.ui.navigation.NavigationItem
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.screen.auth.LoginScreen
@@ -103,17 +102,17 @@ fun MainApp(
     LaunchedEffect(currentRoute) {
         when (currentRoute) {
             Screen.Splash.route -> setTopNavBarColor(
-                MyStyle.colors.bgSplash,
-                MyStyle.colors.bgSplash
+                MyStyle.colors.primaryMain,
+                MyStyle.colors.primaryMain
             )
 
             Screen.Home.route -> setTopNavBarColor(
-                MyStyle.colors.bgWhite,
+                MyStyle.colors.primaryMain,
                 MyStyle.colors.bgSecondary
             )
 
             Screen.ManagementProduct.route -> setTopNavBarColor(
-                MyStyle.colors.bgWhite,
+                MyStyle.colors.primaryMain,
                 MyStyle.colors.bgSecondary
             )
 
@@ -134,7 +133,7 @@ fun MainApp(
     }
 
     BackHandler {
-        if ((currentRoute == Screen.Login.route || currentRoute == Screen.Home.route) && !doubleBackToExitPressedOnce.value) {
+        if ((currentRoute == Screen.Onboarding.route || currentRoute == Screen.Home.route) && !doubleBackToExitPressedOnce.value) {
             Toast.makeText(context, "Tekan sekali lagi untuk keluar", Toast.LENGTH_SHORT).show()
             doubleBackToExitPressedOnce.value = true
         } else if (doubleBackToExitPressedOnce.value) {
@@ -145,18 +144,6 @@ fun MainApp(
     }
 
     Scaffold(
-        bottomBar = {
-            if (
-                currentRoute == Screen.Home.route ||
-                currentRoute == Screen.ManagementProduct.route ||
-                currentRoute == Screen.Setting.route
-            ) {
-                BottomBar(
-                    navController = navController,
-                    navigationItems = navigationItems
-                )
-            }
-        },
         modifier = Modifier
             .fillMaxSize()
             .background(MyStyle.colors.bgWhite),
@@ -179,6 +166,14 @@ fun MainApp(
                         Screen.Home.route
                     navigateToAndMakeTop(navController, destination)
                 }
+            }
+
+            composable(
+                route = Screen.Onboarding.route,
+            ) {
+                OnBoardingScreen(
+                    navController = navController,
+                )
             }
             composable(Screen.Login.route) {
                 LoginScreen(
@@ -241,13 +236,6 @@ fun MainApp(
                 EditProfileScreen(
                     navController = navController,
                     profileData = profileData
-                )
-            }
-            composable(
-                route = Screen.Onboarding.route,
-            ) {
-                OnBoardingScreen(
-                    navController = navController,
                 )
             }
         }

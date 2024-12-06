@@ -41,6 +41,7 @@ import com.ipb.remangokbabel.ui.components.common.LoadingDialog
 import com.ipb.remangokbabel.ui.navigation.Screen
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import com.ipb.remangokbabel.ui.viewmodel.OrderViewModel
+import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import ir.kaaveh.sdpcompose.sdp
 import kotlinx.coroutines.launch
@@ -120,6 +121,9 @@ fun OrderScreen(
         topBar = {
             AppTopBar(
                 title = "Penjualan Saya",
+                onClickToProfile = {
+                    navigateTo(navController, Screen.Setting.route)
+                },
                 modifier = Modifier
             )
         },

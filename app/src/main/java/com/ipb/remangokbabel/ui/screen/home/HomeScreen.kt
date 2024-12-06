@@ -5,19 +5,21 @@ import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.FilterAlt
+import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,8 +35,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
@@ -58,6 +62,7 @@ import com.ipb.remangokbabel.utils.capitalizeEachWord
 import com.ipb.remangokbabel.utils.navigateTo
 import com.ipb.remangokbabel.utils.navigateToAndMakeTop
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 
 @Preview(showBackground = true, device = Devices.PIXEL_4)
 @Composable
@@ -141,64 +146,80 @@ fun HomeScreen(
         topBar = {
             AppTopBar(
                 title = "Remangok Babel",
-                modifier = if (BuildConfig.DEBUG) Modifier.clickable {
-                } else Modifier
+                onClickToProfile = {
+                    navigateToAndMakeTop(navController, Screen.Setting.route)
+                },
+                onClickToManagementProduct = {
+                    navigateToAndMakeTop(navController, Screen.ManagementProduct.route)
+                },
+
+                modifier = Modifier.background(MyStyle.colors.neutral20)
             )
         },
-        modifier = modifier
+        modifier = modifier.background(MyStyle.colors.bgWhite)
     ) { innerPadding ->
         Column(
             modifier = Modifier
-                .background(MyStyle.colors.bgWhite)
+                .background(MyStyle.colors.neutral20)
                 .padding(top = innerPadding.calculateTopPadding())
                 .fillMaxSize()
         ) {
             Row(
                 modifier = Modifier
-                    .padding(16.sdp),
+                    .padding(horizontal = 16.sdp)
+                    .padding(top = 10.sdp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Produk Terbaru",
-                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.W600,
+                    fontSize = 10.ssp,
                     modifier = Modifier
                         .weight(1f)
                 )
                 Row(
                     modifier = Modifier
-                        .clip(RoundedCornerShape(16.sdp))
+                        .clip(RoundedCornerShape(4.sdp))
                         .clickable {
                             showFilterDialog = true
                         }
-                        .background(MyStyle.colors.bgSecondary)
+                        .background(MyStyle.colors.bgWhite)
                         .border(
                             width = 1.sdp,
-                            color = MyStyle.colors.bgPrimary,
-                            shape = RoundedCornerShape(16.sdp)
+                            color = MyStyle.colors.bgBlack,
+                            shape = RoundedCornerShape(4.sdp)
                         )
-                        .padding(horizontal = 8.sdp),
+                        .padding(horizontal = 8.sdp, vertical = 4.sdp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.FilterAlt,
-                        contentDescription = "Filter",
-                        tint = MyStyle.colors.textPrimary,
-                    )
                     Text(
-                        text = filter.ifEmpty { "Filter" },
-                        color = MyStyle.colors.textPrimary,
-                        modifier = Modifier.padding(8.sdp)
+                        text = filter.ifEmpty { "Kecamatan" },
+                        color = if (filter.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                        fontSize = 10.ssp,
+                        fontWeight = FontWeight.W400,
+                    )
+                    Icon(
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Filter",
+                        tint = if (filter.isEmpty()) MyStyle.colors.neutral600 else MyStyle.colors.textPrimary,
+                        modifier = Modifier
+                            .padding(start = 4.sdp)
+                            .size(12.sdp)
                     )
                 }
                 if (filter != "") {
                     Icon(
-                    imageVector = Icons.Default.Close,
-                    contentDescription = "clear",
-                    modifier = Modifier.clickable {
-                        filter = ""
-                        listProduct = emptyList()
-                        productViewModel.getAllProducts(limit, offset, filter.capitalizeEachWord())
-                    })
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "clear",
+                        modifier = Modifier.clickable {
+                            filter = ""
+                            listProduct = emptyList()
+                            productViewModel.getAllProducts(
+                                limit,
+                                offset,
+                                filter.capitalizeEachWord()
+                            )
+                        })
                 }
             }
             ProductGrid(
@@ -230,30 +251,31 @@ fun ProductGrid(
 ) {
     if (listProduct.isEmpty()) {
         EmptyScreen()
-    } else 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(2),
-        modifier = modifier
-    ) {
-        itemsIndexed(listProduct, key = { _, item -> item.id }) { index, product ->
-            ProductCard(
-                product = product,
-                onViewDetailsClick = {
-                    onViewDetailsClick(product)
-                },
-                modifier = Modifier.then(
-                    if (index == listProduct.lastIndex) {
-                        Modifier
-                            .padding(bottom = 16.sdp)
-                            .onGloballyPositioned {
-                                // Panggil ketika item terakhir terlihat
-                                onLastItemVisible()
-                            }
-                    } else Modifier
+    } else
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            contentPadding = PaddingValues(horizontal = 16.sdp, vertical = 16.sdp),
+            verticalArrangement = Arrangement.spacedBy(12.sdp),
+            horizontalArrangement = Arrangement.spacedBy(10.sdp),
+            modifier = modifier
+        ) {
+            itemsIndexed(listProduct, key = { _, item -> item.id }) { index, product ->
+                ProductCard(
+                    product = product,
+                    onViewDetailsClick = {
+                        onViewDetailsClick(product)
+                    },
+                    modifier = Modifier.then(
+                        if (index == listProduct.lastIndex) {
+                            Modifier
+                                .onGloballyPositioned {
+                                    onLastItemVisible()
+                                }
+                        } else Modifier
+                    )
                 )
-            )
+            }
         }
-    }
 }
 
 

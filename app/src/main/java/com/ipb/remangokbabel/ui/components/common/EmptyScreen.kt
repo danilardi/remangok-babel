@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
@@ -25,12 +26,14 @@ import com.ipb.remangokbabel.R
 import com.ipb.remangokbabel.model.component.ScreenType
 import com.ipb.remangokbabel.ui.theme.MyStyle
 import ir.kaaveh.sdpcompose.sdp
+import ir.kaaveh.sdpcompose.ssp
 
 @Preview(showBackground = true, showSystemUi = true, device = Devices.PIXEL_4)
 @Composable
 fun EmptyScreen(
     modifier: Modifier = Modifier,
     title: String = "Data Kosong",
+    desc: String = "",
     type: ScreenType = ScreenType.Empty,
 ) {
     var contentDescription by remember { mutableStateOf("") }
@@ -57,7 +60,6 @@ fun EmptyScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(MyStyle.colors.bgWhite)
             .padding(16.sdp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -69,8 +71,21 @@ fun EmptyScreen(
         )
         Text(
             text = title,
-            style = MaterialTheme.typography.titleLarge,
-            textAlign = TextAlign.Center
+            textAlign = TextAlign.Center,
+            fontSize = 18.ssp,
+            color = MyStyle.colors.textBlack,
+            fontWeight = FontWeight(700),
+            modifier = Modifier.padding(top = 26.sdp)
         )
+        if(desc.isNotEmpty()) {
+            Text(
+                text = desc,
+                textAlign = TextAlign.Center,
+                fontSize = 14.ssp,
+                color = MyStyle.colors.textGrey,
+                fontWeight = FontWeight(400),
+                modifier = Modifier.padding(top = 5.sdp)
+            )
+        }
     }
 }
